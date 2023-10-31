@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace BackendQueDiosa.Controllers
 {
     [Route("api/[controller]")]
-[ApiController]
-public class ValuesController : ControllerBase
-{
-}
+    [ApiController]
+    public class CategoriasController : ControllerBase
+    {
+
+
+
+    }
 }
