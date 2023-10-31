@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddTransient<IRepositorioCategoria, RepositorioCategoria>();
+builder.Services.AddTransient<IRepositorioTipoPrenda, RepositorioTipoPrenda>();
 
 
 builder.Services.AddControllers();

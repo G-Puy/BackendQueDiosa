@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace IRepositorios
 {
-    public interface IRepositorioCategoria : IRepositorioT<DTOCategoria>
+    public interface IRepositorioTipoPrenda : IRepositorioT<DTOTipoPrenda>
     {
-        public bool VerificarExistenciaCategoria(DTOCategoria DTOCategoria);
+        public bool VerificarExistenciaCategoria(DTOTipoPrenda DTOCategoria);
 
     }
 }
