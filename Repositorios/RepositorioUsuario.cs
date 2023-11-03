@@ -175,8 +175,8 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        usuario.NombreDeUsuario = reader.GetString(0);
-                        usuario.Contraseña = reader.GetString(1);
+                        usuario.NombreDeUsuario = reader["nombre"].ToString();
+                        usuario.Contraseña = reader["contrasenia"].ToString();
                     }
                 }
                 trn.Commit();
