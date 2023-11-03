@@ -221,6 +221,10 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
+
+               //TODO: para dar de alta un tipo de producto no usamos id, por lo tanto no se puede confirmar si exsite por id
+               //Hay que confirmarlo haciendo uppercase en el parametro de entrada, y upper case en el parametro de la bd
+               //para asi comparar por nombre los 2 en mayuscula
                 string sentenciaSql = @"SELECT * FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
