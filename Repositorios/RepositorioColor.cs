@@ -2,34 +2,36 @@
 using Dominio.Entidades;
 using DTOS;
 using IRepositorios;
+using System.Data.SqlClient;
+
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace Repositorios
 {
-    public class RepositorioTipoPrenda : RepositorioBase, IRepositorioTipoPrenda
+    public class RepositorioColor : RepositorioBase, IRepositorioColor
     {
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
 
-        public bool Alta(DTOTipoPrenda obj)
+        public bool Alta(DTOColor obj)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(obj);
+           Color color = new Color();
+            color.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO TipoProducto VALUES(@NombreTipoPrenda,@BajaLogica)
+                string sentenciaSql = @"INSERT INTO Color VALUES(@NombreColor,@BajaLogica)
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@NombreTipoPrenda", tipoPrenda.NombreTipoPrenda);
-                cmd.Parameters.AddWithValue("@BajaLogica", tipoPrenda.BajaLogica);
+                cmd.Parameters.AddWithValue("@NombreColor",color.Nombre);
+                cmd.Parameters.AddWithValue("@BajaLogica", color.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -47,19 +49,20 @@ namespace Repositorios
             }
         }
 
-        public bool BajaLogica(DTOTipoPrenda obj)
+        public bool BajaLogica(DTOColor obj)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(obj);
+            Color color = new Color();
+            color.cargarDeDTO(obj);
+
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TABLE TipoProducto SET bajaLogica = @BajaLogica WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"UPDATE TABLE Color SET bajaLogica = @BajaLogica WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
-                cmd.Parameters.AddWithValue("@BajaLogica", tipoPrenda.BajaLogica);
+                cmd.Parameters.AddWithValue("@idColor", color.IdColor);
+                cmd.Parameters.AddWithValue("@BajaLogica", color.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -77,54 +80,23 @@ namespace Repositorios
             }
         }
 
-        public DTOTipoPrenda BuscarPorId(int id)
+        public DTOColor BuscarPorId(int id)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-
-            cn = manejadorConexion.CrearConexion();
-            SqlTransaction trn = null;
-            try
-            {
-                string sentenciaSql = @"SELECT * FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
-                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", id);
-                manejadorConexion.AbrirConexion(cn);
-                trn = cn.BeginTransaction();
-                cmd.Transaction = trn;
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        tipoPrenda.IdTipoPrenda = reader.GetInt32(0);
-                        tipoPrenda.NombreTipoPrenda = reader.GetString(1);
-                        tipoPrenda.BajaLogica = reader.GetBoolean(2);
-                    }
-                }
-                trn.Commit();
-                manejadorConexion.CerrarConexionConClose(cn);
-                return tipoPrenda.darDto();
-            }
-            catch (Exception ex)
-            {
-                trn.Rollback();
-                manejadorConexion.CerrarConexionConClose(cn);
-                this.DescripcionError = ex.Message;
-                throw ex;
-            }
+            throw new NotImplementedException();
         }
 
-        public bool Eliminar(DTOTipoPrenda obj)
+        public bool Eliminar(DTOColor obj)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(obj);
+            Color color = new Color();
+            color.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"DELETE FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"DELETE FROM Color WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
+                cmd.Parameters.AddWithValue("@idColor", color.IdColor);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -142,19 +114,19 @@ namespace Repositorios
             }
         }
 
-        public bool Modificar(DTOTipoPrenda obj)
+        public bool Modificar(DTOColor obj)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(obj);
+            Color color = new Color();
+            color.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TipoProducto SET nombre = @nombre WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"UPDATE Color SET nombre = @nombre WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
-                cmd.Parameters.AddWithValue("@Nombre", tipoPrenda.NombreTipoPrenda);
+                cmd.Parameters.AddWithValue("@idColor", color.IdColor);
+                cmd.Parameters.AddWithValue("@Nombre", color.Nombre);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -172,15 +144,15 @@ namespace Repositorios
             }
         }
 
-        public IEnumerable<DTOTipoPrenda> TraerTodos()
+        public IEnumerable<DTOColor> TraerTodos()
         {
-            List<DTOTipoPrenda> tipos = new List<DTOTipoPrenda>();
+            List<DTOColor> tipos = new List<DTOColor>();
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM TipoProducto";
+                string sentenciaSql = @"SELECT * FROM Color";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -189,19 +161,19 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        TipoPrenda tipoPrenda = new TipoPrenda();
+                        Color color = new Color();
 
-                        tipoPrenda.IdTipoPrenda = reader.GetInt32(0);
-                        tipoPrenda.NombreTipoPrenda = reader.GetString(1);
-                        tipoPrenda.BajaLogica = reader.GetBoolean(2);
-                        DTOTipoPrenda dtoTipoP = tipoPrenda.darDto();
+                        color.IdColor = reader.GetInt32(0);
+                        color.Nombre = reader.GetString(1);
+                        color.BajaLogica = reader.GetBoolean(2);
+                        DTOColor dtoTipoC = color.darDto();
 
-                        tipos.Add(dtoTipoP);
+                        tipos.Add(dtoTipoC);
                     }
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return (IEnumerable<DTOTipoPrenda>)tipos;
+                return (IEnumerable<DTOColor>)tipos;
             }
             catch (Exception ex)
             {
@@ -212,22 +184,22 @@ namespace Repositorios
             }
         }
 
-        public bool VerificarExistenciaCategoria(DTOTipoPrenda DTOCategoria)
+        public bool VerificarExistenciaColor(DTOColor DTOCol)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(DTOCategoria);
+            Color color = new Color();
+            color.cargarDeDTO(DTOCol);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
 
-               //TODO: para dar de alta un tipo de producto no usamos id, por lo tanto no se puede confirmar si exsite por id
-               //Hay que confirmarlo haciendo uppercase en el parametro de entrada, y upper case en el parametro de la bd
-               //para asi comparar por nombre los 2 en mayuscula
-                string sentenciaSql = @"SELECT * FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
+                //TODO: para dar de alta un tipo de producto no usamos id, por lo tanto no se puede confirmar si exsite por id
+                //Hay que confirmarlo haciendo uppercase en el parametro de entrada, y upper case en el parametro de la bd
+                //para asi comparar por nombre los 2 en mayuscula
+                string sentenciaSql = @"SELECT * FROM Color WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
+                cmd.Parameters.AddWithValue("@idTipoProducto", color.IdColor);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -235,9 +207,9 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        tipoPrenda.IdTipoPrenda = reader.GetInt32(0);
-                        tipoPrenda.NombreTipoPrenda = reader.GetString(1);
-                        tipoPrenda.BajaLogica = reader.GetBoolean(2);
+                        color.IdColor = reader.GetInt32(0);
+                        color.Nombre = reader.GetString(1);
+                        color.BajaLogica = reader.GetBoolean(2);
                     }
                 }
                 trn.Commit();
@@ -252,5 +224,11 @@ namespace Repositorios
                 throw ex;
             }
         }
+
+        IEnumerable<DTOColor> IRepositorioT<DTOColor>.TraerTodos()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
+

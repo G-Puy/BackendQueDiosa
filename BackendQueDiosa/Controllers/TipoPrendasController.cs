@@ -12,7 +12,7 @@ namespace BackendQueDiosa.Controllers
     [ApiController]
     public class TipoPrendasController : ControllerBase
     {
-        
+
         private IRepositorioTipoPrenda ManejadorCategoria { get; set; }
 
         public TipoPrendasController([FromServices] IRepositorioTipoPrenda repInj)
@@ -29,12 +29,12 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTipoPrenda dtoCat = new DTOTipoPrenda();
-                dtoCat.NombreTipoPrenda = mapperCategoriaFront.NombreCategoria;
+                dtoCat.NombreTipoPrenda = mapperCategoriaFront.NombreTipoProducto;
 
                 bool resultadoAlta = this.ManejadorCategoria.Alta(dtoCat);
 
                 if (resultadoAlta) return Ok(resultadoAlta);
-                else  return BadRequest(resultadoAlta);
+                else return BadRequest(resultadoAlta);
 
             }
             catch (Exception ex)
@@ -61,6 +61,49 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
+        [HttpPut("editarTipoProducto")]
+        public IActionResult EditarTipoProducto([FromBody] MapperTipoPrenda mapperCategoriaFront)
+        {
+            try
+            {
+                DTOTipoPrenda dtoCat = new DTOTipoPrenda();
+                dtoCat.NombreTipoPrenda = mapperCategoriaFront.NombreTipoProducto;
+                dtoCat.IdTipoPrenda = mapperCategoriaFront.IdTipoProducto;
+
+                bool resultadoEditar = this.ManejadorCategoria.Modificar(dtoCat);
+
+                if (resultadoEditar) return Ok(resultadoEditar);
+                else return BadRequest(resultadoEditar);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        [HttpGet("TraerTiposProductos")]
+        public IActionResult TraerTiposProductos()
+        {
+            try
+            {
+                List<DTOTipoPrenda> resultado = (List<DTOTipoPrenda>)this.ManejadorCategoria.TraerTodos();
+                if (resultado.Count>0) return Ok(resultado);
+                else return BadRequest(false);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+
+
+
+
 
     }
 }

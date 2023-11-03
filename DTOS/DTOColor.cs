@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace DTOS
 {
-    internal class DTOColor
+    public class DTOColor
     {
-        public int pepe { get; set; }
+        public long IdColor { get; set; } = 0;
+        public string Nombre { get; set; } = "";
+        public bool BajaLogica { get; set; } = false;
     }
 }
