@@ -23,10 +23,9 @@ namespace BackendQueDiosa.Controllers
 
 
 
-        [HttpPost("altaTipoPrenda")]
-        public IActionResult AltaCategoria([FromBody] MapperTipoPrenda mapperCategoriaFront)
+        [HttpPost("altaTipoProducto")]
+        public IActionResult AltaTipoProducto([FromBody] MapperTipoPrenda mapperCategoriaFront)
         {
-
             try
             {
                 DTOTipoPrenda dtoCat = new DTOTipoPrenda();
@@ -43,12 +42,25 @@ namespace BackendQueDiosa.Controllers
 
                 throw ex;
             }
-
-
-
-
         }
+        [HttpDelete("eliminarTipoProducto")]
+        public IActionResult EliminarTipoProducto(long idTipoPrenda)
+        {
+            try
+            {
+                DTOTipoPrenda dtoCat = new DTOTipoPrenda();
+                dtoCat.IdTipoPrenda = idTipoPrenda;
+                bool resultadoEliminar = this.ManejadorCategoria.Eliminar(dtoCat);
+                if (resultadoEliminar) return Ok(resultadoEliminar);
+                else return BadRequest(resultadoEliminar);
 
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
 
     }
 }
