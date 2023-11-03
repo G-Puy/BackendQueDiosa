@@ -28,7 +28,7 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpPost("alta")]
-        public IActionResult Alta([FromBody] MapperUsuario mapperUsuario)
+        public IActionResult Alta([FromBody] MapperUsuarioAlta mapperUsuario)
         {
 
             try
