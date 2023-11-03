@@ -54,9 +54,6 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-
-
-
         [HttpPost("login")]
         public IActionResult Login([FromBody] MapperUsuarioLogin mapperUsuarioLogin)
         {
@@ -89,7 +86,7 @@ namespace BackendQueDiosa.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var securityToken = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddMinutes(60), signingCredentials: creds);
+            var securityToken = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddHours(12), signingCredentials: creds);
 
             var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
 
