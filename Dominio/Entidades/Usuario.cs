@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dominio.Entidades
 {
-    internal class Usuario
+    public class Usuario
     {
         public long IdUsuario { get; set; } = 0;
         public string NombreDeUsuario { get; set; } = "";
@@ -17,7 +17,7 @@ namespace Dominio.Entidades
         public string Telefono { get; set; } = "";
         public string Correo { get; set; } = "";
         public bool BajaLogica { get; set; } = false;
-        public int TipoUsuario { get; set; } = 0;
+        public int IdTipoUsuario { get; set; } = 0;
 
         public void cargarDeDTO(DTOUsuario dtoUsuario)
         {
@@ -29,7 +29,7 @@ namespace Dominio.Entidades
             this.Telefono = dtoUsuario.Telefono;
             this.Correo = dtoUsuario.Correo;
             this.BajaLogica = dtoUsuario.BajaLogica;
-            this.TipoUsuario = dtoUsuario.TipoUsuario;
+            this.IdTipoUsuario = dtoUsuario.TipoUsuario;
 
         }
         public DTOUsuario darDto()
@@ -44,7 +44,7 @@ namespace Dominio.Entidades
             dto.Telefono = this.Telefono;
             dto.Correo = this.Correo;
             dto.BajaLogica = this.BajaLogica;
-            dto.TipoUsuario = this.TipoUsuario;
+            dto.TipoUsuario = this.IdTipoUsuario;
 
             return dto;
         }

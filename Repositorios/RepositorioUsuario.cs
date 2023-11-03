@@ -11,25 +11,31 @@ using System.Threading.Tasks;
 
 namespace Repositorios
 {
-    public class RepositorioTipoPrenda : RepositorioBase, IRepositorioTipoPrenda
+    public class RepositorioUsuario : RepositorioBase, IRepositorioLogin
     {
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
 
-        public bool Alta(DTOTipoPrenda obj)
+        public bool Alta(DTOUsuario obj)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(obj);
+            Usuario usuario = new Usuario();
+            usuario.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO TipoProducto VALUES(@NombreTipoPrenda,@BajaLogica)
+                string sentenciaSql = @"INSERT INTO Usuario VALUES(@NombreUsuario, @Contrasenia, @Nombre, @Apellido, @Telefono, @Correo, @BajaLogica, @IdTipoUsuario)
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@NombreTipoPrenda", tipoPrenda.NombreTipoPrenda);
-                cmd.Parameters.AddWithValue("@BajaLogica", tipoPrenda.BajaLogica);
+                cmd.Parameters.AddWithValue("@NombreUsuario", usuario.NombreDeUsuario);
+                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contraseña);
+                cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre);
+                cmd.Parameters.AddWithValue("@Apellido", usuario.Apellido);
+                cmd.Parameters.AddWithValue("@Telefono", usuario.Telefono);
+                cmd.Parameters.AddWithValue("@Correo", usuario.Correo);
+                cmd.Parameters.AddWithValue("@BajaLogica", usuario.BajaLogica);
+                cmd.Parameters.AddWithValue("@IdTipoUsuario", usuario.IdTipoUsuario);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -47,19 +53,19 @@ namespace Repositorios
             }
         }
 
-        public bool BajaLogica(DTOTipoPrenda obj)
+        public bool BajaLogica(DTOUsuario obj)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(obj);
+            Usuario usuario = new Usuario();
+            usuario.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TABLE TipoProducto SET bajaLogica = @BajaLogica WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"UPDATE TABLE Usuario SET bajaLogica = @BajaLogica WHERE idUsuario = @IdUsuario";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
-                cmd.Parameters.AddWithValue("@BajaLogica", tipoPrenda.BajaLogica);
+                cmd.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
+                cmd.Parameters.AddWithValue("@BajaLogica", usuario.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -77,17 +83,17 @@ namespace Repositorios
             }
         }
 
-        public DTOTipoPrenda BuscarPorId(int id)
+        public DTOUsuario BuscarPorId(int id)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
+            Usuario usuario = new Usuario();
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"SELECT TOP 1 * FROM Usuario WHERE idUsuario = @IdUsuario";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", id);
+                cmd.Parameters.AddWithValue("@IdUsuario", id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -95,14 +101,21 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        tipoPrenda.IdTipoPrenda = reader.GetInt32(0);
-                        tipoPrenda.NombreTipoPrenda = reader.GetString(1);
-                        tipoPrenda.BajaLogica = reader.GetBoolean(2);
+                        usuario.IdUsuario = reader.GetInt32(0);
+                        usuario.NombreDeUsuario = reader.GetString(1);
+                        usuario.Contraseña = reader.GetString(2);
+                        usuario.Nombre = reader.GetString(3);
+                        usuario.Apellido = reader.GetString(4);
+                        usuario.Telefono = reader.GetString(5);
+                        usuario.Correo = reader.GetString(6);
+                        usuario.BajaLogica = reader.GetBoolean(7);
+                        usuario.IdTipoUsuario = reader.GetInt32(8);
+
                     }
                 }
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return tipoPrenda.darDto();
+                return usuario.darDto();
             }
             catch (Exception ex)
             {
@@ -113,18 +126,18 @@ namespace Repositorios
             }
         }
 
-        public bool Eliminar(DTOTipoPrenda obj)
+        public bool Eliminar(DTOUsuario obj)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(obj);
+            Usuario usuario = new Usuario();
+            usuario.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"DELETE FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"DELETE FROM TipoProducto WHERE idUsuario = @IdUsuario";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
+                cmd.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -142,19 +155,63 @@ namespace Repositorios
             }
         }
 
-        public bool Modificar(DTOTipoPrenda obj)
+        public bool Login(DTOUsuario dtoUsuario)
         {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(obj);
+            Usuario usuario = new Usuario();
+            usuario.cargarDeDTO(dtoUsuario);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TipoProducto SET nombre = @nombre WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"SELECT * FROM Usuario WHERE nombreDeUsuario = @NombreDeUsuario AND contrasenia = @Contrasenia";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
-                cmd.Parameters.AddWithValue("@Nombre", tipoPrenda.NombreTipoPrenda);
+                cmd.Parameters.AddWithValue("@NombreDeUsuario", usuario.NombreDeUsuario);
+                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contraseña);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        usuario.NombreDeUsuario = reader.GetString(0);
+                        usuario.Contraseña = reader.GetString(1);
+                    }
+                }
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
+        public bool Modificar(DTOUsuario obj)
+        {
+            Usuario usuario = new Usuario();
+            usuario.cargarDeDTO(obj);
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"UPDATE Usuario SET nombreDeUsuario = @NombreDeUsuario, contrasenia = @Contrasenia, nombre = @Nombre, apellido = @Apellido, telefono = @Telefono, correo = @Correo, bajaLogica = @BajaLogica, idTipoUsuario = @IdTipoUsuario WHERE idUsuario = @IdUsuario";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
+                cmd.Parameters.AddWithValue("@NombreUsuario", usuario.NombreDeUsuario);
+                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contraseña);
+                cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre);
+                cmd.Parameters.AddWithValue("@Apellido", usuario.Apellido);
+                cmd.Parameters.AddWithValue("@Telefono", usuario.Telefono);
+                cmd.Parameters.AddWithValue("@Correo", usuario.Correo);
+                cmd.Parameters.AddWithValue("@BajaLogica", usuario.BajaLogica);
+                cmd.Parameters.AddWithValue("@IdTipoUsuario", usuario.IdTipoUsuario);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -172,15 +229,15 @@ namespace Repositorios
             }
         }
 
-        public IEnumerable<DTOTipoPrenda> TraerTodos()
+        public IEnumerable<DTOUsuario> TraerTodos()
         {
-            List<DTOTipoPrenda> tipos = new List<DTOTipoPrenda>();
+            List<DTOUsuario> tipos = new List<DTOUsuario>();
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM TipoProducto";
+                string sentenciaSql = @"SELECT * FROM Usuario";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -189,56 +246,25 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        TipoPrenda tipoPrenda = new TipoPrenda();
+                        Usuario usuario = new Usuario();
 
-                        tipoPrenda.IdTipoPrenda = reader.GetInt32(0);
-                        tipoPrenda.NombreTipoPrenda = reader.GetString(1);
-                        tipoPrenda.BajaLogica = reader.GetBoolean(2);
-                        DTOTipoPrenda dtoTipoP = tipoPrenda.darDto();
+                        usuario.IdUsuario = reader.GetInt32(0);
+                        usuario.NombreDeUsuario = reader.GetString(1);
+                        usuario.Contraseña = reader.GetString(2);
+                        usuario.Nombre = reader.GetString(3);
+                        usuario.Apellido = reader.GetString(4);
+                        usuario.Telefono = reader.GetString(5);
+                        usuario.Correo = reader.GetString(6);
+                        usuario.BajaLogica = reader.GetBoolean(7);
+                        usuario.IdTipoUsuario = reader.GetInt32(8);
+                        DTOUsuario dtoTipoP = usuario.darDto();
 
                         tipos.Add(dtoTipoP);
                     }
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return (IEnumerable<DTOTipoPrenda>)tipos;
-            }
-            catch (Exception ex)
-            {
-                trn.Rollback();
-                manejadorConexion.CerrarConexionConClose(cn);
-                this.DescripcionError = ex.Message;
-                throw ex;
-            }
-        }
-
-        public bool VerificarExistenciaCategoria(DTOTipoPrenda DTOCategoria)
-        {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(DTOCategoria);
-
-            cn = manejadorConexion.CrearConexion();
-            SqlTransaction trn = null;
-            try
-            {
-                string sentenciaSql = @"SELECT TOP 1 * FROM TipoProducto WHERE nombre = @Nombre";
-                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", tipoPrenda.NombreTipoPrenda);
-                manejadorConexion.AbrirConexion(cn);
-                trn = cn.BeginTransaction();
-                cmd.Transaction = trn;
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        tipoPrenda.IdTipoPrenda = reader.GetInt32(0);
-                        tipoPrenda.NombreTipoPrenda = reader.GetString(1);
-                        tipoPrenda.BajaLogica = reader.GetBoolean(2);
-                    }
-                }
-                trn.Commit();
-                manejadorConexion.CerrarConexionConClose(cn);
-                return true;
+                return (IEnumerable<DTOUsuario>)tipos;
             }
             catch (Exception ex)
             {

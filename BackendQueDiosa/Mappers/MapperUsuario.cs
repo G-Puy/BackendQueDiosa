@@ -10,6 +10,6 @@
         public string Telefono { get; set; } = "";
         public string Correo { get; set; } = "";
         public bool BajaLogica { get; set; } = false;
-        public int TipoUsuario { get; set; } = 0;
+        public int IdTipoUsuario { get; set; } = 0;
     }
 }

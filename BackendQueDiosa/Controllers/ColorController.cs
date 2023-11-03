@@ -9,16 +9,12 @@ namespace BackendQueDiosa.Controllers
     [ApiController]
     public class ColorController : ControllerBase
     {
-
         private IRepositorioColor ManejadorColor { get; set; }
 
         public ColorController([FromServices] IRepositorioColor repInj)
         {
-
             this.ManejadorColor = repInj;
         }
-
-
 
         [HttpPost("altaColor")]
         public IActionResult AltaColor ([FromBody] MapperColor mapperColorFront)
@@ -36,10 +32,10 @@ namespace BackendQueDiosa.Controllers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         [HttpDelete("eliminarColor")]
         public IActionResult EliminarColor(long idColor)
         {
@@ -54,10 +50,10 @@ namespace BackendQueDiosa.Controllers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
+
         [HttpPut("editarColor")]
         public IActionResult EditarColor([FromBody] MapperColor mapperColorFront)
         {
@@ -92,16 +88,9 @@ namespace BackendQueDiosa.Controllers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
-
-
-
-
-
-
     }
 }
 

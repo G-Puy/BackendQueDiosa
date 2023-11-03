@@ -11,7 +11,6 @@ using System.Text;
 
 namespace BackendQueDiosa.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsuarioController : ControllerBase
@@ -27,7 +26,8 @@ namespace BackendQueDiosa.Controllers
             this.config = config;
         }
 
-        [HttpPost("altaUsuario")]
+        [Authorize]
+        [HttpPost("alta")]
         public IActionResult Alta([FromBody] MapperUsuario mapperUsuario)
         {
 
@@ -40,7 +40,7 @@ namespace BackendQueDiosa.Controllers
                 dtoUsuario.Contraseña = mapperUsuario.Contraseña;
                 dtoUsuario.Correo = mapperUsuario.Correo;
                 dtoUsuario.Telefono = mapperUsuario.Telefono;
-                dtoUsuario.TipoUsuario = mapperUsuario.TipoUsuario;
+                dtoUsuario.TipoUsuario = mapperUsuario.IdTipoUsuario;
 
                 bool resultadoAlta = this.ManejadorLogin.Alta(dtoUsuario);
 
@@ -57,7 +57,7 @@ namespace BackendQueDiosa.Controllers
 
 
 
-        [HttpPost("loginUsuario")]
+        [HttpPost("login")]
         public IActionResult Login([FromBody] MapperUsuarioLogin mapperUsuarioLogin)
         {
             try
@@ -70,8 +70,8 @@ namespace BackendQueDiosa.Controllers
 
                 if (resultadoLogin) { 
                     string jwtToken = GenerateToken(dtoUsuario);
-                    return Ok(resultadoLogin);}
-                else return BadRequest(resultadoLogin);
+                    return Ok(jwtToken);}
+                else return BadRequest();
             }
             catch (Exception ex)
             {
@@ -83,8 +83,7 @@ namespace BackendQueDiosa.Controllers
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, dtoUsuario.Nombre),
-                new Claim(ClaimTypes.Email, dtoUsuario.Correo)
+                new Claim(ClaimTypes.NameIdentifier, dtoUsuario.NombreDeUsuario)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
