@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<IRepositorioTipoPrenda, RepositorioTipoPrenda>();
 builder.Services.AddTransient<IRepositorioLogin, RepositorioUsuario>();
+builder.Services.AddTransient<IRepositorioColor, RepositorioColor>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

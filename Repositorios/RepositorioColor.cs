@@ -27,10 +27,10 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO Color VALUES(@NombreColor,@BajaLogica)
+                string sentenciaSql = @"INSERT INTO Color VALUES(@Nombre,@BajaLogica)
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@NombreColor",color.Nombre);
+                cmd.Parameters.AddWithValue("@Nombre",color.Nombre);
                 cmd.Parameters.AddWithValue("@BajaLogica", color.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -146,7 +146,7 @@ namespace Repositorios
 
         public IEnumerable<DTOColor> TraerTodos()
         {
-            List<DTOColor> tipos = new List<DTOColor>();
+            List<DTOColor> colores = new List<DTOColor>();
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
@@ -168,12 +168,12 @@ namespace Repositorios
                         color.BajaLogica = reader.GetBoolean(2);
                         DTOColor dtoTipoC = color.darDto();
 
-                        tipos.Add(dtoTipoC);
+                        colores.Add(dtoTipoC);
                     }
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return (IEnumerable<DTOColor>)tipos;
+                return (IEnumerable<DTOColor>)colores;
             }
             catch (Exception ex)
             {
@@ -193,13 +193,9 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-
-                //TODO: para dar de alta un tipo de producto no usamos id, por lo tanto no se puede confirmar si exsite por id
-                //Hay que confirmarlo haciendo uppercase en el parametro de entrada, y upper case en el parametro de la bd
-                //para asi comparar por nombre los 2 en mayuscula
-                string sentenciaSql = @"SELECT * FROM Color WHERE idColor = @idColor";
+                string sentenciaSql = @"SELECT TOP 1 * FROM Color WHERE nombre = @Nombre";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", color.IdColor);
+                cmd.Parameters.AddWithValue("@Nombre", color.IdColor);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -223,11 +219,6 @@ namespace Repositorios
                 this.DescripcionError = ex.Message;
                 throw ex;
             }
-        }
-
-        IEnumerable<DTOColor> IRepositorioT<DTOColor>.TraerTodos()
-        {
-            throw new NotImplementedException();
         }
     }
 }

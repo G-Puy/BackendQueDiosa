@@ -21,7 +21,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                DTOColor dtoCol = new DTOColor ();
+                DTOColor dtoCol = new DTOColor();
                 dtoCol.Nombre = mapperColorFront.Nombre;
 
                 bool resultadoAlta = this.ManejadorColor.Alta(dtoCol);
@@ -41,7 +41,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                DTOColor dtoCol = new DTOColor ();
+                DTOColor dtoCol = new DTOColor();
                 dtoCol.IdColor = idColor;
                 bool resultadoEliminar = this.ManejadorColor.Eliminar(dtoCol);
                 if (resultadoEliminar) return Ok(resultadoEliminar);
@@ -82,7 +82,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 List<DTOColor> resultado = (List<DTOColor>)this.ManejadorColor.TraerTodos();
-                if (resultado.Count > 0) return Ok(resultado);
+                if (resultado.Count>0) return Ok(resultado);
                 else return BadRequest(false);
 
             }
