@@ -2,36 +2,34 @@
 using Dominio.Entidades;
 using DTOS;
 using IRepositorios;
-using System.Data.SqlClient;
-
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
 
 namespace Repositorios
 {
-    public class RepositorioColor : RepositorioBase, IRepositorioColor
+    public class RepositorioTalle : RepositorioBase, IRepositorioTalle
     {
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
 
-        public bool Alta(DTOColor obj)
+        public bool Alta(DTOTalle obj)
         {
-           Color color = new Color();
-            color.cargarDeDTO(obj);
+            Talle talle = new Talle();
+            talle.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO Color VALUES(@Nombre,@BajaLogica)
+                string sentenciaSql = @"INSERT INTO Talle VALUES(@Nombre,@BajaLogica)
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre",color.Nombre);
-                cmd.Parameters.AddWithValue("@BajaLogica", color.BajaLogica);
+                cmd.Parameters.AddWithValue("@Nombre", talle.Nombre);
+                cmd.Parameters.AddWithValue("@BajaLogica", talle.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -49,20 +47,20 @@ namespace Repositorios
             }
         }
 
-        public bool BajaLogica(DTOColor obj)
+        public bool BajaLogica(DTOTalle obj)
         {
-            Color color = new Color();
-            color.cargarDeDTO(obj);
+            Talle talle = new Talle();
+            talle.cargarDeDTO(obj);
 
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TABLE Color SET bajaLogica = @BajaLogica WHERE idColor = @idColor";
+                string sentenciaSql = @"UPDATE TABLE Color SET bajaLogica = @BajaLogica WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", color.IdColor);
-                cmd.Parameters.AddWithValue("@BajaLogica", color.BajaLogica);
+                cmd.Parameters.AddWithValue("@idTalle", talle.IdTalle);
+                cmd.Parameters.AddWithValue("@BajaLogica", talle.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -80,17 +78,17 @@ namespace Repositorios
             }
         }
 
-        public DTOColor BuscarPorId(int id)
+        public DTOTalle BuscarPorId(int id)
         {
-            Color color = new Color();
+            Talle talle = new Talle();
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM Color WHERE idColor = @idColor";
+                string sentenciaSql = @"SELECT * FROM Talle WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", id);
+                cmd.Parameters.AddWithValue("@idTalle", id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -98,14 +96,14 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        color.IdColor = reader.GetInt32(0);
-                        color.Nombre = reader.GetString(1);
-                        color.BajaLogica = reader.GetBoolean(2);
+                        talle.IdTalle = reader.GetInt32(0);
+                        talle.Nombre = reader.GetString(1);
+                        talle.BajaLogica = reader.GetBoolean(2);
                     }
                 }
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return color.darDto();
+                return talle.darDto();
             }
             catch (Exception ex)
             {
@@ -116,18 +114,18 @@ namespace Repositorios
             }
         }
 
-        public bool Eliminar(DTOColor obj)
+        public bool Eliminar(DTOTalle obj)
         {
-            Color color = new Color();
-            color.cargarDeDTO(obj);
+            Talle talle = new Talle();
+            talle.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"DELETE FROM Color WHERE idColor = @idColor";
+                string sentenciaSql = @"DELETE FROM Talle WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", color.IdColor);
+                cmd.Parameters.AddWithValue("@idTalle", talle.IdTalle);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -145,19 +143,19 @@ namespace Repositorios
             }
         }
 
-        public bool Modificar(DTOColor obj)
+        public bool Modificar(DTOTalle obj)
         {
-            Color color = new Color();
-            color.cargarDeDTO(obj);
+            Talle talle = new Talle();
+            talle.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE Color SET nombre = @nombre WHERE idColor = @idColor";
+                string sentenciaSql = @"UPDATE Talle SET nombre = @nombre WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", color.IdColor);
-                cmd.Parameters.AddWithValue("@Nombre", color.Nombre);
+                cmd.Parameters.AddWithValue("@idTalle", talle.IdTalle);
+                cmd.Parameters.AddWithValue("@Nombre", talle.Nombre);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -175,15 +173,15 @@ namespace Repositorios
             }
         }
 
-        public IEnumerable<DTOColor> TraerTodos()
+        public IEnumerable<DTOTalle> TraerTodos()
         {
-            List<DTOColor> colores = new List<DTOColor>();
+            List<DTOTalle> talles = new List<DTOTalle>();
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM Color";
+                string sentenciaSql = @"SELECT * FROM Talle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -192,19 +190,19 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        Color color = new Color();
+                        Talle talle = new Talle();
 
-                        color.IdColor = reader.GetInt32(0);
-                        color.Nombre = reader.GetString(1);
-                        color.BajaLogica = reader.GetBoolean(2);
-                        DTOColor dtoTipoC = color.darDto();
+                        talle.IdTalle = reader.GetInt32(0);
+                        talle.Nombre = reader.GetString(1);
+                        talle.BajaLogica = reader.GetBoolean(2);
+                        DTOTalle dtoTipoT = talle.darDto();
 
-                        colores.Add(dtoTipoC);
+                        talles.Add(dtoTipoT);
                     }
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return (IEnumerable<DTOColor>)colores;
+                return (IEnumerable<DTOTalle>)talles;
             }
             catch (Exception ex)
             {
@@ -215,18 +213,18 @@ namespace Repositorios
             }
         }
 
-        public bool VerificarExistenciaColor(DTOColor DTOCol)
+        public bool VerificarExistenciaColor(DTOTalle DTOTal)
         {
-            Color color = new Color();
-            color.cargarDeDTO(DTOCol);
+            Talle talle = new Talle();
+            talle.cargarDeDTO(DTOTal);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT TOP 1 * FROM Color WHERE nombre = @Nombre";
+                string sentenciaSql = @"SELECT TOP 1 * FROM Talle WHERE nombre = @Nombre";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", color.IdColor);
+                cmd.Parameters.AddWithValue("@Nombre", talle.IdTalle);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -234,9 +232,9 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        color.IdColor = reader.GetInt32(0);
-                        color.Nombre = reader.GetString(1);
-                        color.BajaLogica = reader.GetBoolean(2);
+                        talle.IdTalle = reader.GetInt32(0);
+                        talle.Nombre = reader.GetString(1);
+                        talle.BajaLogica = reader.GetBoolean(2);
                     }
                 }
                 trn.Commit();
@@ -253,4 +251,3 @@ namespace Repositorios
         }
     }
 }
-

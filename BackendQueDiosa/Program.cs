@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IRepositorioTipoPrenda, RepositorioTipoPrenda>();
 builder.Services.AddTransient<IRepositorioLogin, RepositorioUsuario>();
 builder.Services.AddTransient<IRepositorioColor, RepositorioColor>();
+builder.Services.AddTransient<IRepositorioTalle, RepositorioTalle>();
 
 
 builder.Services.AddControllers();
