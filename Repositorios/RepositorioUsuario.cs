@@ -196,7 +196,6 @@ namespace Repositorios
         public DTOUsuario Login(DTOUsuario dtoUsuario)
         {
             Usuario usuario = new Usuario();
-            usuario.cargarDeDTO(dtoUsuario);
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
@@ -221,10 +220,16 @@ namespace Repositorios
 
                     }
                 }
-                trn.Commit();
+                trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
-                DTOUsuario dtoReturn = usuario.darDto();
-                return dtoReturn;
+
+                if (usuario == null || usuario.IdUsuario == 0)
+                {
+                    return null;
+                }
+
+                return usuario.darDto();
+
             }
             catch (Exception ex)
             {

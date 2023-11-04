@@ -30,7 +30,6 @@ namespace BackendQueDiosa.Controllers
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] MapperUsuarioAlta mapperUsuario)
         {
-
             try
             {
                 DTOUsuario dtoUsuario = new DTOUsuario();
