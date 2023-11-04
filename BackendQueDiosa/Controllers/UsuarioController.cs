@@ -55,18 +55,13 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] MapperUsuarioLogin mapperUsuarioLogin)
+        public IActionResult Login([FromBody] DTOUsuario dtoUsuarioFront)
         {
             try
             {
-                DTOUsuario dtoUsuario = new DTOUsuario();
-                dtoUsuario.NombreDeUsuario = mapperUsuarioLogin.NombreDeUsuario;
-                dtoUsuario.Contraseña = mapperUsuarioLogin.Contraseña;
-
-                bool resultadoLogin = this.ManejadorLogin.Login(dtoUsuario);
-
+                bool resultadoLogin = this.ManejadorLogin.Login(dtoUsuarioFront);
                 if (resultadoLogin) { 
-                    string jwtToken = GenerateToken(dtoUsuario);
+                    string jwtToken = GenerateToken(dtoUsuarioFront);
                     return Ok(jwtToken);}
                 else return BadRequest();
             }
@@ -86,9 +81,12 @@ namespace BackendQueDiosa.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var securityToken = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddHours(12), signingCredentials: creds);
+            var securityToken = new JwtSecurityToken(
+                claims: claims, 
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: creds);
 
-            var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+            string token = new JwtSecurityTokenHandler().WriteToken(securityToken);
 
             return token;
         }
