@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddTransient<IRepositorioTipoPrenda, RepositorioTipoPrenda>();
-builder.Services.AddTransient<IRepositorioLogin, RepositorioUsuario>();
+builder.Services.AddTransient<IRepositorioUsuario, RepositorioUsuario>();
 builder.Services.AddTransient<IRepositorioColor, RepositorioColor>();
 builder.Services.AddTransient<IRepositorioTalle, RepositorioTalle>();
 

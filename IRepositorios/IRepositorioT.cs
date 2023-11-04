@@ -8,7 +8,7 @@
 
         bool Modificar(T obj);
 
-        T BuscarPorId(int id);
+        T BuscarPorId(T obj);
 
         IEnumerable<T> TraerTodos();
         bool BajaLogica(T obj);

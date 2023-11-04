@@ -2,16 +2,11 @@
 using Dominio.Entidades;
 using DTOS;
 using IRepositorios;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositorios
 {
-    public class RepositorioUsuario : RepositorioBase, IRepositorioLogin
+    public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
     {
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
@@ -83,7 +78,7 @@ namespace Repositorios
             }
         }
 
-        public DTOUsuario BuscarPorId(int id)
+        public DTOUsuario BuscarPorId(DTOUsuario dtoUsuario)
         {
             Usuario usuario = new Usuario();
 
@@ -93,7 +88,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT TOP 1 * FROM Usuario WHERE idUsuario = @IdUsuario";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@IdUsuario", id);
+                cmd.Parameters.AddWithValue("@IdUsuario", dtoUsuario.IdUsuario);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -101,15 +96,58 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        usuario.IdUsuario = reader.GetInt32(0);
-                        usuario.NombreDeUsuario = reader.GetString(1);
-                        usuario.Contrasenia = reader.GetString(2);
-                        usuario.Nombre = reader.GetString(3);
-                        usuario.Apellido = reader.GetString(4);
-                        usuario.Telefono = reader.GetString(5);
-                        usuario.Correo = reader.GetString(6);
-                        usuario.BajaLogica = reader.GetBoolean(7);
-                        usuario.IdTipoUsuario = reader.GetInt32(8);
+                        usuario.IdUsuario = (long)reader["idUsuario"];
+                        usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
+                        usuario.Contrasenia = reader["contrasenia"].ToString();
+                        usuario.Nombre = reader["nombre"].ToString();
+                        usuario.Apellido = reader["apellido"].ToString();
+                        usuario.Telefono = reader["telefono"].ToString();
+                        usuario.Correo = reader["correo"].ToString();
+                        usuario.BajaLogica = (bool)reader["bajaLogica"];
+                        usuario.IdTipoUsuario = (long)reader["idTipoUsuario"];
+
+                    }
+                }
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return usuario.darDto();
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
+        public DTOUsuario BuscarPorNombreDeUsuario(DTOUsuario dtoUsuario)
+        {
+            Usuario usuario = new Usuario();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT TOP 1 * FROM Usuario WHERE nombreDeUsuario = @NombreDeUsuario";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@NombreDeUsuario", usuario.NombreDeUsuario);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        usuario.IdUsuario = (long)reader["idUsuario"];
+                        usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
+                        usuario.Contrasenia = reader["contrasenia"].ToString();
+                        usuario.Nombre = reader["nombre"].ToString();
+                        usuario.Apellido = reader["apellido"].ToString();
+                        usuario.Telefono = reader["telefono"].ToString();
+                        usuario.Correo = reader["correo"].ToString();
+                        usuario.BajaLogica = (bool)reader["bajaLogica"];
+                        usuario.IdTipoUsuario = (long)reader["idTipoUsuario"];
 
                     }
                 }
@@ -175,8 +213,9 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        usuario.NombreDeUsuario = reader["nombre"].ToString();
+                        usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
                         usuario.Contrasenia = reader["contrasenia"].ToString();
+                        usuario.Nombre = reader["nombre"].ToString();
                         usuario.Apellido = reader["apellido"].ToString();
                         usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
@@ -252,15 +291,16 @@ namespace Repositorios
                     {
                         Usuario usuario = new Usuario();
 
-                        usuario.IdUsuario = reader.GetInt32(0);
-                        usuario.NombreDeUsuario = reader.GetString(1);
-                        usuario.Contrasenia = reader.GetString(2);
-                        usuario.Nombre = reader.GetString(3);
-                        usuario.Apellido = reader.GetString(4);
-                        usuario.Telefono = reader.GetString(5);
-                        usuario.Correo = reader.GetString(6);
-                        usuario.BajaLogica = reader.GetBoolean(7);
-                        usuario.IdTipoUsuario = reader.GetInt32(8);
+                        usuario.IdUsuario = (long)reader["idUsuario"];
+                        usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
+                        usuario.Contrasenia = reader["contrasenia"].ToString();
+                        usuario.Nombre = reader["nombre"].ToString();
+                        usuario.Apellido = reader["apellido"].ToString();
+                        usuario.Telefono = reader["telefono"].ToString();
+                        usuario.Correo = reader["correo"].ToString();
+                        usuario.BajaLogica = (bool)reader["bajaLogica"];
+                        usuario.IdTipoUsuario = (long)reader["idTipoUsuario"];
+
                         DTOUsuario dtoTipoP = usuario.darDto();
 
                         tipos.Add(dtoTipoP);
@@ -268,7 +308,7 @@ namespace Repositorios
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return (IEnumerable<DTOUsuario>)tipos;
+                return tipos;
             }
             catch (Exception ex)
             {
