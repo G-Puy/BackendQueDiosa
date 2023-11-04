@@ -29,7 +29,7 @@ namespace Repositorios
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@NombreUsuario", usuario.NombreDeUsuario);
-                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contraseña);
+                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
                 cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                 cmd.Parameters.AddWithValue("@Apellido", usuario.Apellido);
                 cmd.Parameters.AddWithValue("@Telefono", usuario.Telefono);
@@ -103,7 +103,7 @@ namespace Repositorios
                     {
                         usuario.IdUsuario = reader.GetInt32(0);
                         usuario.NombreDeUsuario = reader.GetString(1);
-                        usuario.Contraseña = reader.GetString(2);
+                        usuario.Contrasenia = reader.GetString(2);
                         usuario.Nombre = reader.GetString(3);
                         usuario.Apellido = reader.GetString(4);
                         usuario.Telefono = reader.GetString(5);
@@ -155,7 +155,7 @@ namespace Repositorios
             }
         }
 
-        public bool Login(DTOUsuario dtoUsuario)
+        public DTOUsuario Login(DTOUsuario dtoUsuario)
         {
             Usuario usuario = new Usuario();
             usuario.cargarDeDTO(dtoUsuario);
@@ -167,7 +167,7 @@ namespace Repositorios
                 string sentenciaSql = @"SELECT * FROM Usuario WHERE nombreDeUsuario = @NombreDeUsuario AND contrasenia = @Contrasenia";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@NombreDeUsuario", usuario.NombreDeUsuario);
-                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contraseña);
+                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -176,12 +176,16 @@ namespace Repositorios
                     while (reader.Read())
                     {
                         usuario.NombreDeUsuario = reader["nombre"].ToString();
-                        usuario.Contraseña = reader["contrasenia"].ToString();
+                        usuario.Contrasenia = reader["contrasenia"].ToString();
+                        usuario.Apellido = reader["apellido"].ToString();
+                        usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
+
                     }
                 }
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return true;
+                DTOUsuario dtoReturn = usuario.darDto();
+                return dtoReturn;
             }
             catch (Exception ex)
             {
@@ -205,7 +209,7 @@ namespace Repositorios
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
                 cmd.Parameters.AddWithValue("@NombreUsuario", usuario.NombreDeUsuario);
-                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contraseña);
+                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
                 cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                 cmd.Parameters.AddWithValue("@Apellido", usuario.Apellido);
                 cmd.Parameters.AddWithValue("@Telefono", usuario.Telefono);
@@ -250,7 +254,7 @@ namespace Repositorios
 
                         usuario.IdUsuario = reader.GetInt32(0);
                         usuario.NombreDeUsuario = reader.GetString(1);
-                        usuario.Contraseña = reader.GetString(2);
+                        usuario.Contrasenia = reader.GetString(2);
                         usuario.Nombre = reader.GetString(3);
                         usuario.Apellido = reader.GetString(4);
                         usuario.Telefono = reader.GetString(5);

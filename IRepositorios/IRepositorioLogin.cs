@@ -9,6 +9,6 @@ namespace IRepositorios
 {
     public interface IRepositorioLogin : IRepositorioT<DTOUsuario>
     {
-        bool Login(DTOUsuario dtoUsuario);
+        DTOUsuario Login(DTOUsuario dtoUsuario);
     }
 }

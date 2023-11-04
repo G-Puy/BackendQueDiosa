@@ -37,7 +37,7 @@ namespace BackendQueDiosa.Controllers
                 dtoUsuario.NombreDeUsuario = mapperUsuario.NombreDeUsuario;
                 dtoUsuario.Nombre = mapperUsuario.Nombre;
                 dtoUsuario.Apellido = mapperUsuario.Apellido;
-                dtoUsuario.Contraseña = mapperUsuario.Contraseña;
+                dtoUsuario.Contrasenia = mapperUsuario.Contraseña;
                 dtoUsuario.Correo = mapperUsuario.Correo;
                 dtoUsuario.Telefono = mapperUsuario.Telefono;
                 dtoUsuario.TipoUsuario = mapperUsuario.IdTipoUsuario;
@@ -59,10 +59,11 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                bool resultadoLogin = this.ManejadorLogin.Login(dtoUsuarioFront);
-                if (resultadoLogin) { 
+                DTOUsuario resultadoLogin = this.ManejadorLogin.Login(dtoUsuarioFront);
+                if (resultadoLogin != null) { 
                     string jwtToken = GenerateToken(dtoUsuarioFront);
-                    return Ok(jwtToken);}
+                    resultadoLogin.Contrasenia = jwtToken;
+                    return Ok(resultadoLogin);}
                 else return BadRequest();
             }
             catch (Exception ex)
