@@ -138,6 +138,30 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [HttpPost("confirmarToken")]
+        public IActionResult ConfirmarToken([FromBody] string token)
+        {
+            try
+            {
+                TokenValidationParameters param = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+
+                new JwtSecurityTokenHandler().ValidateToken(token, param, out SecurityToken validatedToken);
+
+                return Ok(new { message = "Token válido" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Token inválido", error = ex.Message });
+            }
+        }
+
+
         [HttpPost("login")]
         public IActionResult Login([FromBody] DTOUsuario dtoUsuarioFront)
         {
@@ -175,6 +199,8 @@ namespace BackendQueDiosa.Controllers
                 signingCredentials: creds);
 
             string token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+
+            new JwtSecurityTokenHandler().
 
             return token;
         }
