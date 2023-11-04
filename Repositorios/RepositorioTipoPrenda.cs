@@ -77,7 +77,7 @@ namespace Repositorios
             }
         }
 
-        public DTOTipoPrenda BuscarPorId(int id)
+        public DTOTipoPrenda BuscarPorId(DTOTipoPrenda dtoTipoPrenda)
         {
             TipoPrenda tipoPrenda = new TipoPrenda();
 
@@ -87,7 +87,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT * FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", id);
+                cmd.Parameters.AddWithValue("@idTipoProducto", dtoTipoPrenda.IdTipoPrenda);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;

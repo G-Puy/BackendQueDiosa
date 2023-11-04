@@ -77,12 +77,12 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpGet("buscarPorId")]
-        public IActionResult BuscarPorId([FromBody] MapperUsuarioId mapperUsuario)
+        public IActionResult BuscarPorId( int id)
         {
             try
             {
                 DTOUsuario dtoUsuario = new DTOUsuario();
-                dtoUsuario.IdUsuario = mapperUsuario.IdUsuario;
+                dtoUsuario.IdUsuario = id;
 
                 DTOUsuario resultado = this.ManejadorUsuario.BuscarPorId(dtoUsuario);
 
@@ -98,12 +98,12 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpGet("buscarPorNombreDeUsuario")]
-        public IActionResult BuscarPorNombreDeUsuario([FromBody] MapperUsuarioNombre mapperUsuario)
+        public IActionResult BuscarPorNombreDeUsuario(string nombreDeUsuario)
         {
             try
             {
                 DTOUsuario dtoUsuario = new DTOUsuario();
-                dtoUsuario.NombreDeUsuario = mapperUsuario.NombreDeUsuario;
+                dtoUsuario.NombreDeUsuario = nombreDeUsuario;
 
                 DTOUsuario resultado = this.ManejadorUsuario.BuscarPorNombreDeUsuario(dtoUsuario);
 
@@ -118,13 +118,13 @@ namespace BackendQueDiosa.Controllers
         }
 
         [Authorize]
-        [HttpPost("eliminar")]
-        public IActionResult Eliminar([FromBody] MapperUsuarioId mapperUsuario)
+        [HttpGet("eliminar")]
+        public IActionResult Eliminar( int id)
         {
             try
             {
                 DTOUsuario dtoUsuario = new DTOUsuario();
-                dtoUsuario.IdUsuario = mapperUsuario.IdUsuario;
+                dtoUsuario.IdUsuario = id;
 
                 bool resultado = this.ManejadorUsuario.Eliminar(dtoUsuario);
 
@@ -138,8 +138,8 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpPost("confirmarToken")]
-        public IActionResult ConfirmarToken([FromBody] string token)
+        [HttpGet("confirmarToken")]
+        public IActionResult ConfirmarToken(string token)
         {
             try
             {
@@ -190,7 +190,6 @@ namespace BackendQueDiosa.Controllers
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
-            string nnombre = config.GetSection("JWT:Key").Value;
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var securityToken = new JwtSecurityToken(
@@ -199,8 +198,6 @@ namespace BackendQueDiosa.Controllers
                 signingCredentials: creds);
 
             string token = new JwtSecurityTokenHandler().WriteToken(securityToken);
-
-            new JwtSecurityTokenHandler().
 
             return token;
         }

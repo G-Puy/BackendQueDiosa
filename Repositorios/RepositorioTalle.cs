@@ -78,7 +78,7 @@ namespace Repositorios
             }
         }
 
-        public DTOTalle BuscarPorId(int id)
+        public DTOTalle BuscarPorId(DTOTalle dtoTalle)
         {
             Talle talle = new Talle();
 
@@ -88,7 +88,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT * FROM Talle WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTalle", id);
+                cmd.Parameters.AddWithValue("@idTalle", dtoTalle.IdTalle);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;

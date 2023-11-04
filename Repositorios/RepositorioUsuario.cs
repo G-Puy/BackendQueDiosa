@@ -203,8 +203,8 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT * FROM Usuario WHERE nombreDeUsuario = @NombreDeUsuario AND contrasenia = @Contrasenia";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@NombreDeUsuario", usuario.NombreDeUsuario);
-                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
+                cmd.Parameters.AddWithValue("@NombreDeUsuario", dtoUsuario.NombreDeUsuario);
+                cmd.Parameters.AddWithValue("@Contrasenia", dtoUsuario.Contrasenia);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -212,6 +212,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
+                        usuario.IdUsuario = Convert.ToInt64(reader["idUsuario"]);
                         usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
                         usuario.Contrasenia = reader["contrasenia"].ToString();
                         usuario.Nombre = reader["nombre"].ToString();

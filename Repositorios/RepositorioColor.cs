@@ -80,7 +80,7 @@ namespace Repositorios
             }
         }
 
-        public DTOColor BuscarPorId(int id)
+        public DTOColor BuscarPorId(DTOColor dtoColor)
         {
             Color color = new Color();
 
@@ -90,7 +90,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT * FROM Color WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", id);
+                cmd.Parameters.AddWithValue("@idColor", dtoColor.IdColor);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
