@@ -134,9 +134,9 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT TOP 1 * FROM Usuario WHERE nombreDeUsuario = @NombreDeUsuario";
+                string sentenciaSql = @"SELECT * FROM Usuario WHERE nombreDeUsuario = @NombreDeUsuario";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@NombreDeUsuario", usuario.NombreDeUsuario);
+                cmd.Parameters.AddWithValue("@NombreDeUsuario", dtoUsuario.NombreDeUsuario);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -144,19 +144,19 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        usuario.IdUsuario = (long)reader["idUsuario"];
+                        usuario.IdUsuario = Convert.ToInt64(reader["idUsuario"]);
                         usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
-                        usuario.Contrasenia = reader["contrasenia"].ToString();
+                        // usuario.Contrasenia = reader["contrasenia"].ToString();
                         usuario.Nombre = reader["nombre"].ToString();
                         usuario.Apellido = reader["apellido"].ToString();
                         usuario.Telefono = reader["telefono"].ToString();
                         usuario.Correo = reader["correo"].ToString();
-                        usuario.BajaLogica = (bool)reader["bajaLogica"];
-                        usuario.IdTipoUsuario = (long)reader["idTipoUsuario"];
+                        // usuario.BajaLogica = (bool)reader["bajaLogica"];
+                        usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
                     }
                 }
-                trn.Commit();
+                trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return usuario.darDto();
             }
@@ -219,9 +219,12 @@ namespace Repositorios
                     {
                         usuario.IdUsuario = Convert.ToInt64(reader["idUsuario"]);
                         usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
-                        usuario.Contrasenia = reader["contrasenia"].ToString();
+                        // usuario.Contrasenia = reader["contrasenia"].ToString();
                         usuario.Nombre = reader["nombre"].ToString();
                         usuario.Apellido = reader["apellido"].ToString();
+                        usuario.Telefono = reader["telefono"].ToString();
+                        usuario.Correo = reader["correo"].ToString();
+                        // usuario.BajaLogica = (bool)reader["bajaLogica"];
                         usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
                     }

@@ -139,7 +139,7 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpGet("confirmarToken")]
-        public IActionResult ConfirmarToken(string token)
+        public IActionResult ConfirmarToken(string token, string nombreDeUsuario)
         {
             try
             {
@@ -153,7 +153,11 @@ namespace BackendQueDiosa.Controllers
 
                 new JwtSecurityTokenHandler().ValidateToken(token, param, out SecurityToken validatedToken);
 
-                return Ok(true);
+                DTOUsuario dtoRetorno = new DTOUsuario();
+                dtoRetorno.NombreDeUsuario = nombreDeUsuario;
+                dtoRetorno = this.ManejadorUsuario.BuscarPorNombreDeUsuario(dtoRetorno);
+                dtoRetorno.Contrasenia = token;
+                return Ok(dtoRetorno);
             }
             catch (Exception ex)
             {
