@@ -153,11 +153,11 @@ namespace BackendQueDiosa.Controllers
 
                 new JwtSecurityTokenHandler().ValidateToken(token, param, out SecurityToken validatedToken);
 
-                return Ok(new { message = "Token válido" });
+                return Ok(true);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = "Token inválido", error = ex.Message });
+                return BadRequest(false);
             }
         }
 

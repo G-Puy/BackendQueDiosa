@@ -121,6 +121,11 @@ namespace Repositorios
             }
         }
 
+        public DTOUsuario BuscarPorId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public DTOUsuario BuscarPorNombreDeUsuario(DTOUsuario dtoUsuario)
         {
             Usuario usuario = new Usuario();
