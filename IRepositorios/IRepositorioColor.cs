@@ -9,5 +9,6 @@ namespace IRepositorios
 {
     public interface IRepositorioColor : IRepositorioT<DTOColor>
     {
+        DTOColor BuscarPorNombreDeColor(DTOColor dtoColor);
     }
 }

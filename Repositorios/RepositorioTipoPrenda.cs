@@ -113,6 +113,47 @@ namespace Repositorios
             }
         }
 
+        public DTOTipoPrenda BuscarPorId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DTOTipoPrenda BuscarPorNombreDePrenda(DTOTipoPrenda dtoTipoPrenda)
+        {
+            TipoPrenda prenda = new TipoPrenda();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Usuario WHERE nombre = @Nombre";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@Nombre", dtoTipoPrenda.NombreTipoPrenda);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        prenda.IdTipoPrenda = Convert.ToInt64(reader["idTipoPrenda"]);
+                        prenda.NombreTipoPrenda = reader["nombreTipoPrenda"].ToString();
+                        prenda.BajaLogica = (bool)reader["bajaLogica"];
+                    }
+                }
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return prenda.darDto();
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public bool Eliminar(DTOTipoPrenda obj)
         {
             TipoPrenda tipoPrenda = new TipoPrenda();

@@ -36,6 +36,70 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [HttpPost("bajaLogica")]
+        public IActionResult BajaLogica([FromBody] MapperColor mapperColor)
+        {
+            try
+            {
+                DTOColor dtoColor = new DTOColor();
+                dtoColor.IdColor = mapperColor.IdColor;
+                dtoColor.Nombre = mapperColor.Nombre;
+                dtoColor.BajaLogica = mapperColor.BajaLogica;
+
+                bool resultado = this.ManejadorColor.BajaLogica(dtoColor);
+
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        [HttpGet("buscarPorId")]
+        public IActionResult BuscarPorId(int id)
+        {
+            try
+            {
+                DTOColor dtoColor = new DTOColor();
+                dtoColor.IdColor = id;
+
+                DTOColor resultado = this.ManejadorColor.BuscarPorId(dtoColor);
+
+                if (!(resultado.IdColor == null)) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        [HttpGet("buscarPorNombreDeColor")]
+        public IActionResult BuscarPorNombreDeColor(string nombreDeColor)
+        {
+            try
+            {
+                DTOColor dtoColor = new DTOColor();
+                dtoColor.Nombre = nombreDeColor;
+
+                DTOColor resultado = this.ManejadorColor.BuscarPorNombreDeColor(dtoColor);
+
+                if (!(resultado.IdColor == null)) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         [HttpDelete("eliminarColor")]
         public IActionResult EliminarColor(long idColor)
         {

@@ -11,5 +11,7 @@ namespace IRepositorios
     {
         public bool VerificarExistenciaCategoria(DTOTipoPrenda DTOCategoria);
 
+        DTOTipoPrenda BuscarPorNombreDePrenda(DTOTipoPrenda dtoTipoPrenda);
+
     }
 }

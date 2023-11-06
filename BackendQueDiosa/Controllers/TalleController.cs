@@ -36,6 +36,70 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [HttpPost("bajaLogica")]
+        public IActionResult BajaLogica([FromBody] MapperTalle mapperTalle)
+        {
+            try
+            {
+                DTOTalle dtoTalle = new DTOTalle();
+                dtoTalle.IdTalle = mapperTalle.IdTalle;
+                dtoTalle.Nombre = mapperTalle.Nombre;
+                dtoTalle.BajaLogica = mapperTalle.BajaLogica;
+
+                bool resultado = this.ManejadorTalle.BajaLogica(dtoTalle);
+
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        [HttpGet("buscarPorId")]
+        public IActionResult BuscarPorId(int id)
+        {
+            try
+            {
+                DTOTalle dtoTalle = new DTOTalle();
+                dtoTalle.IdTalle = id;
+
+                DTOTalle resultado = this.ManejadorTalle.BuscarPorId(dtoTalle);
+
+                if (!(resultado.IdTalle == null)) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        [HttpGet("buscarPorNombreDeTalle")]
+        public IActionResult BuscarPorNombreDeTalle(string nombreDeTalle)
+        {
+            try
+            {
+                DTOTalle dtoTalle = new DTOTalle();
+                dtoTalle.Nombre = nombreDeTalle;
+
+                DTOTalle resultado = this.ManejadorTalle.BuscarPorNombreDeTalle(dtoTalle);
+
+                if (!(resultado.IdTalle == null)) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         [HttpDelete("eliminarTalle")]
         public IActionResult EliminarTalle(long idTalle)
         {

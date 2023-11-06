@@ -9,5 +9,6 @@ namespace IRepositorios
 {
     public interface IRepositorioTalle : IRepositorioT<DTOTalle>
     {
+        DTOTalle BuscarPorNombreDeTalle(DTOTalle dtoTalle);
     }
 }

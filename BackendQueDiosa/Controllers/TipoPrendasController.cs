@@ -2,6 +2,7 @@
 using Conexiones;
 using DTOS;
 using IRepositorios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
@@ -22,7 +23,7 @@ namespace BackendQueDiosa.Controllers
         }
 
 
-
+        
         [HttpPost("altaTipoProducto")]
         public IActionResult AltaTipoProducto([FromBody] MapperTipoPrenda mapperCategoriaFront)
         {
@@ -43,6 +44,76 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
+
+       
+        [HttpPost("bajaLogica")]
+        public IActionResult BajaLogica([FromBody] MapperTipoPrenda mapperTipoPrenda)
+        {
+            try
+            {
+                DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
+                dtoTipoPrenda.IdTipoPrenda = mapperTipoPrenda.IdTipoProducto;
+                dtoTipoPrenda.NombreTipoPrenda = mapperTipoPrenda.NombreTipoProducto;
+                dtoTipoPrenda.BajaLogica = mapperTipoPrenda.BajaLogica;
+
+                bool resultado = this.ManejadorCategoria.BajaLogica(dtoTipoPrenda);
+
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        
+        [HttpGet("buscarPorId")]
+        public IActionResult BuscarPorId(int id)
+        {
+            try
+            {
+                DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
+                dtoTipoPrenda.IdTipoPrenda = id;
+
+                DTOTipoPrenda resultado = this.ManejadorCategoria.BuscarPorId(dtoTipoPrenda);
+
+                if (!(resultado.IdTipoPrenda == null)) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+       
+        [HttpGet("buscarPorNombreDePrenda")]
+        public IActionResult BuscarPorNombreDePrenda(string nombreDePrenda)
+        {
+            try
+            {
+                DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
+                dtoTipoPrenda.NombreTipoPrenda = nombreDePrenda;
+
+                DTOTipoPrenda resultado = this.ManejadorCategoria.BuscarPorNombreDePrenda(dtoTipoPrenda);
+
+                if (!(resultado.IdTipoPrenda == null)) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
+
+        
         [HttpDelete("eliminarTipoProducto")]
         public IActionResult EliminarTipoProducto(long idTipoPrenda)
         {

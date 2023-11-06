@@ -114,6 +114,47 @@ namespace Repositorios
             }
         }
 
+        public DTOTalle BuscarPorId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DTOTalle BuscarPorNombreDeTalle(DTOTalle dtoTalle)
+        {
+            Talle talle = new Talle();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Talle WHERE nombre = @Nombre";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@Nombre", dtoTalle.Nombre);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        talle.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                        talle.Nombre = reader["nombre"].ToString();
+                        talle.BajaLogica = (bool)reader["bajaLogica"];
+                    }
+                }
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return talle.darDto();
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public bool Eliminar(DTOTalle obj)
         {
             Talle talle = new Talle();

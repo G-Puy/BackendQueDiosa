@@ -116,6 +116,47 @@ namespace Repositorios
             }
         }
 
+        public DTOColor BuscarPorId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DTOColor BuscarPorNombreDeColor(DTOColor dtoColor)
+        {
+            Color color = new Color();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Color WHERE nombre = @Nombre";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@Nombre", dtoColor.Nombre);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        color.IdColor = Convert.ToInt64(reader["idColor"]);
+                        color.Nombre = reader["nombre"].ToString();
+                        color.BajaLogica = (bool)reader["bajaLogica"];
+                    }
+                }
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return color.darDto();
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public bool Eliminar(DTOColor obj)
         {
             Color color = new Color();
