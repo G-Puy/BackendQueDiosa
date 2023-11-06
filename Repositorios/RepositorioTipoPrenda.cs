@@ -25,10 +25,11 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO TipoProducto VALUES(@NombreTipoPrenda)
+                string sentenciaSql = @"INSERT INTO TipoProducto VALUES(@NombreTipoPrenda,@BajaLogica)
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@NombreTipoPrenda", tipoPrenda.NombreTipoPrenda);
+                cmd.Parameters.AddWithValue("@BajaLogica", false);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
