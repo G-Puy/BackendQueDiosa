@@ -24,16 +24,12 @@ namespace BackendQueDiosa.Controllers
 
 
         
-        [HttpPost("altaTipoProducto")]
-        public IActionResult AltaTipoProducto([FromBody] MapperTipoPrenda mapperCategoriaFront)
+        [HttpPost("altaTipoPrenda")]
+        public IActionResult AltaTipoPrenda([FromBody] DTOTipoPrenda dtoTp)
         {
             try
             {
-                DTOTipoPrenda dtoCat = new DTOTipoPrenda();
-                dtoCat.NombreTipoPrenda = mapperCategoriaFront.NombreTipoProducto;
-
-                bool resultadoAlta = this.ManejadorCategoria.Alta(dtoCat);
-
+                bool resultadoAlta = this.ManejadorCategoria.Alta(dtoTp);
                 if (resultadoAlta) return Ok(resultadoAlta);
                 else return BadRequest(resultadoAlta);
 
@@ -114,7 +110,7 @@ namespace BackendQueDiosa.Controllers
 
 
         
-        [HttpDelete("eliminarTipoProducto")]
+        [HttpDelete("eliminarTipoPrenda")]
         public IActionResult EliminarTipoProducto(long idTipoPrenda)
         {
             try
@@ -132,7 +128,7 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
-        [HttpPut("editarTipoProducto")]
+        [HttpPut("editarTipoPrenda")]
         public IActionResult EditarTipoProducto([FromBody] MapperTipoPrenda mapperCategoriaFront)
         {
             try
@@ -154,7 +150,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpGet("TraerTiposProductos")]
+        [HttpGet("TraerTiposPrenda")]
         public IActionResult TraerTiposProductos()
         {
             try

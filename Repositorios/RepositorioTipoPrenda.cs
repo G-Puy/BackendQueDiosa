@@ -29,7 +29,6 @@ namespace Repositorios
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@NombreTipoPrenda", tipoPrenda.NombreTipoPrenda);
-                cmd.Parameters.AddWithValue("@BajaLogica", tipoPrenda.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
