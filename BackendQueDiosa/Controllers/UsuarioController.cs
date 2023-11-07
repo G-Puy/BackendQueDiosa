@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace BackendQueDiosa.Controllers
 {
@@ -40,6 +41,8 @@ namespace BackendQueDiosa.Controllers
                 dtoUsuario.Correo = mapperUsuario.Correo;
                 dtoUsuario.Telefono = mapperUsuario.Telefono;
                 dtoUsuario.TipoUsuario = mapperUsuario.IdTipoUsuario;
+
+                if (!ValidarContrasenia(mapperUsuario.Contraseña)) return BadRequest(dtoUsuario);
 
                 bool resultado = this.ManejadorUsuario.Alta(dtoUsuario);
 
@@ -204,6 +207,21 @@ namespace BackendQueDiosa.Controllers
             string token = new JwtSecurityTokenHandler().WriteToken(securityToken);
 
             return token;
+        }
+
+        private bool ValidarContrasenia( string password)
+        {
+            try
+            {
+                Regex reg = new Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*\\W)(?!.*[()'\\[\\],;<>_])(?!.*script).+$");
+                
+                return reg.IsMatch(password);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [Authorize]
