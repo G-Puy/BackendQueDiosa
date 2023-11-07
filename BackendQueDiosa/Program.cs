@@ -31,6 +31,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization(options => {
+    options.AddPolicy("Administrador", policy => policy.RequireClaim("TipoUsuario", "1"));
+});
 
 builder.Services.AddCors(options =>
 {

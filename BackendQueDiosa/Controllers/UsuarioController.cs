@@ -27,7 +27,7 @@ namespace BackendQueDiosa.Controllers
             this.config = config;
         }
 
-        [Authorize]
+        [Authorize("Administrador")]
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] MapperUsuarioAlta mapperUsuario)
         {
@@ -56,7 +56,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize("Administrador")]
         [HttpPost("bajaLogica")]
         public IActionResult BajaLogica([FromBody] MapperUsuarioBajaLogica mapperUsuario)
         {
@@ -78,7 +78,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize("Administrador")]
         [HttpGet("buscarPorId")]
         public IActionResult BuscarPorId( int id)
         {
@@ -99,7 +99,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize("Administrador")]
         [HttpGet("buscarPorNombreDeUsuario")]
         public IActionResult BuscarPorNombreDeUsuario(string nombreDeUsuario)
         {
@@ -120,7 +120,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize("Administrador")]
         [HttpGet("eliminar")]
         public IActionResult Eliminar( int id)
         {
@@ -193,7 +193,9 @@ namespace BackendQueDiosa.Controllers
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, dtoUsuario.NombreDeUsuario)
+                new Claim(ClaimTypes.Name, dtoUsuario.NombreDeUsuario),
+                new Claim(ClaimTypes.Email, dtoUsuario.Correo),
+                new Claim("TipoUsuario", dtoUsuario.TipoUsuario.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
@@ -224,7 +226,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize("Administrador")]
         [HttpPost("modificar")]
         public IActionResult Modificar([FromBody] DTOUsuario dtoUsuario)
         {
@@ -242,7 +244,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize("Administrador")]
         [HttpGet("traerTodos")]
         public IActionResult TraerTodos()
         {
