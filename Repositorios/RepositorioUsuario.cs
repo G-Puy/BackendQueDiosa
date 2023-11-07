@@ -96,7 +96,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        usuario.IdUsuario = (long)reader["idUsuario"];
+                        usuario.IdUsuario = Convert.ToInt64(reader["idUsuario"]);
                         usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
                         usuario.Contrasenia = reader["contrasenia"].ToString();
                         usuario.Nombre = reader["nombre"].ToString();
@@ -104,7 +104,7 @@ namespace Repositorios
                         usuario.Telefono = reader["telefono"].ToString();
                         usuario.Correo = reader["correo"].ToString();
                         usuario.BajaLogica = (bool)reader["bajaLogica"];
-                        usuario.IdTipoUsuario = (long)reader["idTipoUsuario"];
+                        usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
                     }
                 }
@@ -305,7 +305,7 @@ namespace Repositorios
                     {
                         Usuario usuario = new Usuario();
 
-                        usuario.IdUsuario = (long)reader["idUsuario"];
+                        usuario.IdUsuario = Convert.ToInt64(reader["idUsuario"]);
                         usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
                         usuario.Contrasenia = reader["contrasenia"].ToString();
                         usuario.Nombre = reader["nombre"].ToString();
@@ -313,7 +313,7 @@ namespace Repositorios
                         usuario.Telefono = reader["telefono"].ToString();
                         usuario.Correo = reader["correo"].ToString();
                         usuario.BajaLogica = (bool)reader["bajaLogica"];
-                        usuario.IdTipoUsuario = (long)reader["idTipoUsuario"];
+                        usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
                         DTOUsuario dtoTipoP = usuario.darDto();
 

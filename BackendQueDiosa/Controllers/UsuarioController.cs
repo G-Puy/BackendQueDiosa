@@ -177,7 +177,7 @@ namespace BackendQueDiosa.Controllers
                 DTOUsuario resultadoLogin = this.ManejadorUsuario.Login(dtoUsuarioFront);
                 if (resultadoLogin != null)
                 {
-                    string jwtToken = GenerateToken(dtoUsuarioFront);
+                    string jwtToken = GenerateToken(resultadoLogin);
                     resultadoLogin.Contrasenia = jwtToken;
                     return Ok(resultadoLogin);
                 }
