@@ -2,8 +2,8 @@
 {
     public class DTOTipoPrenda
     {
-        public long IdTipoPrenda { get; set; } = 0;
-        public string NombreTipoPrenda { get; set; } = "";
+        public long Id { get; set; } = 0;
+        public string Nombre { get; set; } = "";
         public bool BajaLogica { get; set; } = false;
     }
 }

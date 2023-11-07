@@ -4,21 +4,21 @@ namespace Dominio.Entidades
 {
     public class TipoPrenda
     {
-        public long IdTipoPrenda { get; set; } = 0;
-        public string NombreTipoPrenda { get; set; } = "";
+        public long Id { get; set; } = 0;
+        public string Nombre { get; set; } = "";
         public bool BajaLogica { get; set; } = false;
 
         public void cargarDeDTO(DTOTipoPrenda dtoCat)
         {
-            this.IdTipoPrenda = dtoCat.IdTipoPrenda;
-            this.NombreTipoPrenda = dtoCat.NombreTipoPrenda;
+            this.Id = dtoCat.Id;
+            this.Nombre = dtoCat.Nombre;
             this.BajaLogica = dtoCat.BajaLogica;
         }
         public DTOTipoPrenda darDto()
         {
             DTOTipoPrenda dtoRetorno = new DTOTipoPrenda();
-            dtoRetorno.IdTipoPrenda = this.IdTipoPrenda;
-            dtoRetorno.NombreTipoPrenda = this.NombreTipoPrenda;
+            dtoRetorno.Id = this.Id;
+            dtoRetorno.Nombre = this.Nombre;
             dtoRetorno.BajaLogica= this.BajaLogica;
             return dtoRetorno;
 

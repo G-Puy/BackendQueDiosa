@@ -48,8 +48,8 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
-                dtoTipoPrenda.IdTipoPrenda = mapperTipoPrenda.IdTipoProducto;
-                dtoTipoPrenda.NombreTipoPrenda = mapperTipoPrenda.NombreTipoProducto;
+                dtoTipoPrenda.Id = mapperTipoPrenda.IdTipoProducto;
+                dtoTipoPrenda.Nombre = mapperTipoPrenda.NombreTipoProducto;
                 dtoTipoPrenda.BajaLogica = mapperTipoPrenda.BajaLogica;
 
                 bool resultado = this.ManejadorCategoria.BajaLogica(dtoTipoPrenda);
@@ -71,11 +71,11 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
-                dtoTipoPrenda.IdTipoPrenda = id;
+                dtoTipoPrenda.Id = id;
 
                 DTOTipoPrenda resultado = this.ManejadorCategoria.BuscarPorId(dtoTipoPrenda);
 
-                if (!(resultado.IdTipoPrenda == null)) return Ok(resultado);
+                if (!(resultado.Id == null)) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -92,11 +92,11 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
-                dtoTipoPrenda.NombreTipoPrenda = nombreDePrenda;
+                dtoTipoPrenda.Nombre = nombreDePrenda;
 
                 DTOTipoPrenda resultado = this.ManejadorCategoria.BuscarPorNombreDePrenda(dtoTipoPrenda);
 
-                if (!(resultado.IdTipoPrenda == null)) return Ok(resultado);
+                if (!(resultado.Id == null)) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -116,7 +116,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTipoPrenda dtoCat = new DTOTipoPrenda();
-                dtoCat.IdTipoPrenda = idTipoPrenda;
+                dtoCat.Id = idTipoPrenda;
                 bool resultadoEliminar = this.ManejadorCategoria.Eliminar(dtoCat);
                 if (resultadoEliminar) return Ok(resultadoEliminar);
                 else return BadRequest(resultadoEliminar);
@@ -134,8 +134,8 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTipoPrenda dtoCat = new DTOTipoPrenda();
-                dtoCat.NombreTipoPrenda = mapperCategoriaFront.NombreTipoProducto;
-                dtoCat.IdTipoPrenda = mapperCategoriaFront.IdTipoProducto;
+                dtoCat.Nombre = mapperCategoriaFront.NombreTipoProducto;
+                dtoCat.Id = mapperCategoriaFront.IdTipoProducto;
 
                 bool resultadoEditar = this.ManejadorCategoria.Modificar(dtoCat);
 

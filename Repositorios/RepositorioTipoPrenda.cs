@@ -25,10 +25,13 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
+
+
+
                 string sentenciaSql = @"INSERT INTO TipoProducto VALUES(@NombreTipoPrenda,@BajaLogica)
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@NombreTipoPrenda", tipoPrenda.NombreTipoPrenda);
+                cmd.Parameters.AddWithValue("@NombreTipoPrenda", tipoPrenda.Nombre);
                 cmd.Parameters.AddWithValue("@BajaLogica", false);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -58,7 +61,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"UPDATE TABLE TipoProducto SET bajaLogica = @BajaLogica WHERE idTipoProducto = @idTipoProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
+                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.Id);
                 cmd.Parameters.AddWithValue("@BajaLogica", tipoPrenda.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -87,7 +90,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT * FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", dtoTipoPrenda.IdTipoPrenda);
+                cmd.Parameters.AddWithValue("@idTipoProducto", dtoTipoPrenda.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -95,8 +98,8 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        tipoPrenda.IdTipoPrenda = reader.GetInt32(0);
-                        tipoPrenda.NombreTipoPrenda = reader.GetString(1);
+                        tipoPrenda.Id = reader.GetInt32(0);
+                        tipoPrenda.Nombre = reader.GetString(1);
                         tipoPrenda.BajaLogica = reader.GetBoolean(2);
                     }
                 }
@@ -128,7 +131,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT * FROM Usuario WHERE nombre = @Nombre";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", dtoTipoPrenda.NombreTipoPrenda);
+                cmd.Parameters.AddWithValue("@Nombre", dtoTipoPrenda.Nombre);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -136,8 +139,8 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        prenda.IdTipoPrenda = Convert.ToInt64(reader["idTipoPrenda"]);
-                        prenda.NombreTipoPrenda = reader["nombreTipoPrenda"].ToString();
+                        prenda.Id = Convert.ToInt64(reader["idTipoPrenda"]);
+                        prenda.Nombre = reader["nombreTipoPrenda"].ToString();
                         prenda.BajaLogica = (bool)reader["bajaLogica"];
                     }
                 }
@@ -165,7 +168,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"DELETE FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
+                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -194,8 +197,8 @@ namespace Repositorios
             {
                 string sentenciaSql = @"UPDATE TipoProducto SET nombre = @nombre WHERE idTipoProducto = @idTipoProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.IdTipoPrenda);
-                cmd.Parameters.AddWithValue("@Nombre", tipoPrenda.NombreTipoPrenda);
+                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.Id);
+                cmd.Parameters.AddWithValue("@Nombre", tipoPrenda.Nombre);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -232,8 +235,8 @@ namespace Repositorios
                     {
                         TipoPrenda tipoPrenda = new TipoPrenda();
 
-                        tipoPrenda.IdTipoPrenda = reader.GetInt32(0);
-                        tipoPrenda.NombreTipoPrenda = reader.GetString(1);
+                        tipoPrenda.Id = reader.GetInt32(0);
+                        tipoPrenda.Nombre = reader.GetString(1);
                         tipoPrenda.BajaLogica = reader.GetBoolean(2);
                         DTOTipoPrenda dtoTipoP = tipoPrenda.darDto();
 
@@ -264,7 +267,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT TOP 1 * FROM TipoProducto WHERE nombre = @Nombre";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", tipoPrenda.NombreTipoPrenda);
+                cmd.Parameters.AddWithValue("@Nombre", tipoPrenda.Nombre);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -272,8 +275,8 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        tipoPrenda.IdTipoPrenda = reader.GetInt32(0);
-                        tipoPrenda.NombreTipoPrenda = reader.GetString(1);
+                        tipoPrenda.Id = reader.GetInt32(0);
+                        tipoPrenda.Nombre = reader.GetString(1);
                         tipoPrenda.BajaLogica = reader.GetBoolean(2);
                     }
                 }
