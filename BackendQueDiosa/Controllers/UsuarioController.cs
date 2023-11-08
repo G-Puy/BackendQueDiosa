@@ -42,13 +42,14 @@ namespace BackendQueDiosa.Controllers
                 dtoUsuario.Telefono = mapperUsuario.Telefono;
                 dtoUsuario.TipoUsuario = mapperUsuario.IdTipoUsuario;
 
-                if (!ValidarContrasenia(mapperUsuario.Contraseña)) return BadRequest(dtoUsuario);
+                if (!ValidarContrasenia(mapperUsuario.Contraseña)) return BadRequest("Contrasenia invalida");
+
+                if (BuscarPorNombre(dtoUsuario.NombreDeUsuario) == null) return BadRequest("Nombre ya existe");
 
                 bool resultado = this.ManejadorUsuario.Alta(dtoUsuario);
 
                 if (resultado) return Ok(resultado);
-                else return BadRequest(resultado);
-
+                else return BadRequest("Fallo al insertar");
             }
             catch (Exception ex)
             {
@@ -101,16 +102,16 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize("Administrador")]
         [HttpGet("buscarPorNombreDeUsuario")]
-        public IActionResult BuscarPorNombreDeUsuario(string nombreDeUsuario)
+        public IActionResult BuscarPorNombre(string nombreDeUsuario)
         {
             try
             {
                 DTOUsuario dtoUsuario = new DTOUsuario();
                 dtoUsuario.NombreDeUsuario = nombreDeUsuario;
 
-                DTOUsuario resultado = this.ManejadorUsuario.BuscarPorNombreDeUsuario(dtoUsuario);
+                DTOUsuario resultado = this.ManejadorUsuario.BuscarPorNombre(dtoUsuario);
 
-                if (!(resultado.IdUsuario == null)) return Ok(resultado);
+                if (!(resultado == null)) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -158,7 +159,7 @@ namespace BackendQueDiosa.Controllers
 
                 DTOUsuario dtoRetorno = new DTOUsuario();
                 dtoRetorno.NombreDeUsuario = nombreDeUsuario;
-                dtoRetorno = this.ManejadorUsuario.BuscarPorNombreDeUsuario(dtoRetorno);
+                dtoRetorno = this.ManejadorUsuario.BuscarPorNombre(dtoRetorno);
                 dtoRetorno.Contrasenia = token;
                 return Ok(dtoRetorno);
             }

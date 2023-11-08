@@ -121,12 +121,7 @@ namespace Repositorios
             }
         }
 
-        public DTOUsuario BuscarPorId(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DTOUsuario BuscarPorNombreDeUsuario(DTOUsuario dtoUsuario)
+        public DTOUsuario BuscarPorNombre(DTOUsuario dtoUsuario)
         {
             Usuario usuario = new Usuario();
 
@@ -158,6 +153,12 @@ namespace Repositorios
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
+
+                if (usuario == null || usuario.IdUsuario == 0)
+                {
+                    return null;
+                }
+
                 return usuario.darDto();
             }
             catch (Exception ex)

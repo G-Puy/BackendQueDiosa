@@ -10,6 +10,8 @@
 
         T BuscarPorId(T obj);
 
+        T BuscarPorNombre(T obj);
+
         IEnumerable<T> TraerTodos();
         bool BajaLogica(T obj);
     }
