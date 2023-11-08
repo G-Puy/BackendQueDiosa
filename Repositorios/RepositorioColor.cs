@@ -61,7 +61,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"UPDATE TABLE Color SET bajaLogica = @BajaLogica WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", color.IdColor);
+                cmd.Parameters.AddWithValue("@idColor", color.Id);
                 cmd.Parameters.AddWithValue("@BajaLogica", color.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -90,7 +90,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT * FROM Color WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", dtoColor.IdColor);
+                cmd.Parameters.AddWithValue("@idColor", dtoColor.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -98,7 +98,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        color.IdColor = reader.GetInt32(0);
+                        color.Id = reader.GetInt32(0);
                         color.Nombre = reader.GetString(1);
                         color.BajaLogica = reader.GetBoolean(2);
                     }
@@ -139,7 +139,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        color.IdColor = Convert.ToInt64(reader["idColor"]);
+                        color.Id = Convert.ToInt64(reader["idColor"]);
                         color.Nombre = reader["nombre"].ToString();
                         color.BajaLogica = (bool)reader["bajaLogica"];
                     }
@@ -168,7 +168,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"DELETE FROM Color WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", color.IdColor);
+                cmd.Parameters.AddWithValue("@idColor", color.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -197,7 +197,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"UPDATE Color SET nombre = @nombre WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", color.IdColor);
+                cmd.Parameters.AddWithValue("@idColor", color.Id);
                 cmd.Parameters.AddWithValue("@Nombre", color.Nombre);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -235,7 +235,7 @@ namespace Repositorios
                     {
                         Color color = new Color();
 
-                        color.IdColor = reader.GetInt32(0);
+                        color.Id = reader.GetInt32(0);
                         color.Nombre = reader.GetString(1);
                         color.BajaLogica = reader.GetBoolean(2);
                         DTOColor dtoTipoC = color.darDto();
@@ -267,7 +267,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT TOP 1 * FROM Color WHERE nombre = @Nombre";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", color.IdColor);
+                cmd.Parameters.AddWithValue("@Nombre", color.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -275,7 +275,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        color.IdColor = reader.GetInt32(0);
+                        color.Id = reader.GetInt32(0);
                         color.Nombre = reader.GetString(1);
                         color.BajaLogica = reader.GetBoolean(2);
                     }

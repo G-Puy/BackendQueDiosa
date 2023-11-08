@@ -8,8 +8,8 @@ namespace Dominio.Entidades
 {
     internal class TipoUsuario
 {
-    public long IdTipoUsuario { get; set; } = 0;
-    public string NombreTipoUsuario { get; set; } = "";
+    public long Id { get; set; } = 0;
+    public string Nombre { get; set; } = "";
     
 }
 }

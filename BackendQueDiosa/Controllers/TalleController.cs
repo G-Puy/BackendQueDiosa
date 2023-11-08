@@ -16,7 +16,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorTalle = repInj;
         }
 
-        [HttpPost("altaTalle")]
+        [HttpPost("alta")]
         public IActionResult AltaTalle([FromBody] MapperTalle mapperTalleFront)
         {
             try
@@ -42,7 +42,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTalle dtoTalle = new DTOTalle();
-                dtoTalle.IdTalle = mapperTalle.IdTalle;
+                dtoTalle.Id = mapperTalle.IdTalle;
                 dtoTalle.Nombre = mapperTalle.Nombre;
                 dtoTalle.BajaLogica = mapperTalle.BajaLogica;
 
@@ -65,11 +65,11 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTalle dtoTalle = new DTOTalle();
-                dtoTalle.IdTalle = id;
+                dtoTalle.Id = id;
 
                 DTOTalle resultado = this.ManejadorTalle.BuscarPorId(dtoTalle);
 
-                if (!(resultado.IdTalle == null)) return Ok(resultado);
+                if (!(resultado.Id == null)) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -90,7 +90,7 @@ namespace BackendQueDiosa.Controllers
 
                 DTOTalle resultado = this.ManejadorTalle.BuscarPorNombreDeTalle(dtoTalle);
 
-                if (!(resultado.IdTalle == null)) return Ok(resultado);
+                if (!(resultado.Id == null)) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -106,7 +106,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTalle dtoTal = new DTOTalle();
-                dtoTal.IdTalle = idTalle;
+                dtoTal.Id = idTalle;
                 bool resultadoEliminar = this.ManejadorTalle.Eliminar(dtoTal);
                 if (resultadoEliminar) return Ok(resultadoEliminar);
                 else return BadRequest(resultadoEliminar);
@@ -118,14 +118,14 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpPut("editarTalle")]
+        [HttpPut("editar")]
         public IActionResult EditarTalle([FromBody] MapperColor mapperTalleFront)
         {
             try
             {
                 DTOTalle dtoTal = new DTOTalle();
                 dtoTal.Nombre = mapperTalleFront.Nombre;
-                dtoTal.IdTalle = mapperTalleFront.IdColor;
+                dtoTal.Id = mapperTalleFront.Id;
 
                 bool resultadoEditar = this.ManejadorTalle.Modificar(dtoTal);
 

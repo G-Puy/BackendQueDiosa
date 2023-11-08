@@ -8,7 +8,7 @@ namespace Dominio.Entidades
 {
     internal class Stock
     {
-        public long IdStock { get; set; } = 0;
+        public long Id { get; set; } = 0;
         public long IdProducto { get; set; } = 0;
         public long IdColor { get; set; } = 0;
         public long IdTalle { get; set; } = 0;

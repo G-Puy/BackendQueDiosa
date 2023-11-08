@@ -16,7 +16,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorColor = repInj;
         }
 
-        [HttpPost("altaColor")]
+        [HttpPost("alta")]
         public IActionResult AltaColor ([FromBody] MapperColor mapperColorFront)
         {
             try
@@ -42,7 +42,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOColor dtoColor = new DTOColor();
-                dtoColor.IdColor = mapperColor.IdColor;
+                dtoColor.Id = mapperColor.Id;
                 dtoColor.Nombre = mapperColor.Nombre;
                 dtoColor.BajaLogica = mapperColor.BajaLogica;
 
@@ -65,11 +65,11 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOColor dtoColor = new DTOColor();
-                dtoColor.IdColor = id;
+                dtoColor.Id = id;
 
                 DTOColor resultado = this.ManejadorColor.BuscarPorId(dtoColor);
 
-                if (!(resultado.IdColor == null)) return Ok(resultado);
+                if (!(resultado.Id == null)) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -90,7 +90,7 @@ namespace BackendQueDiosa.Controllers
 
                 DTOColor resultado = this.ManejadorColor.BuscarPorNombreDeColor(dtoColor);
 
-                if (!(resultado.IdColor == null)) return Ok(resultado);
+                if (!(resultado.Id == null)) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -100,13 +100,13 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpDelete("eliminarColor")]
+        [HttpDelete("eliminar")]
         public IActionResult EliminarColor(long idColor)
         {
             try
             {
                 DTOColor dtoCol = new DTOColor();
-                dtoCol.IdColor = idColor;
+                dtoCol.Id = idColor;
                 bool resultadoEliminar = this.ManejadorColor.Eliminar(dtoCol);
                 if (resultadoEliminar) return Ok(resultadoEliminar);
                 else return BadRequest(resultadoEliminar);
@@ -125,7 +125,7 @@ namespace BackendQueDiosa.Controllers
             {
                 DTOColor dtoCol = new DTOColor();
                 dtoCol.Nombre = mapperColorFront.Nombre;
-                dtoCol.IdColor = mapperColorFront.IdColor;
+                dtoCol.Id = mapperColorFront.Id;
 
                 bool resultadoEditar = this.ManejadorColor.Modificar(dtoCol);
 

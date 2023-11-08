@@ -8,7 +8,7 @@ namespace Dominio.Entidades
 {
     internal class AlertaPedido
     {
-        public long IdAlertaPedido { get; set; } = 0;
+        public long Id { get; set; } = 0;
         public long IdVenta { get; set; } = 0;
         public string Descripcion { get; set; } = "";
         public bool Entregado { get; set; } = false;

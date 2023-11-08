@@ -8,7 +8,7 @@ namespace Dominio.Entidades
 {
     internal class Producto
     {
-        public long IdProducto { get; set; } = 0;
+        public long Id { get; set; } = 0;
         public string Nombre { get; set; } = "";
         public string Descripcion { get; set; } = "";
         public double PrecioActual { get; set; } = 0;

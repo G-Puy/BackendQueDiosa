@@ -59,7 +59,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"UPDATE TABLE Color SET bajaLogica = @BajaLogica WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTalle", talle.IdTalle);
+                cmd.Parameters.AddWithValue("@idTalle", talle.Id);
                 cmd.Parameters.AddWithValue("@BajaLogica", talle.BajaLogica);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -88,7 +88,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT * FROM Talle WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTalle", dtoTalle.IdTalle);
+                cmd.Parameters.AddWithValue("@idTalle", dtoTalle.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -96,7 +96,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        talle.IdTalle = reader.GetInt32(0);
+                        talle.Id = reader.GetInt32(0);
                         talle.Nombre = reader.GetString(1);
                         talle.BajaLogica = reader.GetBoolean(2);
                     }
@@ -137,7 +137,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        talle.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                        talle.Id = Convert.ToInt64(reader["idTalle"]);
                         talle.Nombre = reader["nombre"].ToString();
                         talle.BajaLogica = (bool)reader["bajaLogica"];
                     }
@@ -166,7 +166,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"DELETE FROM Talle WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTalle", talle.IdTalle);
+                cmd.Parameters.AddWithValue("@idTalle", talle.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -195,7 +195,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"UPDATE Talle SET nombre = @nombre WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTalle", talle.IdTalle);
+                cmd.Parameters.AddWithValue("@idTalle", talle.Id);
                 cmd.Parameters.AddWithValue("@Nombre", talle.Nombre);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -233,7 +233,7 @@ namespace Repositorios
                     {
                         Talle talle = new Talle();
 
-                        talle.IdTalle = reader.GetInt32(0);
+                        talle.Id = reader.GetInt32(0);
                         talle.Nombre = reader.GetString(1);
                         talle.BajaLogica = reader.GetBoolean(2);
                         DTOTalle dtoTipoT = talle.darDto();
@@ -265,7 +265,7 @@ namespace Repositorios
             {
                 string sentenciaSql = @"SELECT TOP 1 * FROM Talle WHERE nombre = @Nombre";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", talle.IdTalle);
+                cmd.Parameters.AddWithValue("@Nombre", talle.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -273,7 +273,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        talle.IdTalle = reader.GetInt32(0);
+                        talle.Id = reader.GetInt32(0);
                         talle.Nombre = reader.GetString(1);
                         talle.BajaLogica = reader.GetBoolean(2);
                     }
