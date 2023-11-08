@@ -2,7 +2,6 @@
 using DTOS;
 using IRepositorios;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -44,7 +43,7 @@ namespace BackendQueDiosa.Controllers
 
                 if (!ValidarContrasenia(mapperUsuario.Contraseña)) return BadRequest("Contrasenia invalida");
 
-                if (BuscarPorNombre(dtoUsuario.NombreDeUsuario) == null) return BadRequest("Nombre ya existe");
+                if (this.ManejadorUsuario.BuscarPorNombre(dtoUsuario) == null) return BadRequest("Nombre ya existe");
 
                 bool resultado = this.ManejadorUsuario.Alta(dtoUsuario);
 

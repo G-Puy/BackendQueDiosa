@@ -2,12 +2,7 @@
 using Dominio.Entidades;
 using DTOS;
 using IRepositorios;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositorios
 {
@@ -25,9 +20,6 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-
-
-
                 string sentenciaSql = @"INSERT INTO TipoProducto VALUES(@NombreTipoPrenda,@BajaLogica)
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
@@ -98,9 +90,9 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        tipoPrenda.Id = reader.GetInt32(0);
-                        tipoPrenda.Nombre = reader.GetString(1);
-                        tipoPrenda.BajaLogica = reader.GetBoolean(2);
+                        tipoPrenda.Id = Convert.ToInt64(reader["idTipoProducto"]);
+                        tipoPrenda.Nombre = reader["nombre"].ToString();
+                        tipoPrenda.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
                 trn.Commit();
@@ -116,12 +108,7 @@ namespace Repositorios
             }
         }
 
-        public DTOTipoPrenda BuscarPorId(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DTOTipoPrenda BuscarPorNombreDePrenda(DTOTipoPrenda dtoTipoPrenda)
+        public DTOTipoPrenda BuscarPorNombre(DTOTipoPrenda dtoTipoPrenda)
         {
             TipoPrenda prenda = new TipoPrenda();
 
@@ -141,7 +128,7 @@ namespace Repositorios
                     {
                         prenda.Id = Convert.ToInt64(reader["idTipoPrenda"]);
                         prenda.Nombre = reader["nombreTipoPrenda"].ToString();
-                        prenda.BajaLogica = (bool)reader["bajaLogica"];
+                        prenda.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
                 trn.Rollback();
@@ -176,6 +163,40 @@ namespace Repositorios
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
+        public bool EnUso(DTOTipoPrenda dtoTipoPrenda)
+        {
+            TipoPrenda tipoPrenda = new TipoPrenda();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT TOP 1 idTipoProducto FROM PRODUCTO WHERE idTipoProducto = @IdTipoProducto";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@IdTipoProducto", dtoTipoPrenda.Id);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        tipoPrenda.Id = Convert.ToInt64(reader["idTipoPrenda"]);
+                    }
+                }
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return tipoPrenda != null && tipoPrenda.Id > 0;
             }
             catch (Exception ex)
             {
@@ -235,9 +256,9 @@ namespace Repositorios
                     {
                         TipoPrenda tipoPrenda = new TipoPrenda();
 
-                        tipoPrenda.Id = reader.GetInt32(0);
-                        tipoPrenda.Nombre = reader.GetString(1);
-                        tipoPrenda.BajaLogica = reader.GetBoolean(2);
+                        tipoPrenda.Id = Convert.ToInt64(reader["idTipoProducto"]);
+                        tipoPrenda.Nombre = reader["nombre"].ToString();
+                        tipoPrenda.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                         DTOTipoPrenda dtoTipoP = tipoPrenda.darDto();
 
                         tipos.Add(dtoTipoP);
@@ -275,9 +296,9 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        tipoPrenda.Id = reader.GetInt32(0);
-                        tipoPrenda.Nombre = reader.GetString(1);
-                        tipoPrenda.BajaLogica = reader.GetBoolean(2);
+                        tipoPrenda.Id = Convert.ToInt64(reader["idTipoProducto"]);
+                        tipoPrenda.Nombre = reader["nombre"].ToString();
+                        tipoPrenda.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
                 trn.Commit();

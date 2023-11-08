@@ -103,7 +103,7 @@ namespace Repositorios
                         usuario.Apellido = reader["apellido"].ToString();
                         usuario.Telefono = reader["telefono"].ToString();
                         usuario.Correo = reader["correo"].ToString();
-                        usuario.BajaLogica = (bool)reader["bajaLogica"];
+                        usuario.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                         usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
                     }
@@ -146,7 +146,7 @@ namespace Repositorios
                         usuario.Apellido = reader["apellido"].ToString();
                         usuario.Telefono = reader["telefono"].ToString();
                         usuario.Correo = reader["correo"].ToString();
-                        // usuario.BajaLogica = (bool)reader["bajaLogica"];
+                        // usuario.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                         usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
                     }
@@ -225,7 +225,7 @@ namespace Repositorios
                         usuario.Apellido = reader["apellido"].ToString();
                         usuario.Telefono = reader["telefono"].ToString();
                         usuario.Correo = reader["correo"].ToString();
-                        // usuario.BajaLogica = (bool)reader["bajaLogica"];
+                        // usuario.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                         usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
                     }
@@ -313,7 +313,7 @@ namespace Repositorios
                         usuario.Apellido = reader["apellido"].ToString();
                         usuario.Telefono = reader["telefono"].ToString();
                         usuario.Correo = reader["correo"].ToString();
-                        usuario.BajaLogica = (bool)reader["bajaLogica"];
+                        usuario.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                         usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
                         DTOUsuario dtoTipoP = usuario.darDto();

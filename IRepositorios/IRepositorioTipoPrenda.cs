@@ -1,17 +1,14 @@
 ﻿using DTOS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IRepositorios
 {
     public interface IRepositorioTipoPrenda : IRepositorioT<DTOTipoPrenda>
     {
-        public bool VerificarExistenciaCategoria(DTOTipoPrenda DTOCategoria);
+        public bool VerificarExistenciaCategoria(DTOTipoPrenda dtoTipoPrenda);
 
-        DTOTipoPrenda BuscarPorNombreDePrenda(DTOTipoPrenda dtoTipoPrenda);
+        public DTOTipoPrenda BuscarPorNombre(DTOTipoPrenda dtoTipoPrenda);
+
+        public bool EnUso(DTOTipoPrenda dtoTipoPrenda);
 
     }
 }

@@ -1,11 +1,7 @@
 ﻿using BackendQueDiosa.Mappers;
-using Conexiones;
 using DTOS;
 using IRepositorios;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
 
 namespace BackendQueDiosa.Controllers
 {
@@ -14,24 +10,27 @@ namespace BackendQueDiosa.Controllers
     public class TipoPrendasController : ControllerBase
     {
 
-        private IRepositorioTipoPrenda ManejadorCategoria { get; set; }
+        private IRepositorioTipoPrenda ManejadorTipoPrenda { get; set; }
 
         public TipoPrendasController([FromServices] IRepositorioTipoPrenda repInj)
         {
 
-            this.ManejadorCategoria = repInj;
+            this.ManejadorTipoPrenda = repInj;
         }
 
 
-        
+
         [HttpPost("altaTipoPrenda")]
-        public IActionResult AltaTipoPrenda([FromBody] DTOTipoPrenda dtoTp)
+        public IActionResult Alta([FromBody] DTOTipoPrenda dtoTp)
         {
             try
             {
-                bool resultadoAlta = this.ManejadorCategoria.Alta(dtoTp);
-                if (resultadoAlta) return Ok(resultadoAlta);
-                else return BadRequest(resultadoAlta);
+                bool resultado = this.ManejadorTipoPrenda.Alta(dtoTp);
+
+                if (this.ManejadorTipoPrenda.BuscarPorNombre(dtoTp) == null) return BadRequest("Nombre ya existe");
+
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
 
             }
             catch (Exception ex)
@@ -41,7 +40,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-       
+
         [HttpPost("bajaLogica")]
         public IActionResult BajaLogica([FromBody] MapperTipoPrenda mapperTipoPrenda)
         {
@@ -52,7 +51,7 @@ namespace BackendQueDiosa.Controllers
                 dtoTipoPrenda.Nombre = mapperTipoPrenda.NombreTipoProducto;
                 dtoTipoPrenda.BajaLogica = mapperTipoPrenda.BajaLogica;
 
-                bool resultado = this.ManejadorCategoria.BajaLogica(dtoTipoPrenda);
+                bool resultado = this.ManejadorTipoPrenda.BajaLogica(dtoTipoPrenda);
 
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);
@@ -64,7 +63,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        
+
         [HttpGet("buscarPorId")]
         public IActionResult BuscarPorId(int id)
         {
@@ -73,7 +72,7 @@ namespace BackendQueDiosa.Controllers
                 DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
                 dtoTipoPrenda.Id = id;
 
-                DTOTipoPrenda resultado = this.ManejadorCategoria.BuscarPorId(dtoTipoPrenda);
+                DTOTipoPrenda resultado = this.ManejadorTipoPrenda.BuscarPorId(dtoTipoPrenda);
 
                 if (!(resultado.Id == null)) return Ok(resultado);
                 else return BadRequest(resultado);
@@ -85,7 +84,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-       
+
         [HttpGet("buscarPorNombreDePrenda")]
         public IActionResult BuscarPorNombreDePrenda(string nombreDePrenda)
         {
@@ -94,7 +93,7 @@ namespace BackendQueDiosa.Controllers
                 DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
                 dtoTipoPrenda.Nombre = nombreDePrenda;
 
-                DTOTipoPrenda resultado = this.ManejadorCategoria.BuscarPorNombreDePrenda(dtoTipoPrenda);
+                DTOTipoPrenda resultado = this.ManejadorTipoPrenda.BuscarPorNombre(dtoTipoPrenda);
 
                 if (!(resultado.Id == null)) return Ok(resultado);
                 else return BadRequest(resultado);
@@ -109,15 +108,20 @@ namespace BackendQueDiosa.Controllers
 
 
 
-        
+
         [HttpDelete("eliminarTipoPrenda")]
-        public IActionResult EliminarTipoProducto(long idTipoPrenda)
+        public IActionResult Eliminar(long idTipoPrenda)
         {
             try
             {
-                DTOTipoPrenda dtoCat = new DTOTipoPrenda();
-                dtoCat.Id = idTipoPrenda;
-                bool resultadoEliminar = this.ManejadorCategoria.Eliminar(dtoCat);
+                DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
+                dtoTipoPrenda.Id = idTipoPrenda;
+
+                if (!this.ManejadorTipoPrenda.EnUso(dtoTipoPrenda)) return BadRequest("En uso");
+
+                bool resultadoEliminar = this.ManejadorTipoPrenda.Eliminar(dtoTipoPrenda);
+
+
                 if (resultadoEliminar) return Ok(resultadoEliminar);
                 else return BadRequest(resultadoEliminar);
 
@@ -129,7 +133,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
         [HttpPut("editarTipoPrenda")]
-        public IActionResult EditarTipoProducto([FromBody] MapperTipoPrenda mapperCategoriaFront)
+        public IActionResult Modificar([FromBody] MapperTipoPrenda mapperCategoriaFront)
         {
             try
             {
@@ -137,7 +141,7 @@ namespace BackendQueDiosa.Controllers
                 dtoCat.Nombre = mapperCategoriaFront.NombreTipoProducto;
                 dtoCat.Id = mapperCategoriaFront.IdTipoProducto;
 
-                bool resultadoEditar = this.ManejadorCategoria.Modificar(dtoCat);
+                bool resultadoEditar = this.ManejadorTipoPrenda.Modificar(dtoCat);
 
                 if (resultadoEditar) return Ok(resultadoEditar);
                 else return BadRequest(resultadoEditar);
@@ -151,12 +155,12 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpGet("TraerTiposPrenda")]
-        public IActionResult TraerTiposProductos()
+        public IActionResult TraerTodos()
         {
             try
             {
-                List<DTOTipoPrenda> resultado = (List<DTOTipoPrenda>)this.ManejadorCategoria.TraerTodos();
-                if (resultado.Count>0) return Ok(resultado);
+                List<DTOTipoPrenda> resultado = (List<DTOTipoPrenda>)this.ManejadorTipoPrenda.TraerTodos();
+                if (resultado.Count > 0) return Ok(resultado);
                 else return BadRequest(false);
 
             }
