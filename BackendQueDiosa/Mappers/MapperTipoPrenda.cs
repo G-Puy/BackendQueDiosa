@@ -2,8 +2,8 @@
 {
     public class MapperTipoPrenda
     {
-        public long IdTipoProducto { get; set; } = 0;
-        public string NombreTipoProducto { get; set; } = "";
+        public long Id  { get; set; } = 0;
+        public string Nombre { get; set; } = "";
         public bool BajaLogica { get; set; } = false;
     }
 }

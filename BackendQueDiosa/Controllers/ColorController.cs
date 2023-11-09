@@ -146,7 +146,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 List<DTOColor> resultado = (List<DTOColor>)this.ManejadorColor.TraerTodos();
-                if (resultado.Count>0) return Ok(resultado);
+                if (resultado != null) return Ok(resultado);
                 else return BadRequest(false);
 
             }

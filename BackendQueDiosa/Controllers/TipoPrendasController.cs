@@ -47,8 +47,8 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
-                dtoTipoPrenda.Id = mapperTipoPrenda.IdTipoProducto;
-                dtoTipoPrenda.Nombre = mapperTipoPrenda.NombreTipoProducto;
+                dtoTipoPrenda.Id = mapperTipoPrenda.Id;
+                dtoTipoPrenda.Nombre = mapperTipoPrenda.Nombre;
                 dtoTipoPrenda.BajaLogica = mapperTipoPrenda.BajaLogica;
 
                 bool resultado = this.ManejadorTipoPrenda.BajaLogica(dtoTipoPrenda);
@@ -117,7 +117,7 @@ namespace BackendQueDiosa.Controllers
                 DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
                 dtoTipoPrenda.Id = idTipoPrenda;
 
-                if (!this.ManejadorTipoPrenda.EnUso(dtoTipoPrenda)) return BadRequest("En uso");
+                //if (!this.ManejadorTipoPrenda.EnUso(dtoTipoPrenda)) return BadRequest("En uso");
 
                 bool resultadoEliminar = this.ManejadorTipoPrenda.Eliminar(dtoTipoPrenda);
 
@@ -138,8 +138,8 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTipoPrenda dtoCat = new DTOTipoPrenda();
-                dtoCat.Nombre = mapperCategoriaFront.NombreTipoProducto;
-                dtoCat.Id = mapperCategoriaFront.IdTipoProducto;
+                dtoCat.Nombre = mapperCategoriaFront.Nombre;
+                dtoCat.Id = mapperCategoriaFront.Id;
 
                 bool resultadoEditar = this.ManejadorTipoPrenda.Modificar(dtoCat);
 

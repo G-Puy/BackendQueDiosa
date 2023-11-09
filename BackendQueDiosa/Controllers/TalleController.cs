@@ -42,7 +42,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 DTOTalle dtoTalle = new DTOTalle();
-                dtoTalle.Id = mapperTalle.IdTalle;
+                dtoTalle.Id = mapperTalle.Id;
                 dtoTalle.Nombre = mapperTalle.Nombre;
                 dtoTalle.BajaLogica = mapperTalle.BajaLogica;
 
@@ -146,7 +146,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 List<DTOTalle> resultado = (List<DTOTalle>)this.ManejadorTalle.TraerTodos();
-                if (resultado.Count > 0) return Ok(resultado);
+                if (resultado != null) return Ok(resultado);
                 else return BadRequest(false);
 
             }
