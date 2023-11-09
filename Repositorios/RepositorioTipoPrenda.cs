@@ -51,17 +51,17 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TABLE TipoProducto SET bajaLogica = @BajaLogica WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"UPDATE TipoProducto SET bajaLogica = @BajaLogica WHERE idTipoProducto = @idTipoProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.Id);
-                cmd.Parameters.AddWithValue("@BajaLogica", tipoPrenda.BajaLogica);
+                cmd.Parameters.AddWithValue("@BajaLogica", true);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 int idGenerado = cmd.ExecuteNonQuery();
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return true;
+                return idGenerado > 0;
             }
             catch (Exception ex)
             {
@@ -126,8 +126,8 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        prenda.Id = Convert.ToInt64(reader["idTipoPrenda"]);
-                        prenda.Nombre = reader["nombreTipoPrenda"].ToString();
+                        prenda.Id = Convert.ToInt64(reader["idTipoProducto"]);
+                        prenda.Nombre = reader["nombre"].ToString();
                         prenda.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
@@ -191,7 +191,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        tipoPrenda.Id = Convert.ToInt64(reader["idTipoPrenda"]);
+                        tipoPrenda.Id = Convert.ToInt64(reader["idTipoProducto"]);
                     }
                 }
                 trn.Commit();

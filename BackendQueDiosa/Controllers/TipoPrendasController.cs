@@ -27,7 +27,7 @@ namespace BackendQueDiosa.Controllers
             {
                 bool resultado = this.ManejadorTipoPrenda.Alta(dtoTp);
 
-                if (this.ManejadorTipoPrenda.BuscarPorNombre(dtoTp) == null) return BadRequest("Nombre ya existe");
+                if (this.ManejadorTipoPrenda.BuscarPorNombre(dtoTp) != null) return BadRequest("Nombre ya existe");
 
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);
@@ -117,13 +117,19 @@ namespace BackendQueDiosa.Controllers
                 DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
                 dtoTipoPrenda.Id = idTipoPrenda;
 
-                //if (!this.ManejadorTipoPrenda.EnUso(dtoTipoPrenda)) return BadRequest("En uso");
+                bool resultado = false;
 
-                bool resultadoEliminar = this.ManejadorTipoPrenda.Eliminar(dtoTipoPrenda);
+                if (this.ManejadorTipoPrenda.EnUso(dtoTipoPrenda))
+                {
+                    resultado = this.ManejadorTipoPrenda.BajaLogica(dtoTipoPrenda);
+                }
+                else
+                {
+                     resultado = this.ManejadorTipoPrenda.Eliminar(dtoTipoPrenda);
+                }
 
-
-                if (resultadoEliminar) return Ok(resultadoEliminar);
-                else return BadRequest(resultadoEliminar);
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
 
             }
             catch (Exception ex)

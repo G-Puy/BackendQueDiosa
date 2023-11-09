@@ -29,7 +29,7 @@ namespace Repositorios
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@Nombre", talle.Nombre);
-                cmd.Parameters.AddWithValue("@BajaLogica", talle.BajaLogica);
+                cmd.Parameters.AddWithValue("@BajaLogica", false);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -60,7 +60,7 @@ namespace Repositorios
                 string sentenciaSql = @"UPDATE TABLE Color SET bajaLogica = @BajaLogica WHERE idTalle = @idTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@idTalle", talle.Id);
-                cmd.Parameters.AddWithValue("@BajaLogica", talle.BajaLogica);
+                cmd.Parameters.AddWithValue("@BajaLogica", true);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
