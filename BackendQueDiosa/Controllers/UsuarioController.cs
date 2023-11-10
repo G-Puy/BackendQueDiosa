@@ -100,7 +100,7 @@ namespace BackendQueDiosa.Controllers
         }
 
         [Authorize("Administrador")]
-        [HttpGet("buscarPorNombreDeUsuario")]
+        [HttpGet("buscarPorNombre")]
         public IActionResult BuscarPorNombre(string nombreDeUsuario)
         {
             try
