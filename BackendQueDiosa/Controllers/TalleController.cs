@@ -17,12 +17,11 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpPost("alta")]
-        public IActionResult AltaTalle([FromBody] MapperTalle mapperTalleFront)
+        public IActionResult Alta([FromBody] DTOTalle dtoTal)
         {
             try
             {
-                DTOTalle dtoTal = new DTOTalle();
-                dtoTal.Nombre = mapperTalleFront.Nombre;
+                if (this.ManejadorTalle.BuscarPorNombre(dtoTal) != null) return BadRequest("Nombre ya existe");
 
                 bool resultadoAlta = this.ManejadorTalle.Alta(dtoTal);
 
@@ -37,15 +36,10 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpPost("bajaLogica")]
-        public IActionResult BajaLogica([FromBody] MapperTalle mapperTalle)
+        public IActionResult BajaLogica([FromBody] DTOTalle dtoTalle)
         {
             try
             {
-                DTOTalle dtoTalle = new DTOTalle();
-                dtoTalle.Id = mapperTalle.Id;
-                dtoTalle.Nombre = mapperTalle.Nombre;
-                dtoTalle.BajaLogica = mapperTalle.BajaLogica;
-
                 bool resultado = this.ManejadorTalle.BajaLogica(dtoTalle);
 
                 if (resultado) return Ok(resultado);
@@ -69,7 +63,7 @@ namespace BackendQueDiosa.Controllers
 
                 DTOTalle resultado = this.ManejadorTalle.BuscarPorId(dtoTalle);
 
-                if (!(resultado.Id == null)) return Ok(resultado);
+                if (resultado != null && resultado.Id > 0) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -80,7 +74,7 @@ namespace BackendQueDiosa.Controllers
         }
 
 
-        [HttpGet("buscarPorNombreDeTalle")]
+        [HttpGet("buscarPorNombre")]
         public IActionResult BuscarPorNombreDeTalle(string nombreDeTalle)
         {
             try
@@ -88,9 +82,9 @@ namespace BackendQueDiosa.Controllers
                 DTOTalle dtoTalle = new DTOTalle();
                 dtoTalle.Nombre = nombreDeTalle;
 
-                DTOTalle resultado = this.ManejadorTalle.BuscarPorNombreDeTalle(dtoTalle);
+                DTOTalle resultado = this.ManejadorTalle.BuscarPorNombre(dtoTalle);
 
-                if (!(resultado.Id == null)) return Ok(resultado);
+                if (resultado != null && resultado.Id > 0) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -100,16 +94,26 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpDelete("eliminarTalle")]
-        public IActionResult EliminarTalle(long idTalle)
+        [HttpDelete("eliminar")]
+        public IActionResult Eliminar(long idTalle)
         {
             try
             {
                 DTOTalle dtoTal = new DTOTalle();
                 dtoTal.Id = idTalle;
-                bool resultadoEliminar = this.ManejadorTalle.Eliminar(dtoTal);
-                if (resultadoEliminar) return Ok(resultadoEliminar);
-                else return BadRequest(resultadoEliminar);
+                bool resultado = false;
+
+                if (this.ManejadorTalle.EnUso(dtoTal))
+                {
+                    resultado = this.ManejadorTalle.BajaLogica(dtoTal);
+                }
+                else
+                {
+                    resultado = this.ManejadorTalle.Eliminar(dtoTal);
+                }
+
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
 
             }
             catch (Exception ex)
@@ -118,19 +122,15 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpPut("editar")]
-        public IActionResult EditarTalle([FromBody] DTOTalle mapperTalleFront)
+        [HttpPut("modificar")]
+        public IActionResult Modificar([FromBody] DTOTalle dtoTal)
         {
             try
             {
-                DTOTalle dtoTal = new DTOTalle();
-                dtoTal.Nombre = mapperTalleFront.Nombre;
-                dtoTal.Id = mapperTalleFront.Id;
+                bool resultado = this.ManejadorTalle.Modificar(dtoTal);
 
-                bool resultadoEditar = this.ManejadorTalle.Modificar(dtoTal);
-
-                if (resultadoEditar) return Ok(resultadoEditar);
-                else return BadRequest(resultadoEditar);
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
 
             }
             catch (Exception ex)
@@ -146,7 +146,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 List<DTOTalle> resultado = (List<DTOTalle>)this.ManejadorTalle.TraerTodos();
-                if (resultado != null) return Ok(resultado);
+                if (resultado.Count > 0) return Ok(resultado);
                 else return BadRequest(false);
 
             }

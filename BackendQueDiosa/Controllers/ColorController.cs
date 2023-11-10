@@ -75,7 +75,7 @@ namespace BackendQueDiosa.Controllers
         }
 
 
-        [HttpGet("buscarPorNombreDeColor")]
+        [HttpGet("buscarPorNombre")]
         public IActionResult BuscarPorNombre(string nombreDeColor)
         {
             try
@@ -127,10 +127,10 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                bool resultadoEditar = this.ManejadorColor.Modificar(dtoCol);
+                bool resultado = this.ManejadorColor.Modificar(dtoCol);
 
-                if (resultadoEditar) return Ok(resultadoEditar);
-                else return BadRequest(resultadoEditar);
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
 
             }
             catch (Exception ex)

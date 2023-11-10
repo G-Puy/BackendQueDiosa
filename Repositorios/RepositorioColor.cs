@@ -265,7 +265,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM Color WHERE bajaLogica == 0";
+                string sentenciaSql = @"SELECT * FROM Color WHERE bajaLogica = 0";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();

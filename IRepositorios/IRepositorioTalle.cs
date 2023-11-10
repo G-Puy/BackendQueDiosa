@@ -1,14 +1,11 @@
 ﻿using DTOS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IRepositorios
 {
     public interface IRepositorioTalle : IRepositorioT<DTOTalle>
     {
-        DTOTalle BuscarPorNombreDeTalle(DTOTalle dtoTalle);
+        DTOTalle BuscarPorNombre(DTOTalle dtoTalle);
+
+        public bool EnUso(DTOTalle dtoTalle);
     }
 }
