@@ -89,7 +89,7 @@ namespace BackendQueDiosa.Controllers
 
                 DTOUsuario resultado = this.ManejadorUsuario.BuscarPorId(dtoUsuario);
 
-                if (!(resultado.IdUsuario == null)) return Ok(resultado);
+                if (resultado != null && resultado.IdUsuario > 0) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -110,7 +110,7 @@ namespace BackendQueDiosa.Controllers
 
                 DTOUsuario resultado = this.ManejadorUsuario.BuscarPorNombre(dtoUsuario);
 
-                if (!(resultado == null)) return Ok(resultado);
+                if (resultado != null && resultado.IdUsuario > 0) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }

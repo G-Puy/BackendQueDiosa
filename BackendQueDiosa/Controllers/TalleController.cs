@@ -119,7 +119,7 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpPut("editar")]
-        public IActionResult EditarTalle([FromBody] MapperColor mapperTalleFront)
+        public IActionResult EditarTalle([FromBody] DTOTalle mapperTalleFront)
         {
             try
             {

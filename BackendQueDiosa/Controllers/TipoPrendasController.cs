@@ -20,14 +20,14 @@ namespace BackendQueDiosa.Controllers
 
 
 
-        [HttpPost("altaTipoPrenda")]
+        [HttpPost("alta")]
         public IActionResult Alta([FromBody] DTOTipoPrenda dtoTp)
         {
             try
             {
-                bool resultado = this.ManejadorTipoPrenda.Alta(dtoTp);
-
                 if (this.ManejadorTipoPrenda.BuscarPorNombre(dtoTp) != null) return BadRequest("Nombre ya existe");
+
+                bool resultado = this.ManejadorTipoPrenda.Alta(dtoTp);
 
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);
@@ -42,15 +42,10 @@ namespace BackendQueDiosa.Controllers
 
 
         [HttpPost("bajaLogica")]
-        public IActionResult BajaLogica([FromBody] MapperTipoPrenda mapperTipoPrenda)
+        public IActionResult BajaLogica([FromBody] DTOTipoPrenda dtoTipoPrenda)
         {
             try
             {
-                DTOTipoPrenda dtoTipoPrenda = new DTOTipoPrenda();
-                dtoTipoPrenda.Id = mapperTipoPrenda.Id;
-                dtoTipoPrenda.Nombre = mapperTipoPrenda.Nombre;
-                dtoTipoPrenda.BajaLogica = mapperTipoPrenda.BajaLogica;
-
                 bool resultado = this.ManejadorTipoPrenda.BajaLogica(dtoTipoPrenda);
 
                 if (resultado) return Ok(resultado);
@@ -74,7 +69,7 @@ namespace BackendQueDiosa.Controllers
 
                 DTOTipoPrenda resultado = this.ManejadorTipoPrenda.BuscarPorId(dtoTipoPrenda);
 
-                if (!(resultado.Id == null)) return Ok(resultado);
+                if (resultado != null && resultado.Id > 0) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -85,7 +80,7 @@ namespace BackendQueDiosa.Controllers
         }
 
 
-        [HttpGet("buscarPorNombreDePrenda")]
+        [HttpGet("buscarPorNombre")]
         public IActionResult BuscarPorNombreDePrenda(string nombreDePrenda)
         {
             try
@@ -95,7 +90,7 @@ namespace BackendQueDiosa.Controllers
 
                 DTOTipoPrenda resultado = this.ManejadorTipoPrenda.BuscarPorNombre(dtoTipoPrenda);
 
-                if (!(resultado.Id == null)) return Ok(resultado);
+                if (resultado != null && resultado.Id > 0) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -105,11 +100,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-
-
-
-
-        [HttpDelete("eliminarTipoPrenda")]
+        [HttpDelete("eliminar")]
         public IActionResult Eliminar(long idTipoPrenda)
         {
             try
@@ -138,15 +129,11 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
-        [HttpPut("editarTipoPrenda")]
-        public IActionResult Modificar([FromBody] MapperTipoPrenda mapperCategoriaFront)
+        [HttpPut("modificar")]
+        public IActionResult Modificar([FromBody] DTOTipoPrenda dtoCat)
         {
             try
             {
-                DTOTipoPrenda dtoCat = new DTOTipoPrenda();
-                dtoCat.Nombre = mapperCategoriaFront.Nombre;
-                dtoCat.Id = mapperCategoriaFront.Id;
-
                 bool resultadoEditar = this.ManejadorTipoPrenda.Modificar(dtoCat);
 
                 if (resultadoEditar) return Ok(resultadoEditar);
@@ -160,7 +147,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpGet("TraerTiposPrenda")]
+        [HttpGet("traerTodos")]
         public IActionResult TraerTodos()
         {
             try

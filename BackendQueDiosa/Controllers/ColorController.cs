@@ -2,6 +2,7 @@
 using DTOS;
 using IRepositorios;
 using Microsoft.AspNetCore.Mvc;
+using static System.Net.WebRequestMethods;
 
 namespace BackendQueDiosa.Controllers
 {
@@ -17,12 +18,11 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpPost("alta")]
-        public IActionResult AltaColor ([FromBody] MapperColor mapperColorFront)
+        public IActionResult Alta ([FromBody] DTOColor dtoCol)
         {
             try
             {
-                DTOColor dtoCol = new DTOColor();
-                dtoCol.Nombre = mapperColorFront.Nombre;
+                if (this.ManejadorColor.BuscarPorNombre(dtoCol) != null) return BadRequest("Nombre ya existe");
 
                 bool resultadoAlta = this.ManejadorColor.Alta(dtoCol);
 
@@ -37,15 +37,10 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpPost("bajaLogica")]
-        public IActionResult BajaLogica([FromBody] MapperColor mapperColor)
+        public IActionResult BajaLogica([FromBody] DTOColor dtoColor)
         {
             try
             {
-                DTOColor dtoColor = new DTOColor();
-                dtoColor.Id = mapperColor.Id;
-                dtoColor.Nombre = mapperColor.Nombre;
-                dtoColor.BajaLogica = mapperColor.BajaLogica;
-
                 bool resultado = this.ManejadorColor.BajaLogica(dtoColor);
 
                 if (resultado) return Ok(resultado);
@@ -69,7 +64,7 @@ namespace BackendQueDiosa.Controllers
 
                 DTOColor resultado = this.ManejadorColor.BuscarPorId(dtoColor);
 
-                if (!(resultado.Id == null)) return Ok(resultado);
+                if (resultado != null && resultado.Id > 0) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -81,16 +76,16 @@ namespace BackendQueDiosa.Controllers
 
 
         [HttpGet("buscarPorNombreDeColor")]
-        public IActionResult BuscarPorNombreDeColor(string nombreDeColor)
+        public IActionResult BuscarPorNombre(string nombreDeColor)
         {
             try
             {
                 DTOColor dtoColor = new DTOColor();
                 dtoColor.Nombre = nombreDeColor;
 
-                DTOColor resultado = this.ManejadorColor.BuscarPorNombreDeColor(dtoColor);
+                DTOColor resultado = this.ManejadorColor.BuscarPorNombre(dtoColor);
 
-                if (!(resultado.Id == null)) return Ok(resultado);
+                if (resultado != null && resultado.Id > 0) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }
@@ -101,15 +96,24 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpDelete("eliminar")]
-        public IActionResult EliminarColor(long idColor)
+        public IActionResult Eliminar(long idColor)
         {
             try
             {
                 DTOColor dtoCol = new DTOColor();
                 dtoCol.Id = idColor;
-                bool resultadoEliminar = this.ManejadorColor.Eliminar(dtoCol);
-                if (resultadoEliminar) return Ok(resultadoEliminar);
-                else return BadRequest(resultadoEliminar);
+                bool resultado = false; 
+                
+                if ( this.ManejadorColor.EnUso(dtoCol))
+                {
+                    resultado = this.ManejadorColor.BajaLogica(dtoCol);
+                } else
+                {
+                    resultado = this.ManejadorColor.Eliminar(dtoCol);
+                }
+                   
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
 
             }
             catch (Exception ex)
@@ -118,15 +122,11 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpPut("editarColor")]
-        public IActionResult EditarColor([FromBody] MapperColor mapperColorFront)
+        [HttpPut("modificar")]
+        public IActionResult Modificar([FromBody] DTOColor dtoCol)
         {
             try
             {
-                DTOColor dtoCol = new DTOColor();
-                dtoCol.Nombre = mapperColorFront.Nombre;
-                dtoCol.Id = mapperColorFront.Id;
-
                 bool resultadoEditar = this.ManejadorColor.Modificar(dtoCol);
 
                 if (resultadoEditar) return Ok(resultadoEditar);
@@ -140,13 +140,13 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpGet("TraerColores")]
-        public IActionResult TraerColores()
+        [HttpGet("TraerTOdos")]
+        public IActionResult TraerTodos()
         {
             try
             {
                 List<DTOColor> resultado = (List<DTOColor>)this.ManejadorColor.TraerTodos();
-                if (resultado != null) return Ok(resultado);
+                if (resultado.Count > 0) return Ok(resultado);
                 else return BadRequest(false);
 
             }

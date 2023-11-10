@@ -20,10 +20,10 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO TipoProducto VALUES(@NombreTipoPrenda,@BajaLogica)
+                string sentenciaSql = @"INSERT INTO TipoProducto VALUES(@Nombre,@BajaLogica)
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@NombreTipoPrenda", tipoPrenda.Nombre);
+                cmd.Parameters.AddWithValue("@Nombre", tipoPrenda.Nombre);
                 cmd.Parameters.AddWithValue("@BajaLogica", false);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -97,6 +97,12 @@ namespace Repositorios
                 }
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
+
+                if (tipoPrenda == null || tipoPrenda.Id == 0)
+                {
+                    return null;
+                }
+
                 return tipoPrenda.darDto();
             }
             catch (Exception ex)
@@ -116,9 +122,9 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM Usuario WHERE nombre = @Nombre";
+                string sentenciaSql = @"SELECT * FROM TipoProducto WHERE UPPER(nombre) = @Nombre";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", dtoTipoPrenda.Nombre);
+                cmd.Parameters.AddWithValue("@Nombre", dtoTipoPrenda.Nombre.ToUpper());
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -133,6 +139,12 @@ namespace Repositorios
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
+
+                if (prenda == null || prenda.Id == 0)
+                {
+                    return null;
+                }
+
                 return prenda.darDto();
             }
             catch (Exception ex)
@@ -267,43 +279,6 @@ namespace Repositorios
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return (IEnumerable<DTOTipoPrenda>)tipos;
-            }
-            catch (Exception ex)
-            {
-                trn.Rollback();
-                manejadorConexion.CerrarConexionConClose(cn);
-                this.DescripcionError = ex.Message;
-                throw ex;
-            }
-        }
-
-        public bool VerificarExistenciaCategoria(DTOTipoPrenda DTOCategoria)
-        {
-            TipoPrenda tipoPrenda = new TipoPrenda();
-            tipoPrenda.cargarDeDTO(DTOCategoria);
-
-            cn = manejadorConexion.CrearConexion();
-            SqlTransaction trn = null;
-            try
-            {
-                string sentenciaSql = @"SELECT TOP 1 * FROM TipoProducto WHERE nombre = @Nombre";
-                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", tipoPrenda.Nombre);
-                manejadorConexion.AbrirConexion(cn);
-                trn = cn.BeginTransaction();
-                cmd.Transaction = trn;
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        tipoPrenda.Id = Convert.ToInt64(reader["idTipoProducto"]);
-                        tipoPrenda.Nombre = reader["nombre"].ToString();
-                        tipoPrenda.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
-                    }
-                }
-                trn.Commit();
-                manejadorConexion.CerrarConexionConClose(cn);
-                return true;
             }
             catch (Exception ex)
             {

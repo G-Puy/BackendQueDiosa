@@ -31,7 +31,7 @@ namespace Repositorios
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@Nombre",color.Nombre);
-                cmd.Parameters.AddWithValue("@BajaLogica", color.BajaLogica);
+                cmd.Parameters.AddWithValue("@BajaLogica", false);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -62,14 +62,14 @@ namespace Repositorios
                 string sentenciaSql = @"UPDATE TABLE Color SET bajaLogica = @BajaLogica WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@idColor", color.Id);
-                cmd.Parameters.AddWithValue("@BajaLogica", color.BajaLogica);
+                cmd.Parameters.AddWithValue("@BajaLogica", true);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 int idGenerado = cmd.ExecuteNonQuery();
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return true;
+                return idGenerado > 0;
             }
             catch (Exception ex)
             {
@@ -88,9 +88,9 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM Color WHERE idColor = @idColor";
+                string sentenciaSql = @"SELECT * FROM Color WHERE idColor = @IdColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", dtoColor.Id);
+                cmd.Parameters.AddWithValue("@IdColor", dtoColor.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -98,13 +98,19 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        color.Id = reader.GetInt32(0);
-                        color.Nombre = reader.GetString(1);
-                        color.BajaLogica = reader.GetBoolean(2);
+                        color.Id = Convert.ToInt64(reader["idColor"]);
+                        color.Nombre = Convert.ToString(reader["nombre"]);
+                        color.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
+
+                if (color == null || color.Id == 0)
+                {
+                    return null;
+                }
+
                 return color.darDto();
             }
             catch (Exception ex)
@@ -116,12 +122,7 @@ namespace Repositorios
             }
         }
 
-        public DTOColor BuscarPorId(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DTOColor BuscarPorNombreDeColor(DTOColor dtoColor)
+        public DTOColor BuscarPorNombre(DTOColor dtoColor)
         {
             Color color = new Color();
 
@@ -129,9 +130,9 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM Color WHERE nombre = @Nombre";
+                string sentenciaSql = @"SELECT * FROM Color WHERE UPPER(nombre) = @Nombre";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", dtoColor.Nombre);
+                cmd.Parameters.AddWithValue("@Nombre", dtoColor.Nombre.ToUpper());
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -140,12 +141,18 @@ namespace Repositorios
                     while (reader.Read())
                     {
                         color.Id = Convert.ToInt64(reader["idColor"]);
-                        color.Nombre = reader["nombre"].ToString();
-                        color.BajaLogica = (bool)reader["bajaLogica"];
+                        color.Nombre = Convert.ToString(reader["nombre"]);
+                        color.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
+
+                if (color == null || color.Id == 0)
+                {
+                    return null;
+                }
+
                 return color.darDto();
             }
             catch (Exception ex)
@@ -186,6 +193,40 @@ namespace Repositorios
             }
         }
 
+        public bool EnUso(DTOColor dtoColor)
+        {
+            Color color = new Color();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT TOP 1 idColor FROM Stock WHERE idColor = @IdColor";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@IdColor", dtoColor.Id);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        color.Id = Convert.ToInt64(reader["idColor"]);
+                    }
+                }
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return color != null && color.Id > 0;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public bool Modificar(DTOColor obj)
         {
             Color color = new Color();
@@ -195,9 +236,9 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE Color SET nombre = @nombre WHERE idColor = @idColor";
+                string sentenciaSql = @"UPDATE Color SET nombre = @Nombre WHERE idColor = @IdColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idColor", color.Id);
+                cmd.Parameters.AddWithValue("@IdColor", color.Id);
                 cmd.Parameters.AddWithValue("@Nombre", color.Nombre);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -224,7 +265,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM Color";
+                string sentenciaSql = @"SELECT * FROM Color WHERE bajaLogica == 0";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -235,54 +276,17 @@ namespace Repositorios
                     {
                         Color color = new Color();
 
-                        color.Id = reader.GetInt32(0);
-                        color.Nombre = reader.GetString(1);
-                        color.BajaLogica = reader.GetBoolean(2);
-                        DTOColor dtoTipoC = color.darDto();
+                        color.Id = Convert.ToInt64(reader["idColor"]);
+                        color.Nombre = Convert.ToString(reader["nombre"]);
+                        color.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        DTOColor dtoColor = color.darDto();
 
-                        colores.Add(dtoTipoC);
+                        colores.Add(dtoColor);
                     }
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return (IEnumerable<DTOColor>)colores;
-            }
-            catch (Exception ex)
-            {
-                trn.Rollback();
-                manejadorConexion.CerrarConexionConClose(cn);
-                this.DescripcionError = ex.Message;
-                throw ex;
-            }
-        }
-
-        public bool VerificarExistenciaColor(DTOColor DTOCol)
-        {
-            Color color = new Color();
-            color.cargarDeDTO(DTOCol);
-
-            cn = manejadorConexion.CrearConexion();
-            SqlTransaction trn = null;
-            try
-            {
-                string sentenciaSql = @"SELECT TOP 1 * FROM Color WHERE nombre = @Nombre";
-                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre", color.Id);
-                manejadorConexion.AbrirConexion(cn);
-                trn = cn.BeginTransaction();
-                cmd.Transaction = trn;
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        color.Id = reader.GetInt32(0);
-                        color.Nombre = reader.GetString(1);
-                        color.BajaLogica = reader.GetBoolean(2);
-                    }
-                }
-                trn.Commit();
-                manejadorConexion.CerrarConexionConClose(cn);
-                return true;
             }
             catch (Exception ex)
             {
