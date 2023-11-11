@@ -288,5 +288,10 @@ namespace Repositorios
                 throw ex;
             }
         }
+
+        public bool VerificarExistenciaCategoria(DTOTipoPrenda dtoTipoPrenda)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

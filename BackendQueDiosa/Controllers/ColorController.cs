@@ -140,7 +140,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpGet("TraerTOdos")]
+        [HttpGet("TraerTodos")]
         public IActionResult TraerTodos()
         {
             try
