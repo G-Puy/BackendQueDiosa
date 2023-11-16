@@ -18,7 +18,7 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpPost("alta")]
-        public IActionResult Alta ([FromBody] DTOColor dtoCol)
+        public IActionResult Alta([FromBody] DTOColor dtoCol)
         {
             try
             {
@@ -102,16 +102,17 @@ namespace BackendQueDiosa.Controllers
             {
                 DTOColor dtoCol = new DTOColor();
                 dtoCol.Id = idColor;
-                bool resultado = false; 
-                
-                if ( this.ManejadorColor.EnUso(dtoCol))
+                bool resultado = false;
+
+                if (this.ManejadorColor.EnUso(dtoCol))
                 {
                     resultado = this.ManejadorColor.BajaLogica(dtoCol);
-                } else
+                }
+                else
                 {
                     resultado = this.ManejadorColor.Eliminar(dtoCol);
                 }
-                   
+
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);
 
@@ -127,7 +128,11 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
+                if (this.ManejadorColor.BuscarPorNombre(dtoCol) != null)
+                    return BadRequest(false);
+
                 bool resultado = this.ManejadorColor.Modificar(dtoCol);
+
 
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);
@@ -135,7 +140,6 @@ namespace BackendQueDiosa.Controllers
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

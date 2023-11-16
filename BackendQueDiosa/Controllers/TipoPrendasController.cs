@@ -116,7 +116,7 @@ namespace BackendQueDiosa.Controllers
                 }
                 else
                 {
-                     resultado = this.ManejadorTipoPrenda.Eliminar(dtoTipoPrenda);
+                    resultado = this.ManejadorTipoPrenda.Eliminar(dtoTipoPrenda);
                 }
 
                 if (resultado) return Ok(resultado);
@@ -134,6 +134,9 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
+                if (this.ManejadorTipoPrenda.BuscarPorNombre(dtoCat) != null)
+                    return BadRequest(false);
+
                 bool resultadoEditar = this.ManejadorTipoPrenda.Modificar(dtoCat);
 
                 if (resultadoEditar) return Ok(resultadoEditar);

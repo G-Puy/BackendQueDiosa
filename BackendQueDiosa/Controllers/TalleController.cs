@@ -75,7 +75,7 @@ namespace BackendQueDiosa.Controllers
 
 
         [HttpGet("buscarPorNombre")]
-        public IActionResult BuscarPorNombreDeTalle(string nombreDeTalle)
+        public IActionResult BuscarPorNombre(string nombreDeTalle)
         {
             try
             {
@@ -127,6 +127,9 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
+                if (this.ManejadorTalle.BuscarPorNombre(dtoTal) != null)
+                    return BadRequest(false);
+
                 bool resultado = this.ManejadorTalle.Modificar(dtoTal);
 
                 if (resultado) return Ok(resultado);

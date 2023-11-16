@@ -80,7 +80,7 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize("Administrador")]
         [HttpGet("buscarPorId")]
-        public IActionResult BuscarPorId( int id)
+        public IActionResult BuscarPorId(int id)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize("Administrador")]
         [HttpGet("eliminar")]
-        public IActionResult Eliminar( int id)
+        public IActionResult Eliminar(int id)
         {
             try
             {
@@ -211,12 +211,12 @@ namespace BackendQueDiosa.Controllers
             return token;
         }
 
-        private bool ValidarContrasenia( string password)
+        private bool ValidarContrasenia(string password)
         {
             try
             {
                 Regex reg = new Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*\\W)(?!.*[()'\\[\\],;<>_])(?!.*script).+$");
-                
+
                 return reg.IsMatch(password);
 
             }
@@ -232,7 +232,10 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                bool resultado = this.ManejadorUsuario.Eliminar(dtoUsuario);
+                if (this.ManejadorUsuario.BuscarPorNombre(dtoUsuario) != null)
+                    return BadRequest(false);
+
+                bool resultado = this.ManejadorUsuario.Modificar(dtoUsuario);
 
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);
