@@ -135,12 +135,12 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 if (this.ManejadorTipoPrenda.BuscarPorNombre(dtoCat) != null)
-                    return BadRequest(false);
+                    return BadRequest("Ya existe nombre");
 
                 bool resultadoEditar = this.ManejadorTipoPrenda.Modificar(dtoCat);
 
-                if (resultadoEditar) return Ok(resultadoEditar);
-                else return BadRequest(resultadoEditar);
+                if (resultadoEditar) return Ok("Modificado exitosamente");
+                else return BadRequest("Fallo al modificar");
 
             }
             catch (Exception ex)

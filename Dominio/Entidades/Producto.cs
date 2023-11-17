@@ -27,6 +27,7 @@ namespace Dominio.Entidades
             this.VisibleEnWeb = dtoProducto.VisibleEnWeb;
             this.Nuevo = dtoProducto.Nuevo;
             this.BajaLogica = dtoProducto.BajaLogica;
+            this.Stocks = cargarStocks(dtoProducto.Stocks);
         }
 
         public DTOProducto darDto()
@@ -42,6 +43,18 @@ namespace Dominio.Entidades
             dtoProducto.Nuevo = this.Nuevo;
             dtoProducto.BajaLogica = this.BajaLogica;
             return dtoProducto;
+        }
+
+        private List<Stock> cargarStocks(List<DTOStock> dtos)
+        {
+            List<Stock> stocks = new List<Stock>();
+            foreach (var dto in dtos)
+            {
+                Stock stock = new Stock();
+                stock.cargarDeDTO(dto);
+                stocks.Add(stock);
+            }
+            return stocks;
         }
     }
 }

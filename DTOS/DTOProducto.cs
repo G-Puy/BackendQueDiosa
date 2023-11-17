@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DTOS
+﻿namespace DTOS
 {
     public class DTOProducto
     {
@@ -17,5 +11,6 @@ namespace DTOS
         public bool VisibleEnWeb { get; set; } = false;
         public bool Nuevo { get; set; } = false;
         public bool BajaLogica { get; set; } = false;
+        public List<DTOStock> Stocks { get; set; } = new List<DTOStock>();
     }
 }

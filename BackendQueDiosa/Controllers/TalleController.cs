@@ -128,12 +128,12 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 if (this.ManejadorTalle.BuscarPorNombre(dtoTal) != null)
-                    return BadRequest(false);
+                    return BadRequest("Ya existe nombre");
 
                 bool resultado = this.ManejadorTalle.Modificar(dtoTal);
 
-                if (resultado) return Ok(resultado);
-                else return BadRequest(resultado);
+                if (resultado) return Ok("Modificado exitosamente");
+                else return BadRequest("Fallo al modificar");
 
             }
             catch (Exception ex)

@@ -129,13 +129,13 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 if (this.ManejadorColor.BuscarPorNombre(dtoCol) != null)
-                    return BadRequest(false);
+                    return BadRequest("Ya existe nombre");
 
                 bool resultado = this.ManejadorColor.Modificar(dtoCol);
 
 
-                if (resultado) return Ok(resultado);
-                else return BadRequest(resultado);
+                if (resultado) return Ok("Modificado exitosamente");
+                else return BadRequest("Fallo al modificar");
 
             }
             catch (Exception ex)

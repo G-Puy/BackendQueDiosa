@@ -20,9 +20,11 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO Producto VALUES (@Nombre, @Descripcion, @PrecioActual, @PrecioAnterior, @IdTipoProducto, @VisibleEnWeb, @Nuevo, @BajaLogica)
+                string sentenciaProducto = @"INSERT INTO Producto VALUES (@Nombre, @Descripcion, @PrecioActual, @PrecioAnterior, @IdTipoProducto, @VisibleEnWeb, @Nuevo, @BajaLogica)
                                     SELECT CAST(Scope_IDentity() as int)";
-                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+
+                
+                SqlCommand cmd = new SqlCommand(sentenciaProducto, cn);
                 cmd.Parameters.AddWithValue("@Nombre", producto.Nombre);
                 cmd.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
                 cmd.Parameters.AddWithValue("@PrecioActual", producto.PrecioActual);
@@ -35,6 +37,21 @@ namespace Repositorios
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 int idGenerado = (int)cmd.ExecuteScalar();
+
+                if (producto.Stocks.Count > 0)
+                {
+                    foreach (var stock in producto.Stocks)
+                    {
+                        string sentenciaStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle)
+                                            SELECT CAST(Scope_IDentity() as int)";
+                        cmd = new SqlCommand(sentenciaStock, cn);
+                        cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
+                        cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
+                        cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
+                        idGenerado = (int)cmd.ExecuteScalar();
+                    }
+                }
+
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
