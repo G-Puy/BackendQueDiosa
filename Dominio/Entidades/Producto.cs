@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DTOS;
 
 namespace Dominio.Entidades
 {
@@ -17,5 +13,35 @@ namespace Dominio.Entidades
         public bool VisibleEnWeb { get; set; } = false;
         public bool Nuevo { get; set; } = false;
         public bool BajaLogica { get; set; } = false;
+
+        public List<Stock> Stocks { get; set; } = new List<Stock>();
+
+        public void cargarDeDTO(DTOProducto dtoProducto)
+        {
+            this.Id = dtoProducto.Id;
+            this.Nombre = dtoProducto.Nombre;
+            this.Descripcion = dtoProducto.Descripcion;
+            this.PrecioActual = dtoProducto.PrecioActual;
+            this.PrecioAnterior = dtoProducto.PrecioAnterior;
+            this.IdTipoProducto = dtoProducto.IdTipoProducto;
+            this.VisibleEnWeb = dtoProducto.VisibleEnWeb;
+            this.Nuevo = dtoProducto.Nuevo;
+            this.BajaLogica = dtoProducto.BajaLogica;
+        }
+
+        public DTOProducto darDto()
+        {
+            DTOProducto dtoProducto = new DTOProducto();
+            dtoProducto.Id = this.Id;
+            dtoProducto.Nombre = this.Nombre;
+            dtoProducto.Descripcion = this.Descripcion;
+            dtoProducto.PrecioActual = this.PrecioActual;
+            dtoProducto.PrecioAnterior = this.PrecioAnterior;
+            dtoProducto.IdTipoProducto = this.IdTipoProducto;
+            dtoProducto.VisibleEnWeb = this.VisibleEnWeb;
+            dtoProducto.Nuevo = this.Nuevo;
+            dtoProducto.BajaLogica = this.BajaLogica;
+            return dtoProducto;
+        }
     }
 }
