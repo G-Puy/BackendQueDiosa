@@ -1,6 +1,7 @@
 ﻿using BackendQueDiosa.Mappers;
 using DTOS;
 using IRepositorios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendQueDiosa.Controllers
@@ -18,8 +19,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorTipoPrenda = repInj;
         }
 
-
-
+        [Authorize]
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] DTOTipoPrenda dtoTp)
         {
@@ -40,7 +40,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpPost("bajaLogica")]
         public IActionResult BajaLogica([FromBody] DTOTipoPrenda dtoTipoPrenda)
         {
@@ -57,7 +57,6 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
-
 
         [HttpGet("buscarPorId")]
         public IActionResult BuscarPorId(int id)
@@ -79,7 +78,6 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-
         [HttpGet("buscarPorNombre")]
         public IActionResult BuscarPorNombreDePrenda(string nombreDePrenda)
         {
@@ -100,6 +98,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("eliminar")]
         public IActionResult Eliminar(long idTipoPrenda)
         {
@@ -129,6 +128,8 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
+
+        [Authorize]
         [HttpPut("modificar")]
         public IActionResult Modificar([FromBody] DTOTipoPrenda dtoCat)
         {
@@ -166,11 +167,5 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
-
-
-
-
-
-
     }
 }

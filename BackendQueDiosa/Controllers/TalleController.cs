@@ -1,6 +1,7 @@
 ﻿using BackendQueDiosa.Mappers;
 using DTOS;
 using IRepositorios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendQueDiosa.Controllers
@@ -16,6 +17,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorTalle = repInj;
         }
 
+        [Authorize]
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] DTOTalle dtoTal)
         {
@@ -35,6 +37,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("bajaLogica")]
         public IActionResult BajaLogica([FromBody] DTOTalle dtoTalle)
         {
@@ -94,6 +97,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("eliminar")]
         public IActionResult Eliminar(long idTalle)
         {
@@ -122,6 +126,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("modificar")]
         public IActionResult Modificar([FromBody] DTOTalle dtoTal)
         {

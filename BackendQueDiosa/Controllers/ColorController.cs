@@ -1,6 +1,7 @@
 ﻿using BackendQueDiosa.Mappers;
 using DTOS;
 using IRepositorios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static System.Net.WebRequestMethods;
 
@@ -17,6 +18,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorColor = repInj;
         }
 
+        [Authorize]
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] DTOColor dtoCol)
         {
@@ -36,6 +38,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("bajaLogica")]
         public IActionResult BajaLogica([FromBody] DTOColor dtoColor)
         {
@@ -52,7 +55,6 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
-
 
         [HttpGet("buscarPorId")]
         public IActionResult BuscarPorId(int id)
@@ -74,7 +76,6 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-
         [HttpGet("buscarPorNombre")]
         public IActionResult BuscarPorNombre(string nombreDeColor)
         {
@@ -95,6 +96,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("eliminar")]
         public IActionResult Eliminar(long idColor)
         {
@@ -123,6 +125,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("modificar")]
         public IActionResult Modificar([FromBody] DTOColor dtoCol)
         {

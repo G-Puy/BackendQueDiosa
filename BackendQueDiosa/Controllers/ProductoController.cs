@@ -1,5 +1,6 @@
 ﻿using DTOS;
 using IRepositorios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendQueDiosa.Controllers
@@ -15,6 +16,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorProducto = repInj;
         }
 
+        [Authorize]
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] DTOProducto dtoProducto)
         {
@@ -34,6 +36,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("bajaLogica")]
         public IActionResult BajaLogica([FromBody] DTOProducto dtoProducto)
         {
@@ -91,6 +94,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("eliminar")]
         public IActionResult Eliminar(long id)
         {
@@ -119,6 +123,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("modificar")]
         public IActionResult Modificar([FromBody] DTOProducto dtoProducto)
         {
