@@ -276,7 +276,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE Producto SET nombre = @Nombre WHERE idProducto = @IdProducto";
+                string sentenciaSql = @"UPDATE Producto SET nombre = @Nombre, descripcion = @Descripcion, precioActual = @PrecioActual, precioAnterior = @PrecioAnterior, idTipoProducto = @IdTipoProducto, visibleEnWeb = @VisibleEnWeb, nuevo = @Nuevo WHERE idProducto = @IdProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 cmd.Parameters.AddWithValue("@Nombre", producto.Nombre);
