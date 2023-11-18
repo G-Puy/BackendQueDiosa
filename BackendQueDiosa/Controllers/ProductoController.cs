@@ -145,8 +145,8 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpGet("TraerTalles")]
-        public IActionResult TraerTalles()
+        [HttpGet("TraerTodos")]
+        public IActionResult TraerTodos()
         {
             try
             {
