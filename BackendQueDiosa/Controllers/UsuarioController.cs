@@ -19,7 +19,7 @@ namespace BackendQueDiosa.Controllers
         private IRepositorioUsuario ManejadorUsuario;
         private IConfiguration config;
 
-        public UsuarioController([FromServices] IRepositorioUsuario repInj, IConfiguration config)
+        public UsuarioController([FromServices] IRepositorioUsuario repInj, [FromServices] IConfiguration config)
         {
 
             this.ManejadorUsuario = repInj;

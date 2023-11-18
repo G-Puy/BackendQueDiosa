@@ -1,3 +1,4 @@
+using Conexiones;
 using IRepositorios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +13,8 @@ builder.Services.AddTransient<IRepositorioTipoPrenda, RepositorioTipoPrenda>();
 builder.Services.AddTransient<IRepositorioUsuario, RepositorioUsuario>();
 builder.Services.AddTransient<IRepositorioColor, RepositorioColor>();
 builder.Services.AddTransient<IRepositorioTalle, RepositorioTalle>();
-
+builder.Services.AddTransient<IRepositorioProducto, RepositorioProducto>();
+builder.Services.AddTransient<IRepositorioStock, RepositorioStock>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

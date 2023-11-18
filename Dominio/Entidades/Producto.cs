@@ -1,4 +1,5 @@
 ﻿using DTOS;
+using Microsoft.AspNetCore.Http;
 
 namespace Dominio.Entidades
 {
@@ -13,8 +14,8 @@ namespace Dominio.Entidades
         public bool VisibleEnWeb { get; set; } = false;
         public bool Nuevo { get; set; } = false;
         public bool BajaLogica { get; set; } = false;
-
         public List<Stock> Stocks { get; set; } = new List<Stock>();
+        public List<IFormFile> Imagenes { get; set; } = new List<IFormFile>();
 
         public void cargarDeDTO(DTOProducto dtoProducto)
         {

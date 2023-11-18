@@ -20,12 +20,13 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaProducto = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle)
+                string sentenciaProducto = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle, @Cantidad)
                                             SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaProducto, cn);
                 cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
                 cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
                 cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
+                cmd.Parameters.AddWithValue("@Cantidad", stock.Cantidad);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -70,6 +71,7 @@ namespace Repositorios
                         stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
                         stock.IdColor = Convert.ToInt64(reader["idColor"]);
                         stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                        stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
                     }
                 }
                 trn.Commit();
@@ -136,12 +138,13 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE Stock SET idProducto = @IdProducto, idColor = @IdColor, idTalle = @IdTalle WHERE idStock = @IdStock";
+                string sentenciaSql = @"UPDATE Stock SET idProducto = @IdProducto, idColor = @IdColor, idTalle = @IdTalle, cantidad = @Cantidad  WHERE idStock = @IdStock";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdStock", stock.Id);
                 cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
                 cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
                 cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
+                cmd.Parameters.AddWithValue("@Cantidad", stock.Cantidad);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -181,6 +184,7 @@ namespace Repositorios
                         stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
                         stock.IdColor = Convert.ToInt64(reader["idColor"]);
                         stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                        stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
                         stocks.Add(stock);
                     }
                 }

@@ -2,27 +2,30 @@
 using Dominio.Entidades;
 using DTOS;
 using IRepositorios;
+using Microsoft.AspNetCore.Http;
 using System.Data.SqlClient;
 
 namespace Repositorios
 {
     public class RepositorioProducto : RepositorioBase, IRepositorioProducto
     {
+        private ServicioBlob servicioBlob = new ServicioBlob();
+
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
 
-        public bool Alta(DTOProducto obj)
+        public async Task<bool> Alta(DTOProducto obj, List<IFormFile> imagenes)
         {
             Producto producto = new Producto();
             producto.cargarDeDTO(obj);
+            producto.Imagenes = imagenes;
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
             try
             {
                 string sentenciaProducto = @"INSERT INTO Producto VALUES (@Nombre, @Descripcion, @PrecioActual, @PrecioAnterior, @IdTipoProducto, @VisibleEnWeb, @Nuevo, @BajaLogica)
-                                    SELECT CAST(Scope_IDentity() as int)";
-
+                                            SELECT CAST(Scope_IDentity() as int)";
                 
                 SqlCommand cmd = new SqlCommand(sentenciaProducto, cn);
                 cmd.Parameters.AddWithValue("@Nombre", producto.Nombre);
@@ -50,6 +53,18 @@ namespace Repositorios
                         cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
                         idGenerado = (int)cmd.ExecuteScalar();
                     }
+                }
+
+                foreach (var imagen in producto.Imagenes)
+                {
+                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
+                                                SELECT CAST(Scope_IDentity as int)";
+                    cmd = new SqlCommand(sentenciaImagen, cn);
+                    cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                    idGenerado = (int)cmd.ExecuteScalar();
+
+                    using var stream = imagen.OpenReadStream();
+                    await servicioBlob.UploadBlobAsync($"{producto.Id}i{idGenerado}", stream);
                 }
 
                 trn.Commit();
@@ -121,7 +136,7 @@ namespace Repositorios
                         producto.PrecioAnterior = Convert.ToDouble(reader["precioAnterior"]);
                         producto.IdTipoProducto = Convert.ToInt64(reader["idTipoProducto"]);
                         producto.VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]);
-                        producto.Nuevo = Convert.ToBoolean(reader["Nuevo"]);
+                        producto.Nuevo = Convert.ToBoolean(reader["nuevo"]);
                         producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
@@ -169,7 +184,7 @@ namespace Repositorios
                         producto.PrecioAnterior = Convert.ToDouble(reader["precioAnterior"]);
                         producto.IdTipoProducto = Convert.ToInt64(reader["idTipoProducto"]);
                         producto.VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]);
-                        producto.Nuevo = Convert.ToBoolean(reader["Nuevo"]);
+                        producto.Nuevo = Convert.ToBoolean(reader["nuevo"]);
                         producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
@@ -267,7 +282,7 @@ namespace Repositorios
             }
         }
 
-        public bool Modificar(DTOProducto obj)
+        public bool Modificar(DTOProducto obj, List<IFormFile> imagenes)
         {
             Producto producto = new Producto();
             producto.cargarDeDTO(obj);
@@ -329,7 +344,7 @@ namespace Repositorios
                         producto.PrecioAnterior = Convert.ToDouble(reader["precioAnterior"]);
                         producto.IdTipoProducto = Convert.ToInt64(reader["idTipoProducto"]);
                         producto.VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]);
-                        producto.Nuevo = Convert.ToBoolean(reader["Nuevo"]);
+                        producto.Nuevo = Convert.ToBoolean(reader["nuevo"]);
                         producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
 
                         DTOProducto dtoTipoT = producto.darDto();

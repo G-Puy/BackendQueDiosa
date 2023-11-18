@@ -13,6 +13,7 @@ namespace Dominio.Entidades
         public long IdProducto { get; set; } = 0;
         public long IdColor { get; set; } = 0;
         public long IdTalle { get; set; } = 0;
+        public int Cantidad { get; set; } = 0;
 
         public void cargarDeDTO(DTOStock dtoStock)
         {
@@ -20,6 +21,7 @@ namespace Dominio.Entidades
             this.IdProducto = dtoStock.IdProducto;
             this.IdColor = dtoStock.IdColor;
             this.IdTalle = dtoStock.IdTalle;
+            this.Cantidad = dtoStock.Cantidad;
         }
 
         public DTOStock darDto()
@@ -29,6 +31,7 @@ namespace Dominio.Entidades
             dtoStock.IdProducto = this.IdProducto;
             dtoStock.IdColor = this.IdColor;
             dtoStock.IdTalle = this.IdTalle;
+            dtoStock.Cantidad = this.Cantidad;
             return dtoStock;
         }
     }

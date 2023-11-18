@@ -1,4 +1,5 @@
-﻿using DTOS;
+﻿using Conexiones;
+using DTOS;
 using IRepositorios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,26 +8,28 @@ namespace BackendQueDiosa.Controllers
 {
     [Route("api/[Controller]")]
     [ApiController]
-    public class ProductoController: ControllerBase
+    public class ProductoController : ControllerBase
     {
         private IRepositorioProducto ManejadorProducto { get; set; }
+        private ServicioBlob ServicioBlob { get; set; }
 
-        public ProductoController([FromServices] IRepositorioProducto repInj)
+        public ProductoController([FromServices] IRepositorioProducto repInj, ServicioBlob servicioBlob)
         {
             this.ManejadorProducto = repInj;
+            ServicioBlob = servicioBlob;
         }
 
         [Authorize]
         [HttpPost("alta")]
-        public IActionResult Alta([FromBody] DTOProducto dtoProducto)
+        public async Task<IActionResult> Alta([FromBody] DTOProducto dtoProducto, List<IFormFile> imagenes)
         {
             try
             {
                 if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null) return BadRequest("Nombre ya existe");
 
-                bool resultadoAlta = this.ManejadorProducto.Alta(dtoProducto);
+                Task<bool> resultadoAlta = this.ManejadorProducto.Alta(dtoProducto, imagenes);
 
-                if (resultadoAlta) return Ok("Ingresado exitosamente");
+                if (resultadoAlta.Result) return Ok("Ingresado exitosamente");
                 else return BadRequest("Fallo al ingresar");
 
             }

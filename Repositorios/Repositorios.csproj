@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Conexiones\Conexiones.csproj" />
     <ProjectReference Include="..\Dominio\Dominio.csproj" />
     <ProjectReference Include="..\IRepositorios\IRepositorios.csproj" />

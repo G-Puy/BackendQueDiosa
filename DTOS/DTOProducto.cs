@@ -1,4 +1,6 @@
-﻿namespace DTOS
+﻿using Microsoft.AspNetCore.Http;
+
+namespace DTOS
 {
     public class DTOProducto
     {
