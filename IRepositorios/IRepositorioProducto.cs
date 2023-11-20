@@ -9,18 +9,18 @@ namespace IRepositorios
 
         Task<bool> Alta(DTOProducto obj, List<IFormFile> imagenes);
 
-        bool Eliminar(DTOProducto obj);
+        Task<bool> Eliminar(DTOProducto obj);
 
-        bool Modificar(DTOProducto obj, List<IFormFile> imagenes);
+        Task<bool> Modificar(DTOProducto obj, List<IFormFile> imagenes);
 
-        DTOProducto BuscarPorId(DTOProducto obj);
+        Task<DTOProducto> BuscarPorId(DTOProducto obj);
 
-        IEnumerable<DTOProducto> TraerTodos();
+        Task<IEnumerable<DTOProducto>> TraerTodos();
 
         bool BajaLogica(DTOProducto obj);
 
-        DTOProducto BuscarPorNombre(DTOProducto dtoProducto);
+        Task<DTOProducto> BuscarPorNombre(DTOProducto dtoProducto);
 
-        public bool EnUso(DTOProducto dtoProducto);
+        bool EnUso(DTOProducto dtoProducto);
     }
 }

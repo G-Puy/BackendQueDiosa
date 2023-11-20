@@ -128,14 +128,14 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpPut("modificar")]
-        public IActionResult Modificar([FromBody] DTOProducto dtoProducto)
+        public IActionResult Modificar([FromBody] DTOProducto dtoProducto, List<IFormFile> imagenes)
         {
             try
             {
                 if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null)
                     return BadRequest("Ya existe nombre");
 
-                bool resultado = this.ManejadorProducto.Modificar(dtoProducto);
+                bool resultado = this.ManejadorProducto.Modificar(dtoProducto, imagenes);
 
                 if (resultado) return Ok("Modificado exitosamente");
                 else return BadRequest("Fallo al modificar");

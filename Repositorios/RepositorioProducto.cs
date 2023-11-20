@@ -1,4 +1,5 @@
 ﻿using Conexiones;
+using Dominio;
 using Dominio.Entidades;
 using DTOS;
 using IRepositorios;
@@ -18,7 +19,7 @@ namespace Repositorios
         {
             Producto producto = new Producto();
             producto.cargarDeDTO(obj);
-            producto.Imagenes = imagenes;
+            
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
@@ -55,7 +56,7 @@ namespace Repositorios
                     }
                 }
 
-                foreach (var imagen in producto.Imagenes)
+                foreach (var imagen in imagenes)
                 {
                     string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
                                                 SELECT CAST(Scope_IDentity as int)";
@@ -111,7 +112,7 @@ namespace Repositorios
             }
         }
 
-        public DTOProducto BuscarPorId(DTOProducto obj)
+        public async Task<DTOProducto> BuscarPorId(DTOProducto obj)
         {
             Producto producto = new Producto();
 
@@ -140,6 +141,30 @@ namespace Repositorios
                         producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
+
+                string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                cmd = new SqlCommand(sentenciaImagenes, cn);
+                cmd.Parameters.AddWithValue("@IdProducto", obj.Id);
+
+                List<Imagen> imagenes = new List<Imagen>();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Imagen imagen = new Imagen();
+                        imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                        imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                        imagenes.Add(imagen);
+                    }
+                }
+
+                foreach (Imagen imagen in imagenes)
+                {
+                    using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                    producto.Imagenes.Add(stream);
+                }
+
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
 
@@ -159,7 +184,7 @@ namespace Repositorios
             }
         }
 
-        public DTOProducto BuscarPorNombre(DTOProducto dtoProducto)
+        public async Task<DTOProducto> BuscarPorNombre(DTOProducto dtoProducto)
         {
             Producto producto = new Producto();
 
@@ -188,6 +213,30 @@ namespace Repositorios
                         producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                     }
                 }
+
+                string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                cmd = new SqlCommand(sentenciaImagenes, cn);
+                cmd.Parameters.AddWithValue("@IdProducto", dtoProducto.Id);
+
+                List<Imagen> imagenes = new List<Imagen>();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Imagen imagen = new Imagen();
+                        imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                        imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                        imagenes.Add(imagen);
+                    }
+                }
+
+                foreach (Imagen imagen in imagenes)
+                {
+                    using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                    producto.Imagenes.Add(stream);
+                }
+
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
 
@@ -207,7 +256,7 @@ namespace Repositorios
             }
         }
 
-        public bool Eliminar(DTOProducto obj)
+        public async Task<bool> Eliminar(DTOProducto obj)
         {
             Producto producto = new Producto();
             producto.cargarDeDTO(obj);
@@ -234,6 +283,33 @@ namespace Repositorios
                 cmd = new SqlCommand(sentenciaProducto, cn);
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 affected = cmd.ExecuteNonQuery();
+
+                string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                cmd = new SqlCommand(sentenciaImagenes, cn);
+                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+
+                List<Imagen> imagenes = new List<Imagen>();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Imagen imagen = new Imagen();
+                        imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                        imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                        imagenes.Add(imagen);
+                    }
+                }
+
+                string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
+                cmd = new SqlCommand(sentenciaEliminarImagenes, cn);
+                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                affected = cmd.ExecuteNonQuery();
+
+                foreach (Imagen imagen in imagenes)
+                {
+                    await servicioBlob.DeleteBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                }
 
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
@@ -282,7 +358,7 @@ namespace Repositorios
             }
         }
 
-        public bool Modificar(DTOProducto obj, List<IFormFile> imagenes)
+        public async Task<bool> Modificar(DTOProducto obj, List<IFormFile> imagenesDTO)
         {
             Producto producto = new Producto();
             producto.cargarDeDTO(obj);
@@ -305,6 +381,46 @@ namespace Repositorios
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 int idGenerado = cmd.ExecuteNonQuery();
+
+                string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                cmd = new SqlCommand(sentenciaImagenes, cn);
+                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+
+                List<Imagen> imagenes = new List<Imagen>();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Imagen imagen = new Imagen();
+                        imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                        imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                        imagenes.Add(imagen);
+                    }
+                }
+
+                string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
+                cmd = new SqlCommand(sentenciaEliminarImagenes, cn);
+                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                int affected = cmd.ExecuteNonQuery();
+
+                foreach (Imagen imagen in imagenes)
+                {
+                    await servicioBlob.DeleteBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                }
+
+                foreach (var imagen in imagenesDTO)
+                {
+                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
+                                                SELECT CAST(Scope_IDentity as int)";
+                    cmd = new SqlCommand(sentenciaImagen, cn);
+                    cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                    idGenerado = (int)cmd.ExecuteScalar();
+
+                    using var stream = imagen.OpenReadStream();
+                    await servicioBlob.UploadBlobAsync($"{producto.Id}i{idGenerado}", stream);
+                }
+
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
@@ -318,7 +434,7 @@ namespace Repositorios
             }
         }
 
-        public IEnumerable<DTOProducto> TraerTodos()
+        public async Task<IEnumerable<DTOProducto>> TraerTodos()
         {
             List<DTOProducto> productos = new List<DTOProducto>();
 
@@ -352,6 +468,33 @@ namespace Repositorios
                         productos.Add(dtoTipoT);
                     }
                 }
+
+                foreach (DTOProducto producto in productos)
+                {
+                    string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                    cmd = new SqlCommand(sentenciaImagenes, cn);
+                    cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+
+                    List<Imagen> imagenes = new List<Imagen>();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Imagen imagen = new Imagen();
+                            imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                            imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            imagenes.Add(imagen);
+                        }
+                    }
+
+                    foreach (Imagen imagen in imagenes)
+                    {
+                        using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                        producto.Imagenes.Add(stream);
+                    }
+                }
+
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return productos;

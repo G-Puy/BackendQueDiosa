@@ -14,5 +14,6 @@ namespace DTOS
         public bool Nuevo { get; set; } = false;
         public bool BajaLogica { get; set; } = false;
         public List<DTOStock> Stocks { get; set; } = new List<DTOStock>();
+        public List<Stream> Imagenes { get; set; } = new List<Stream>();
     }
 }
