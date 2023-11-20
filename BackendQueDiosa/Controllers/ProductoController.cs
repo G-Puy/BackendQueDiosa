@@ -65,7 +65,7 @@ namespace BackendQueDiosa.Controllers
                 DTOProducto dtoProducto = new DTOProducto();
                 dtoProducto.Id = id;
 
-                DTOProducto resultado = this.ManejadorProducto.BuscarPorId(dtoProducto);
+                DTOProducto resultado = this.ManejadorProducto.BuscarPorId(dtoProducto).Result;
 
                 if (resultado != null && resultado.Id > 0) return Ok(resultado);
                 else return BadRequest(resultado);
@@ -85,7 +85,7 @@ namespace BackendQueDiosa.Controllers
                 DTOProducto dtoProducto = new DTOProducto();
                 dtoProducto.Nombre = nombre;
 
-                DTOProducto resultado = this.ManejadorProducto.BuscarPorNombre(dtoProducto);
+                DTOProducto resultado = this.ManejadorProducto.BuscarPorNombre(dtoProducto).Result;
 
                 if (resultado != null && resultado.Id > 0) return Ok(resultado);
                 else return BadRequest(resultado);
@@ -113,7 +113,7 @@ namespace BackendQueDiosa.Controllers
                 }
                 else
                 {
-                    resultado = this.ManejadorProducto.Eliminar(dtoProducto);
+                    resultado = this.ManejadorProducto.Eliminar(dtoProducto).Result;
                 }
 
                 if (resultado) return Ok(resultado);
@@ -135,7 +135,7 @@ namespace BackendQueDiosa.Controllers
                 if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null)
                     return BadRequest("Ya existe nombre");
 
-                bool resultado = this.ManejadorProducto.Modificar(dtoProducto, imagenes);
+                bool resultado = this.ManejadorProducto.Modificar(dtoProducto, imagenes).Result;
 
                 if (resultado) return Ok("Modificado exitosamente");
                 else return BadRequest("Fallo al modificar");
@@ -153,7 +153,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                List<DTOProducto> resultado = (List<DTOProducto>)this.ManejadorProducto.TraerTodos();
+                List<DTOProducto> resultado = (List<DTOProducto>)this.ManejadorProducto.TraerTodos().Result;
                 if (resultado.Count > 0) return Ok(resultado);
                 else return BadRequest(false);
 
@@ -163,5 +163,65 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
+
+        //EndPoints de prueba
+
+        [HttpGet("PRUEBATraerImagenes")]
+        public IActionResult TraerImagenes(int idProducto)
+        {
+            try
+            {
+                DTOProducto resultado = this.ManejadorProducto.TraerTodosImagenes(idProducto).Result;
+                if (resultado.Imagenes.Count > 0) return Ok(resultado);
+                else return BadRequest(false);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpPost("PRUEBAInsertarEnBlob")]
+        public IActionResult InsertarEnBlob(List<IFormFile> imagenes, int idProducto)
+        {
+            try
+            {
+                bool resultado = this.ManejadorProducto.InsertarEnBlob(imagenes, idProducto).Result;
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        [HttpGet("PRUEBATraerStreams")]
+        public IActionResult TraerStreams(List<IFormFile> imagenes)
+        {
+            try
+            {
+                List<Stream> resultado = new List<Stream>();
+
+                foreach (var imagen in imagenes)
+                {
+                    using var stream = imagen.OpenReadStream();
+                    resultado.Add(stream);
+                }
+
+                if (resultado.Count > 0) return Ok(resultado);
+                else return BadRequest(false);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
     }
 }

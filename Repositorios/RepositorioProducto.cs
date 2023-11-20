@@ -507,5 +507,90 @@ namespace Repositorios
                 throw ex;
             }
         }
+
+        public async Task<DTOProducto> TraerTodosImagenes(int idProducto)
+        {
+            DTOProducto producto = new DTOProducto();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                 string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                SqlCommand cmd = new SqlCommand(sentenciaImagenes, cn);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                    cmd.Parameters.AddWithValue("@IdProducto", idProducto);
+
+                    List<Imagen> imagenes = new List<Imagen>();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Imagen imagen = new Imagen();
+                            imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                            imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            imagenes.Add(imagen);
+                        }
+                    }
+
+                    foreach (Imagen imagen in imagenes)
+                    {
+                        using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                        producto.Imagenes.Add(stream);
+                    }
+                
+
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return producto;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
+        public async Task<bool> InsertarEnBlob(List<IFormFile> imagenes, int productoId)
+        {
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                SqlCommand cmd = new SqlCommand();
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+
+                int idGenerado = 0;
+                foreach (var imagen in imagenes)
+                {
+                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
+                                                SELECT CAST(Scope_IDentity as int)";
+                    cmd = new SqlCommand(sentenciaImagen, cn);
+                    cmd.Parameters.AddWithValue("@IdProducto", productoId);
+                    idGenerado = (int)cmd.ExecuteScalar();
+
+                    using var stream = imagen.OpenReadStream();
+                    await servicioBlob.UploadBlobAsync($"{productoId}i{idGenerado}", stream);
+                }
+
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
     }
 }
