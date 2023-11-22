@@ -140,7 +140,7 @@ namespace BackendQueDiosa.Controllers
 
                 bool resultadoEditar = this.ManejadorTipoPrenda.Modificar(dtoCat);
 
-                if (resultadoEditar) return Ok("Modificado exitosamente");
+                if (resultadoEditar) return Ok(true);
                 else return BadRequest("Fallo al modificar");
 
             }
