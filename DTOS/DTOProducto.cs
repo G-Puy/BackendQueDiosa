@@ -11,6 +11,7 @@ namespace DTOS
         public double PrecioAnterior { get; set; } = 0;
         public long IdTipoProducto { get; set; } = 0;
         public bool VisibleEnWeb { get; set; } = false;
+        public string GuiaTalles { get; set; } = "";
         public bool Nuevo { get; set; } = false;
         public bool BajaLogica { get; set; } = false;
         public List<DTOStock> Stocks { get; set; } = new List<DTOStock>();
