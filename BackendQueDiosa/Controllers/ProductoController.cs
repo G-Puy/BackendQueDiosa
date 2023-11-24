@@ -11,12 +11,10 @@ namespace BackendQueDiosa.Controllers
     public class ProductoController : ControllerBase
     {
         private IRepositorioProducto ManejadorProducto { get; set; }
-        private ServicioBlob ServicioBlob { get; set; }
 
-        public ProductoController([FromServices] IRepositorioProducto repInj, ServicioBlob servicioBlob)
+        public ProductoController([FromServices] IRepositorioProducto repInj)
         {
             this.ManejadorProducto = repInj;
-            ServicioBlob = servicioBlob;
         }
 
         [Authorize]
@@ -188,6 +186,22 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 bool resultado = this.ManejadorProducto.InsertarEnBlob(imagenes, idProducto).Result;
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpPost("PRUEBAInsertarEnBlobSINBD")]
+        public IActionResult InsertarEnBlobSINBD(List<IFormFile> imagenes, int idProducto)
+        {
+            try
+            {
+                bool resultado = this.ManejadorProducto.InsertarEnBlobSINBD(imagenes, idProducto).Result;
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);
 

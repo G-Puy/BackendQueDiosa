@@ -10,7 +10,7 @@ namespace Repositorios
 {
     public class RepositorioProducto : RepositorioBase, IRepositorioProducto
     {
-        private ServicioBlob servicioBlob = new ServicioBlob();
+        private ServicioBlobAzure servicioBlob = new ServicioBlobAzure();
 
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
@@ -48,7 +48,7 @@ namespace Repositorios
                     {
                         string sentenciaStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle)
                                             SELECT CAST(Scope_IDentity() as int)";
-                        cmd = new SqlCommand(sentenciaStock, cn);
+                        cmd.CommandText = sentenciaStock;
                         cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
                         cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
                         cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
@@ -60,7 +60,7 @@ namespace Repositorios
                 {
                     string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
                                                 SELECT CAST(Scope_IDentity as int)";
-                    cmd = new SqlCommand(sentenciaImagen, cn);
+                    cmd.CommandText = sentenciaImagen;
                     cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                     idGenerado = (int)cmd.ExecuteScalar();
 
@@ -143,7 +143,7 @@ namespace Repositorios
                 }
 
                 string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
-                cmd = new SqlCommand(sentenciaImagenes, cn);
+                cmd.CommandText = sentenciaImagenes;
                 cmd.Parameters.AddWithValue("@IdProducto", obj.Id);
 
                 List<Imagen> imagenes = new List<Imagen>();
@@ -215,7 +215,7 @@ namespace Repositorios
                 }
 
                 string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
-                cmd = new SqlCommand(sentenciaImagenes, cn);
+                cmd.CommandText = sentenciaImagenes;
                 cmd.Parameters.AddWithValue("@IdProducto", dtoProducto.Id);
 
                 List<Imagen> imagenes = new List<Imagen>();
@@ -276,16 +276,16 @@ namespace Repositorios
                 cmd.Transaction = trn;
                 int affected = cmd.ExecuteNonQuery();
 
-                cmd = new SqlCommand(sentenciaStock, cn);
+                cmd.CommandText = sentenciaStock;
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 affected = cmd.ExecuteNonQuery();
 
-                cmd = new SqlCommand(sentenciaProducto, cn);
+                cmd.CommandText = sentenciaProducto;
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 affected = cmd.ExecuteNonQuery();
 
                 string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
-                cmd = new SqlCommand(sentenciaImagenes, cn);
+                cmd.CommandText = sentenciaImagenes;
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
 
                 List<Imagen> imagenes = new List<Imagen>();
@@ -302,7 +302,7 @@ namespace Repositorios
                 }
 
                 string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
-                cmd = new SqlCommand(sentenciaEliminarImagenes, cn);
+                cmd.CommandText = sentenciaEliminarImagenes;
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 affected = cmd.ExecuteNonQuery();
 
@@ -383,7 +383,7 @@ namespace Repositorios
                 int idGenerado = cmd.ExecuteNonQuery();
 
                 string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
-                cmd = new SqlCommand(sentenciaImagenes, cn);
+                cmd.CommandText = sentenciaImagenes;
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
 
                 List<Imagen> imagenes = new List<Imagen>();
@@ -400,7 +400,7 @@ namespace Repositorios
                 }
 
                 string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
-                cmd = new SqlCommand(sentenciaEliminarImagenes, cn);
+                cmd.CommandText = sentenciaEliminarImagenes;
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 int affected = cmd.ExecuteNonQuery();
 
@@ -413,7 +413,7 @@ namespace Repositorios
                 {
                     string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
                                                 SELECT CAST(Scope_IDentity as int)";
-                    cmd = new SqlCommand(sentenciaImagen, cn);
+                    cmd.CommandText = sentenciaImagen;
                     cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                     idGenerado = (int)cmd.ExecuteScalar();
 
@@ -472,7 +472,7 @@ namespace Repositorios
                 foreach (DTOProducto producto in productos)
                 {
                     string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
-                    cmd = new SqlCommand(sentenciaImagenes, cn);
+                    cmd.CommandText = sentenciaImagenes;
                     cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
 
                     List<Imagen> imagenes = new List<Imagen>();
@@ -563,6 +563,7 @@ namespace Repositorios
             try
             {
                 SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cn;
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -572,7 +573,7 @@ namespace Repositorios
                 {
                     string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
                                                 SELECT CAST(Scope_IDentity as int)";
-                    cmd = new SqlCommand(sentenciaImagen, cn);
+                    cmd.CommandText = sentenciaImagen;
                     cmd.Parameters.AddWithValue("@IdProducto", productoId);
                     idGenerado = (int)cmd.ExecuteScalar();
 
@@ -588,6 +589,23 @@ namespace Repositorios
             {
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
+        public async Task<bool> InsertarEnBlobSINBD(List<IFormFile> imagenes, int productoId)
+        {
+           try {
+                foreach (IFormFile imagen in imagenes)
+                {
+                    using var stream = imagen.OpenReadStream();
+                    await servicioBlob.UploadBlobAsync($"{productoId}i{1}", stream);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
                 this.DescripcionError = ex.Message;
                 throw ex;
             }
