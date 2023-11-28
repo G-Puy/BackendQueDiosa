@@ -1,8 +1,10 @@
 ﻿using Conexiones;
 using DTOS;
+using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace BackendQueDiosa.Controllers
 {
@@ -17,25 +19,51 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorProducto = repInj;
         }
 
-        [Authorize]
+        //[Authorize]
+        //[HttpPost("alta")]
+        //public async Task<IActionResult> Alta([FromBody] DTOProducto dtoProducto, List<IFormFile> imagenes)
+        //{
+        //    try
+        //    {
+        //        if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null) return BadRequest("Nombre ya existe");
+
+        //        Task<bool> resultadoAlta = this.ManejadorProducto.Alta(dtoProducto, imagenes);
+
+        //        if (resultadoAlta.Result) return Ok("Ingresado exitosamente");
+        //        else return BadRequest("Fallo al ingresar");
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
+
+
         [HttpPost("alta")]
-        public async Task<IActionResult> Alta([FromBody] DTOProducto dtoProducto, List<IFormFile> imagenes)
+        public async Task<IActionResult> CargarProducto([FromForm] IFormCollection dataEnvio)
         {
             try
             {
-                if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null) return BadRequest("Nombre ya existe");
+                var productoJson = dataEnvio["producto"].ToString();
+                Console.WriteLine(productoJson);
+                DTOProductoEnvio producto = JsonConvert.DeserializeObject<DTOProductoEnvio>(productoJson);
+                var archivos = dataEnvio.Files;
 
-                Task<bool> resultadoAlta = this.ManejadorProducto.Alta(dtoProducto, imagenes);
+                // Aquí, maneja la lógica para guardar las imágenes y el producto
 
-                if (resultadoAlta.Result) return Ok("Ingresado exitosamente");
-                else return BadRequest("Fallo al ingresar");
-
+                return Ok();
             }
             catch (Exception ex)
             {
-                throw ex;
+
+                throw;
             }
+            
         }
+
+
+
 
         [Authorize]
         [HttpPost("bajaLogica")]
@@ -201,7 +229,9 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                bool resultado = this.ManejadorProducto.InsertarEnBlobSINBD(imagenes, idProducto).Result;
+                //TODO: ARREGLAR
+                //bool resultado = this.ManejadorProducto.InsertarEnBlobSINBD(imagenes, idProducto).Result;
+                bool resultado = false;
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);
 
