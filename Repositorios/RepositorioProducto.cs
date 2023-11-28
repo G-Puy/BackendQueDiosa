@@ -15,7 +15,7 @@ namespace Repositorios
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
 
-        public async Task<bool> Alta(DTOProducto obj, List<IFormFile> imagenes)
+        public async Task<bool> Alta(DTOProducto obj, IFormFileCollection imagenes)
         {
             Producto producto = new Producto();
             producto.cargarDeDTO(obj);
@@ -25,8 +25,8 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaProducto = @"INSERT INTO Producto VALUES (@Nombre, @Descripcion, @PrecioActual, @PrecioAnterior, @IdTipoProducto, @VisibleEnWeb, @Nuevo, @BajaLogica)
-                                            SELECT CAST(Scope_IDentity() as int)";
+                string sentenciaProducto = @"INSERT INTO Producto VALUES (@Nombre, @Descripcion, @PrecioActual, @PrecioAnterior, @IdTipoProducto, @VisibleEnWeb, @Nuevo, @BajaLogica);
+                                            SELECT CAST(Scope_IDentity() as int);";
                 
                 SqlCommand cmd = new SqlCommand(sentenciaProducto, cn);
                 cmd.Parameters.AddWithValue("@Nombre", producto.Nombre);
@@ -46,8 +46,8 @@ namespace Repositorios
                 {
                     foreach (var stock in producto.Stocks)
                     {
-                        string sentenciaStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle)
-                                            SELECT CAST(Scope_IDentity() as int)";
+                        string sentenciaStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle);
+                                            SELECT CAST(Scope_IDentity() as int);";
                         cmd.CommandText = sentenciaStock;
                         cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
                         cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
@@ -58,8 +58,8 @@ namespace Repositorios
 
                 foreach (var imagen in imagenes)
                 {
-                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
-                                                SELECT CAST(Scope_IDentity as int)";
+                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto);
+                                                SELECT CAST(Scope_IDentity as int);";
                     cmd.CommandText = sentenciaImagen;
                     cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                     idGenerado = (int)cmd.ExecuteScalar();
@@ -358,7 +358,7 @@ namespace Repositorios
             }
         }
 
-        public async Task<bool> Modificar(DTOProducto obj, List<IFormFile> imagenesDTO)
+        public async Task<bool> Modificar(DTOProducto obj, IFormFileCollection imagenesDTO)
         {
             Producto producto = new Producto();
             producto.cargarDeDTO(obj);
@@ -516,7 +516,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                 string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                 string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaImagenes, cn);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -571,8 +571,8 @@ namespace Repositorios
                 int idGenerado = 0;
                 foreach (var imagen in imagenes)
                 {
-                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
-                                                SELECT CAST(Scope_IDentity as int)";
+                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto);
+                                               SELECT CAST(Scope_IDentity() as int);";
                     cmd.CommandText = sentenciaImagen;
                     cmd.Parameters.AddWithValue("@IdProducto", productoId);
                     idGenerado = (int)cmd.ExecuteScalar();

@@ -7,11 +7,11 @@ namespace IRepositorios
     public interface IRepositorioProducto
     {
 
-        Task<bool> Alta(DTOProducto obj, List<IFormFile> imagenes);
+        Task<bool> Alta(DTOProducto obj, IFormFileCollection imagenes);
 
         Task<bool> Eliminar(DTOProducto obj);
 
-        Task<bool> Modificar(DTOProducto obj, List<IFormFile> imagenes);
+        Task<bool> Modificar(DTOProducto obj, IFormFileCollection imagenes);
 
         Task<DTOProducto> BuscarPorId(DTOProducto obj);
 

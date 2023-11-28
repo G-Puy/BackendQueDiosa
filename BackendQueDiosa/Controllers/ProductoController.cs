@@ -18,28 +18,7 @@ namespace BackendQueDiosa.Controllers
         {
             this.ManejadorProducto = repInj;
         }
-
-        //[Authorize]
-        //[HttpPost("alta")]
-        //public async Task<IActionResult> Alta([FromBody] DTOProducto dtoProducto, List<IFormFile> imagenes)
-        //{
-        //    try
-        //    {
-        //        if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null) return BadRequest("Nombre ya existe");
-
-        //        Task<bool> resultadoAlta = this.ManejadorProducto.Alta(dtoProducto, imagenes);
-
-        //        if (resultadoAlta.Result) return Ok("Ingresado exitosamente");
-        //        else return BadRequest("Fallo al ingresar");
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
-
-
+        [Authorize]
         [HttpPost("alta")]
         public async Task<IActionResult> CargarProducto([FromForm] IFormCollection dataEnvio)
         {
@@ -50,9 +29,14 @@ namespace BackendQueDiosa.Controllers
                 DTOProductoEnvio producto = JsonConvert.DeserializeObject<DTOProductoEnvio>(productoJson);
                 var archivos = dataEnvio.Files;
 
-                // Aquí, maneja la lógica para guardar las imágenes y el producto
+                if (resultadoAlta.Result) return Ok("Ingresado exitosamente");
+                else return BadRequest("Fallo al ingresar");
 
-                return Ok();
+                Task<bool> resultadoAlta = this.ManejadorProducto.Alta(dtoProducto, imagenes);
+
+                if (resultadoAlta.Result) return Ok("Ingresado exitosamente");
+                else return BadRequest("Fallo al ingresar");
+
             }
             catch (Exception ex)
             {
@@ -154,10 +138,16 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpPut("modificar")]
-        public IActionResult Modificar([FromBody] DTOProducto dtoProducto, List<IFormFile> imagenes)
+        public IActionResult Modificar([FromBody]IFormCollection dtoModificar)
         {
             try
             {
+                var productoJson = dtoModificar["producto"].ToString();
+                Console.WriteLine(productoJson);
+                DTOProducto dtoProducto = JsonConvert.DeserializeObject<DTOProducto>(productoJson);
+                var imagenes = dtoModificar.Files;
+
+
                 if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null)
                     return BadRequest("Ya existe nombre");
 
