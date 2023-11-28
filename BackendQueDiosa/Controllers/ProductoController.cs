@@ -1,4 +1,5 @@
 ﻿using Conexiones;
+using Dominio;
 using DTOS;
 using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
@@ -18,7 +19,7 @@ namespace BackendQueDiosa.Controllers
         {
             this.ManejadorProducto = repInj;
         }
-        [Authorize]
+
         [HttpPost("alta")]
         public async Task<IActionResult> CargarProducto([FromForm] IFormCollection dataEnvio)
         {
@@ -29,25 +30,45 @@ namespace BackendQueDiosa.Controllers
                 DTOProductoEnvio producto = JsonConvert.DeserializeObject<DTOProductoEnvio>(productoJson);
                 var archivos = dataEnvio.Files;
 
+                DTOProducto dtoProducto = new DTOProducto();
+                dtoProducto.Nombre = producto.Nombre;
+                dtoProducto.PrecioAnterior = producto.PrecioAnterior;
+                dtoProducto.Nuevo = producto.Nuevo;
+                dtoProducto.Descripcion = producto.Descripcion;
+                dtoProducto.PrecioActual = producto.PrecioActual;
+                dtoProducto.IdTipoProducto = producto.IdTipoProducto;
+                dtoProducto.BajaLogica = producto.BajaLogica;
+                dtoProducto.GuiaTalles = producto.GuiaTalles;
+
+                DTOStockEnvio stock = producto.Stock;
+
+                foreach ( DTOTalleEnvio talle in stock.Talles)
+                {
+                    foreach (DTOColorEnvio color in talle.Colores)
+                    {
+                        DTOStock dtoStock =  new DTOStock();
+                        dtoStock.IdProducto = stock.IdProducto;
+                        dtoStock.IdColor = color.Id;
+                        dtoStock.IdTalle = talle.Id;
+                        dtoStock.Cantidad = color.Cantidad;
+
+                        dtoProducto.Stocks.Add(dtoStock);
+                    }
+                }
+
+
+                Task<bool> resultadoAlta = this.ManejadorProducto.Alta(dtoProducto, archivos);
+
                 if (resultadoAlta.Result) return Ok("Ingresado exitosamente");
                 else return BadRequest("Fallo al ingresar");
-
-                Task<bool> resultadoAlta = this.ManejadorProducto.Alta(dtoProducto, imagenes);
-
-                if (resultadoAlta.Result) return Ok("Ingresado exitosamente");
-                else return BadRequest("Fallo al ingresar");
-
             }
             catch (Exception ex)
             {
 
                 throw;
             }
-            
+
         }
-
-
-
 
         [Authorize]
         [HttpPost("bajaLogica")]
@@ -138,16 +159,10 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpPut("modificar")]
-        public IActionResult Modificar([FromBody]IFormCollection dtoModificar)
+        public IActionResult Modificar([FromBody] DTOProducto dtoProducto, List<IFormFile> imagenes)
         {
             try
             {
-                var productoJson = dtoModificar["producto"].ToString();
-                Console.WriteLine(productoJson);
-                DTOProducto dtoProducto = JsonConvert.DeserializeObject<DTOProducto>(productoJson);
-                var imagenes = dtoModificar.Files;
-
-
                 if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null)
                     return BadRequest("Ya existe nombre");
 

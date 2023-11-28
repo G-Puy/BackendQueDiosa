@@ -9,7 +9,7 @@ namespace DTOS.DTOSProductoFrontBack
     public class DTOColorEnvio
     {
         public long Id { get; set; } = -1;
-        public long Cantidad { get; set; } = 0;
+        public int Cantidad { get; set; } = 0;
         public string NombreColor { get; set; } = "";
     }
 }
