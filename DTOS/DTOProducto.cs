@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DTOS.DTOSProductoFrontBack;
+using Microsoft.AspNetCore.Http;
 
 namespace DTOS
 {

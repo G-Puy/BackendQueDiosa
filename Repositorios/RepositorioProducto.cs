@@ -19,7 +19,7 @@ namespace Repositorios
         {
             Producto producto = new Producto();
             producto.cargarDeDTO(obj);
-            
+
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
@@ -27,7 +27,7 @@ namespace Repositorios
             {
                 string sentenciaProducto = @"INSERT INTO Producto VALUES (@Nombre, @Descripcion, @PrecioActual, @PrecioAnterior, @IdTipoProducto, @VisibleEnWeb, @Nuevo, @BajaLogica);
                                             SELECT CAST(Scope_IDentity() as int);";
-                
+
                 SqlCommand cmd = new SqlCommand(sentenciaProducto, cn);
                 cmd.Parameters.AddWithValue("@Nombre", producto.Nombre);
                 cmd.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
@@ -474,11 +474,12 @@ namespace Repositorios
                     }
                 }
 
-                foreach (DTOProducto producto in productos)
+                foreach (DTOProducto dtoProducto in productos)
                 {
-                    string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                    string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto;";
                     cmd.CommandText = sentenciaImagenes;
-                    cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", dtoProducto.Id);
 
                     List<Imagen> imagenes = new List<Imagen>();
 
@@ -496,7 +497,26 @@ namespace Repositorios
                     foreach (Imagen imagen in imagenes)
                     {
                         using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
-                        producto.Imagenes.Add(stream);
+                        dtoProducto.Imagenes.Add(stream);
+                    }
+
+                    string sentenciaStock = @"SELECT * FROM Stock WHERE idProducto = @IdProducto;";
+                    cmd.CommandText = sentenciaStock;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", dtoProducto.Id);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Stock stock = new Stock();
+                            stock.Id = Convert.ToInt64(reader["idImagen"]);
+                            stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                            stock.IdColor = Convert.ToInt64(reader["idColor"]);
+                            stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                            dtoProducto.Stocks.Add(stock.darDto());
+                        }
                     }
                 }
 
@@ -521,32 +541,32 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                 string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
+                string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaImagenes, cn);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
-                    cmd.Parameters.AddWithValue("@IdProducto", idProducto);
+                cmd.Parameters.AddWithValue("@IdProducto", idProducto);
 
-                    List<Imagen> imagenes = new List<Imagen>();
+                List<Imagen> imagenes = new List<Imagen>();
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            Imagen imagen = new Imagen();
-                            imagen.Id = Convert.ToInt64(reader["idImagen"]);
-                            imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
-                            imagenes.Add(imagen);
-                        }
+                        Imagen imagen = new Imagen();
+                        imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                        imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                        imagenes.Add(imagen);
                     }
+                }
 
-                    foreach (Imagen imagen in imagenes)
-                    {
-                        using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
-                        producto.Imagenes.Add(stream);
-                    }
-                
+                foreach (Imagen imagen in imagenes)
+                {
+                    using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                    producto.Imagenes.Add(stream);
+                }
+
 
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
@@ -601,7 +621,8 @@ namespace Repositorios
 
         public async Task<bool> InsertarEnBlobSINBD(List<IFormFile> imagenes, int productoId)
         {
-           try {
+            try
+            {
                 foreach (IFormFile imagen in imagenes)
                 {
                     using var stream = imagen.OpenReadStream();

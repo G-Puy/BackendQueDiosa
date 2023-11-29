@@ -21,7 +21,7 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpPost("alta")]
-        public async Task<IActionResult> CargarProducto([FromForm] IFormCollection dataEnvio)
+        public async Task<IActionResult> Alta([FromForm] IFormCollection dataEnvio)
         {
             try
             {
