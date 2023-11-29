@@ -46,12 +46,13 @@ namespace Repositorios
                 {
                     foreach (var stock in producto.Stocks)
                     {
-                        string sentenciaStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle);
+                        string sentenciaStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle, @Cantidad);
                                             SELECT CAST(Scope_IDentity() as int);";
                         cmd.CommandText = sentenciaStock;
                         cmd.Parameters.AddWithValue("@IdProducto", idGeneradoProducto);
                         cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
                         cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
+                        cmd.Parameters.AddWithValue("@Cantidad", stock.Cantidad);
                         int idGeneradoStock = (int)cmd.ExecuteScalar();
                     }
                 }
