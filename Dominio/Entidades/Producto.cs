@@ -14,6 +14,7 @@ namespace Dominio.Entidades
         public bool VisibleEnWeb { get; set; } = false;
         public bool Nuevo { get; set; } = false;
         public bool BajaLogica { get; set; } = false;
+        public string GuiaTalles { get; set; } = "";
         public List<Stock> Stocks { get; set; } = new List<Stock>();
         public List<Stream> Imagenes { get; set; } = new List<Stream>();
 
@@ -30,6 +31,7 @@ namespace Dominio.Entidades
             this.BajaLogica = dtoProducto.BajaLogica;
             this.Stocks = cargarStocks(dtoProducto.Stocks);
             this.Imagenes = dtoProducto.Imagenes;
+            this.GuiaTalles = dtoProducto.GuiaTalles;
         }
 
         public DTOProducto darDto()
@@ -44,6 +46,7 @@ namespace Dominio.Entidades
             dtoProducto.VisibleEnWeb = this.VisibleEnWeb;
             dtoProducto.Nuevo = this.Nuevo;
             dtoProducto.BajaLogica = this.BajaLogica;
+            dtoProducto.GuiaTalles = this.GuiaTalles;
 
             foreach (var stock in this.Stocks)
             {

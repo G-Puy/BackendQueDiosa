@@ -40,7 +40,7 @@ namespace Repositorios
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
-                int idGenerado = (int)cmd.ExecuteScalar();
+                int idGeneradoProducto = (int)cmd.ExecuteScalar();
 
                 if (producto.Stocks.Count > 0)
                 {
@@ -49,10 +49,10 @@ namespace Repositorios
                         string sentenciaStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle);
                                             SELECT CAST(Scope_IDentity() as int);";
                         cmd.CommandText = sentenciaStock;
-                        cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
+                        cmd.Parameters.AddWithValue("@IdProducto", idGeneradoProducto);
                         cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
                         cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
-                        idGenerado = (int)cmd.ExecuteScalar();
+                        int idGeneradoStock = (int)cmd.ExecuteScalar();
                     }
                 }
 
@@ -62,10 +62,10 @@ namespace Repositorios
                                                 SELECT CAST(Scope_IDentity as int);";
                     cmd.CommandText = sentenciaImagen;
                     cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
-                    idGenerado = (int)cmd.ExecuteScalar();
+                    int idGeneradoImagen = (int)cmd.ExecuteScalar();
 
                     using var stream = imagen.OpenReadStream();
-                    await servicioBlob.UploadBlobAsync($"{producto.Id}i{idGenerado}", stream);
+                    await servicioBlob.UploadBlobAsync($"{idGeneradoProducto}i{idGeneradoImagen}", stream);
                 }
 
                 trn.Commit();
@@ -442,7 +442,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM Producto WHERE bajaLogica = 0";
+                string sentenciaSql = @"SELECT * FROM Producto WHERE bajaLogica = 0;";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -462,6 +462,7 @@ namespace Repositorios
                         producto.VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]);
                         producto.Nuevo = Convert.ToBoolean(reader["nuevo"]);
                         producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        producto.GuiaTalles = Convert.ToString(reader["guiaTalles"]);
 
                         DTOProducto dtoTipoT = producto.darDto();
 

@@ -159,7 +159,7 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpPut("modificar")]
-        public IActionResult Modificar([FromBody] DTOProducto dtoProducto, List<IFormFile> imagenes)
+        public IActionResult Modificar([FromBody] DTOProducto dtoProducto,IFormFileCollection imagenes)
         {
             try
             {
