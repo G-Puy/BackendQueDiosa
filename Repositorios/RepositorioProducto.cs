@@ -49,6 +49,7 @@ namespace Repositorios
                         string sentenciaStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle, @Cantidad);
                                             SELECT CAST(Scope_IDentity() as int);";
                         cmd.CommandText = sentenciaStock;
+                        cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@IdProducto", idGeneradoProducto);
                         cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
                         cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
@@ -60,9 +61,11 @@ namespace Repositorios
                 foreach (var imagen in imagenes)
                 {
                     string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto);
-                                                SELECT CAST(Scope_IDentity as int);";
+                                                SELECT CAST(Scope_IDentity() as int); ";
+
                     cmd.CommandText = sentenciaImagen;
-                    cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", idGeneradoProducto);
                     int idGeneradoImagen = (int)cmd.ExecuteScalar();
 
                     using var stream = imagen.OpenReadStream();
