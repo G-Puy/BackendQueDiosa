@@ -10,5 +10,6 @@ namespace Dominio
     {
         public long Id { get; set; } = 0;
         public long IdProducto { get; set; } = 0;
+        public string Extension { get; set; } = "";
     }
 }

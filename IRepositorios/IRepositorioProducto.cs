@@ -22,11 +22,5 @@ namespace IRepositorios
         Task<DTOProducto> BuscarPorNombre(DTOProducto dtoProducto);
 
         bool EnUso(DTOProducto dtoProducto);
-
-        //Prueba
-
-        Task<DTOProducto> TraerTodosImagenes(int idProducto);
-        Task<bool> InsertarEnBlob(List<IFormFile> imagenes, int idProducto);
-        Task<bool> InsertarEnBlobSINBD(List<IFormFile> imagenes, int idProducto);
     }
 }

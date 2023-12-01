@@ -16,6 +16,6 @@ namespace DTOS
         public bool Nuevo { get; set; } = false;
         public bool BajaLogica { get; set; } = false;
         public List<DTOStock> Stocks { get; set; } = new List<DTOStock>();
-        public List<byte[]> Imagenes { get; set; } = new List<byte[]>();
+        public List<DTOImagen> Imagenes { get; set; } = new List<DTOImagen>();
     }
 }
