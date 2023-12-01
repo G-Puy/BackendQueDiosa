@@ -144,11 +144,13 @@ namespace Repositorios
                         producto.VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]);
                         producto.Nuevo = Convert.ToBoolean(reader["nuevo"]);
                         producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        producto.GuiaTalles = Convert.ToString(reader["guiaTalles"]);
                     }
                 }
 
                 string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
                 cmd.CommandText = sentenciaImagenes;
+                cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdProducto", obj.Id);
 
                 List<Imagen> imagenes = new List<Imagen>();
@@ -216,11 +218,13 @@ namespace Repositorios
                         producto.VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]);
                         producto.Nuevo = Convert.ToBoolean(reader["nuevo"]);
                         producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        producto.GuiaTalles = Convert.ToString(reader["guiaTalles"]);
                     }
                 }
 
                 string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
                 cmd.CommandText = sentenciaImagenes;
+                cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdProducto", dtoProducto.Id);
 
                 List<Imagen> imagenes = new List<Imagen>();
@@ -282,15 +286,18 @@ namespace Repositorios
                 int affected = cmd.ExecuteNonQuery();
 
                 cmd.CommandText = sentenciaStock;
+                cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 affected = cmd.ExecuteNonQuery();
 
                 cmd.CommandText = sentenciaProducto;
+                cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 affected = cmd.ExecuteNonQuery();
 
-                string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
                 cmd.CommandText = sentenciaImagenes;
+                cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
 
                 List<Imagen> imagenes = new List<Imagen>();
@@ -308,6 +315,7 @@ namespace Repositorios
 
                 string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
                 cmd.CommandText = sentenciaEliminarImagenes;
+                cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 affected = cmd.ExecuteNonQuery();
 
@@ -347,7 +355,7 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        producto.Id = Convert.ToInt64(reader["idProducto"]);
+                        producto.Id = Convert.ToInt64(reader["idVenta"]);
                     }
                 }
                 trn.Commit();
@@ -372,7 +380,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE Producto SET nombre = @Nombre, descripcion = @Descripcion, precioActual = @PrecioActual, precioAnterior = @PrecioAnterior, idTipoProducto = @IdTipoProducto, visibleEnWeb = @VisibleEnWeb, nuevo = @Nuevo WHERE idProducto = @IdProducto";
+                string sentenciaSql = @"UPDATE Producto SET nombre = @Nombre, descripcion = @Descripcion, precioActual = @PrecioActual, precioAnterior = @PrecioAnterior, idTipoProducto = @IdTipoProducto, visibleEnWeb = @VisibleEnWeb, nuevo = @Nuevo, guiaTalles = @GuiaTalles WHERE idProducto = @IdProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 cmd.Parameters.AddWithValue("@Nombre", producto.Nombre);
@@ -382,13 +390,15 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@IdTipoProducto", producto.IdTipoProducto);
                 cmd.Parameters.AddWithValue("@VisibleEnWeb", producto.VisibleEnWeb);
                 cmd.Parameters.AddWithValue("@Nuevo", producto.Nuevo);
+                cmd.Parameters.AddWithValue("@GuiaTalles", producto.GuiaTalles);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 int idGenerado = cmd.ExecuteNonQuery();
 
-                string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto";
+                string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
                 cmd.CommandText = sentenciaImagenes;
+                cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
 
                 List<Imagen> imagenes = new List<Imagen>();
@@ -406,6 +416,7 @@ namespace Repositorios
 
                 string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
                 cmd.CommandText = sentenciaEliminarImagenes;
+                cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 int affected = cmd.ExecuteNonQuery();
 
@@ -416,9 +427,10 @@ namespace Repositorios
 
                 foreach (var imagen in imagenesDTO)
                 {
-                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto)
-                                                SELECT CAST(Scope_IDentity as int)";
+                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto);
+                                                SELECT CAST(Scope_IDentity() as int)";
                     cmd.CommandText = sentenciaImagen;
+                    cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                     idGenerado = (int)cmd.ExecuteScalar();
 
