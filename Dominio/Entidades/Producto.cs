@@ -16,7 +16,7 @@ namespace Dominio.Entidades
         public bool BajaLogica { get; set; } = false;
         public string GuiaTalles { get; set; } = "";
         public List<Stock> Stocks { get; set; } = new List<Stock>();
-        public List<Stream> Imagenes { get; set; } = new List<Stream>();
+        public List<byte[]> Imagenes { get; set; } = new List<byte[]>();
 
         public void cargarDeDTO(DTOProducto dtoProducto)
         {

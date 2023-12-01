@@ -5,6 +5,7 @@ using DTOS;
 using IRepositorios;
 using Microsoft.AspNetCore.Http;
 using System.Data.SqlClient;
+using System.Reflection.Metadata;
 
 namespace Repositorios
 {
@@ -165,7 +166,7 @@ namespace Repositorios
 
                 foreach (Imagen imagen in imagenes)
                 {
-                    using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                    byte[]  stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
                     producto.Imagenes.Add(stream);
                 }
 
@@ -237,7 +238,7 @@ namespace Repositorios
 
                 foreach (Imagen imagen in imagenes)
                 {
-                    using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                    byte[] stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
                     producto.Imagenes.Add(stream);
                 }
 
@@ -444,6 +445,7 @@ namespace Repositorios
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
+
             try
             {
                 string sentenciaSql = @"SELECT * FROM Producto WHERE bajaLogica = 0;";
@@ -455,18 +457,19 @@ namespace Repositorios
                 {
                     while (reader.Read())
                     {
-                        Producto producto = new Producto();
-
-                        producto.Id = Convert.ToInt64(reader["idProducto"]);
-                        producto.Nombre = Convert.ToString(reader["nombre"]);
-                        producto.Descripcion = Convert.ToString(reader["descripcion"]);
-                        producto.PrecioActual = Convert.ToDouble(reader["precioActual"]);
-                        producto.PrecioAnterior = Convert.ToDouble(reader["precioAnterior"]);
-                        producto.IdTipoProducto = Convert.ToInt64(reader["idTipoProducto"]);
-                        producto.VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]);
-                        producto.Nuevo = Convert.ToBoolean(reader["nuevo"]);
-                        producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
-                        producto.GuiaTalles = Convert.ToString(reader["guiaTalles"]);
+                        Producto producto = new Producto
+                        {
+                            Id = Convert.ToInt64(reader["idProducto"]),
+                            Nombre = Convert.ToString(reader["nombre"]),
+                            Descripcion = Convert.ToString(reader["descripcion"]),
+                            PrecioActual = Convert.ToDouble(reader["precioActual"]),
+                            PrecioAnterior = Convert.ToDouble(reader["precioAnterior"]),
+                            IdTipoProducto = Convert.ToInt64(reader["idTipoProducto"]),
+                            VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]),
+                            Nuevo = Convert.ToBoolean(reader["nuevo"]),
+                            BajaLogica = Convert.ToBoolean(reader["bajaLogica"]),
+                            GuiaTalles = Convert.ToString(reader["guiaTalles"])
+                        };
 
                         DTOProducto dtoTipoT = producto.darDto();
 
@@ -476,7 +479,7 @@ namespace Repositorios
 
                 foreach (DTOProducto dtoProducto in productos)
                 {
-                    string sentenciaImagenes = @"SELECT * FROM Imagenes WHERE idProducto = @IdProducto;";
+                    string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto;";
                     cmd.CommandText = sentenciaImagenes;
                     cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@IdProducto", dtoProducto.Id);
@@ -496,7 +499,7 @@ namespace Repositorios
 
                     foreach (Imagen imagen in imagenes)
                     {
-                        using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                        byte[] stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
                         dtoProducto.Imagenes.Add(stream);
                     }
 
@@ -510,7 +513,7 @@ namespace Repositorios
                         while (reader.Read())
                         {
                             Stock stock = new Stock();
-                            stock.Id = Convert.ToInt64(reader["idImagen"]);
+                            stock.Id = Convert.ToInt64(reader["idStock"]);
                             stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
                             stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
                             stock.IdColor = Convert.ToInt64(reader["idColor"]);
@@ -563,7 +566,7 @@ namespace Repositorios
 
                 foreach (Imagen imagen in imagenes)
                 {
-                    using Stream stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                     byte[] stream =   await servicioBlob.GetBlobAsync($"{idProducto}i{imagen.Id}");
                     producto.Imagenes.Add(stream);
                 }
 

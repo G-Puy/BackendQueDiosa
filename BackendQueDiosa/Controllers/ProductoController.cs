@@ -186,7 +186,7 @@ namespace BackendQueDiosa.Controllers
             {
                 List<DTOProducto> resultado = (List<DTOProducto>)this.ManejadorProducto.TraerTodos().Result;
                 if (resultado.Count > 0) return Ok(resultado);
-                else return BadRequest(false);
+                else return BadRequest(resultado);
 
             }
             catch (Exception ex)
@@ -204,7 +204,7 @@ namespace BackendQueDiosa.Controllers
             {
                 DTOProducto resultado = this.ManejadorProducto.TraerTodosImagenes(idProducto).Result;
                 if (resultado.Imagenes.Count > 0) return Ok(resultado);
-                else return BadRequest(false);
+                else return BadRequest(resultado);
 
             }
             catch (Exception ex)

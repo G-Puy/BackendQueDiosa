@@ -1,7 +1,9 @@
 ﻿using Azure.Storage;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using IRepositorios;
 using Microsoft.Extensions.Configuration;
+using System.Reflection.Metadata;
 
 namespace Conexiones
 {
@@ -32,11 +34,18 @@ namespace Conexiones
             await blobClient.DeleteIfExistsAsync();
         }
 
-        public async Task<Stream> GetBlobAsync(string blobName)
+        public async Task<byte[]> GetBlobAsync(string blobName)
         {
             var blobClient = blobServiceClient.GetBlobContainerClient(_container).GetBlobClient(blobName);
-            var downloadInfo = await blobClient.DownloadAsync();
-            return downloadInfo.Value.Content;
+            if (await blobClient.ExistsAsync())
+            {
+                BlobDownloadInfo download = await blobClient.DownloadAsync();
+                using var memoryStream = new MemoryStream();
+                await download.Content.CopyToAsync(memoryStream);
+                return memoryStream.ToArray();
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<string>> GetAllBlobsAsync()
