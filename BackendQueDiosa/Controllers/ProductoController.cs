@@ -185,7 +185,24 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 List<DTOProducto> resultado = (List<DTOProducto>)this.ManejadorProducto.TraerTodos().Result;
-                if (resultado.Count > 0) return Ok(resultado);
+                if (resultado != null) return Ok(resultado);
+                else return BadRequest(resultado);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        [HttpGet("TraerTodos2")]
+        public IActionResult TraerTodos22()
+        {
+            try
+            {
+                List<DTOProductoEnviarAFRONT> resultado = (List<DTOProductoEnviarAFRONT>)this.ManejadorProducto.TraerTodos2().Result;
+                if (resultado != null) return Ok(resultado);
                 else return BadRequest(resultado);
 
             }

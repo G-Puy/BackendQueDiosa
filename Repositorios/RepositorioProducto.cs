@@ -2,6 +2,7 @@
 using Dominio;
 using Dominio.Entidades;
 using DTOS;
+using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
 using Microsoft.AspNetCore.Http;
 using System.Data.SqlClient;
@@ -26,7 +27,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaProducto = @"INSERT INTO Producto VALUES (@Nombre, @Descripcion, @PrecioActual, @PrecioAnterior, @IdTipoProducto, @VisibleEnWeb, @Nuevo, @BajaLogica);
+                string sentenciaProducto = @"INSERT INTO Producto VALUES (@Nombre, @Descripcion, @PrecioActual, @PrecioAnterior, @IdTipoProducto, @VisibleEnWeb, @Nuevo, @BajaLogica,@GuiaDeTalles);
                                             SELECT CAST(Scope_IDentity() as int);";
 
                 SqlCommand cmd = new SqlCommand(sentenciaProducto, cn);
@@ -38,6 +39,7 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@VisibleEnWeb", true);
                 cmd.Parameters.AddWithValue("@Nuevo", false);
                 cmd.Parameters.AddWithValue("@BajaLogica", false);
+                cmd.Parameters.AddWithValue("@GuiaDeTalles", producto.GuiaTalles);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -170,7 +172,7 @@ namespace Repositorios
 
                 foreach (Imagen imagen in imagenes)
                 {
-                    byte[]  stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                    byte[] stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
                     DTOImagen dtoImagen = new DTOImagen();
                     dtoImagen.Imagen = stream;
                     dtoImagen.Extension = imagen.Extension;
@@ -562,5 +564,145 @@ namespace Repositorios
                 throw ex;
             }
         }
+        public async Task<IEnumerable<DTOProductoEnviarAFRONT>> TraerTodos2()
+        {
+            List<DTOProductoEnviarAFRONT> productos = new List<DTOProductoEnviarAFRONT>();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Producto WHERE bajaLogica = 0;";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        DTOProductoEnviarAFRONT producto = new DTOProductoEnviarAFRONT
+                        {
+                            Id = Convert.ToInt64(reader["idProducto"]),
+                            Nombre = Convert.ToString(reader["nombre"]),
+                            Descripcion = Convert.ToString(reader["descripcion"]),
+                            PrecioActual = Convert.ToDouble(reader["precioActual"]),
+                            PrecioAnterior = Convert.ToDouble(reader["precioAnterior"]),
+                            IdTipoProducto = Convert.ToInt64(reader["idTipoProducto"]),
+                            VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]),
+                            Nuevo = Convert.ToBoolean(reader["nuevo"]),
+                            BajaLogica = Convert.ToBoolean(reader["bajaLogica"]),
+                            GuiaTalles = Convert.ToString(reader["guiaTalles"])
+                        };
+
+                        //DTOProducto dtoTipoT = producto.darDto();
+
+                        productos.Add(producto);
+                    }
+                }
+
+                foreach (DTOProductoEnviarAFRONT dtoProdEnvioFront in productos)
+                {
+                    string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto;";
+                    cmd.CommandText = sentenciaImagenes;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", dtoProdEnvioFront.Id);
+
+                    List<Imagen> imagenes = new List<Imagen>();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Imagen imagen = new Imagen();
+                            imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                            imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            imagen.Extension = Convert.ToString(reader["extension"]);
+                            imagenes.Add(imagen);
+                        }
+                    }
+
+                    foreach (Imagen imagen in imagenes)
+                    {
+                        byte[] stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                        DTOImagen dtoImagen = new DTOImagen();
+                        dtoImagen.Imagen = stream;
+                        dtoImagen.Extension = imagen.Extension;
+                        dtoProdEnvioFront.Imagenes.Add(dtoImagen);
+                    }
+
+                    string sentenciaStock = @"SELECT Stock.idStock, Stock.idProducto, Stock.idColor, Stock.idTalle, Stock.cantidad, 
+                                             Talle.nombre as nombreTalle, Color.nombre as nombreColor FROM Stock 
+                                             inner  join Talle on Stock.idTalle =Talle.idTalle 
+                                             inner join Color on Stock.idColor = Color.idColor
+                                             where idProducto = @IdProducto;";
+                    cmd.CommandText = sentenciaStock;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", dtoProdEnvioFront.Id);
+                    List<DTOStockTalleColorEnvioAFront> listaStocks = new List<DTOStockTalleColorEnvioAFront>();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            DTOStockTalleColorEnvioAFront stock = new DTOStockTalleColorEnvioAFront();
+                            stock.Id = Convert.ToInt64(reader["idStock"]);
+                            stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                            stock.IdColor = Convert.ToInt64(reader["idColor"]);
+                            stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                            stock.NombreTalle = Convert.ToString(reader["nombreTalle"]);
+                            stock.NombreColor = Convert.ToString(reader["nombreColor"]);
+
+                            listaStocks.Add(stock);
+                        }
+                    }
+
+                    dtoProdEnvioFront.Stock.IdProducto = dtoProdEnvioFront.Id;
+                    long idTalleActual = 0;
+                    foreach (DTOStockTalleColorEnvioAFront stockActual in listaStocks)
+                    {
+                        if (idTalleActual != stockActual.IdTalle)
+                        {
+                            //CARGAR TALLE
+                            DTOTalleEnvio dtoTalleEnv = new DTOTalleEnvio();
+                            dtoTalleEnv.NombreTalle = stockActual.NombreTalle;
+                            dtoTalleEnv.Id = stockActual.IdTalle;
+                            dtoProdEnvioFront.Stock.Talles.Add(dtoTalleEnv);
+                        }
+                        idTalleActual = stockActual.IdTalle;
+
+                        //CARGAR COLOR
+                        DTOColorEnvio dTOColorEnvio = new DTOColorEnvio();
+                        dTOColorEnvio.NombreColor = stockActual.NombreColor;
+                        dTOColorEnvio.Cantidad = stockActual.Cantidad;
+
+                        foreach (DTOTalleEnvio talleParaAgregarElColor in dtoProdEnvioFront.Stock.Talles)
+                        {
+                            if (talleParaAgregarElColor.Id == stockActual.IdTalle)
+                            {
+                                talleParaAgregarElColor.Colores.Add(dTOColorEnvio);
+                            }
+                        }
+                    }
+
+
+
+
+                }
+
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return productos;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
     }
 }

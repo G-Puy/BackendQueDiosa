@@ -1,5 +1,6 @@
 ﻿using Dominio.Entidades;
 using DTOS;
+using DTOS.DTOSProductoFrontBack;
 using Microsoft.AspNetCore.Http;
 
 namespace IRepositorios
@@ -16,6 +17,7 @@ namespace IRepositorios
         Task<DTOProducto> BuscarPorId(DTOProducto obj);
 
         Task<IEnumerable<DTOProducto>> TraerTodos();
+        Task<IEnumerable<DTOProductoEnviarAFRONT>> TraerTodos2();
 
         bool BajaLogica(DTOProducto obj);
 
