@@ -464,107 +464,7 @@ namespace Repositorios
             }
         }
 
-        public async Task<IEnumerable<DTOProducto>> TraerTodos()
-        {
-            List<DTOProducto> productos = new List<DTOProducto>();
-
-            cn = manejadorConexion.CrearConexion();
-            SqlTransaction trn = null;
-
-            try
-            {
-                string sentenciaSql = @"SELECT * FROM Producto WHERE bajaLogica = 0;";
-                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                manejadorConexion.AbrirConexion(cn);
-                trn = cn.BeginTransaction();
-                cmd.Transaction = trn;
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        Producto producto = new Producto
-                        {
-                            Id = Convert.ToInt64(reader["idProducto"]),
-                            Nombre = Convert.ToString(reader["nombre"]),
-                            Descripcion = Convert.ToString(reader["descripcion"]),
-                            PrecioActual = Convert.ToDouble(reader["precioActual"]),
-                            PrecioAnterior = Convert.ToDouble(reader["precioAnterior"]),
-                            IdTipoProducto = Convert.ToInt64(reader["idTipoProducto"]),
-                            VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]),
-                            Nuevo = Convert.ToBoolean(reader["nuevo"]),
-                            BajaLogica = Convert.ToBoolean(reader["bajaLogica"]),
-                            GuiaTalles = Convert.ToString(reader["guiaTalles"])
-                        };
-
-                        DTOProducto dtoTipoT = producto.darDto();
-
-                        productos.Add(dtoTipoT);
-                    }
-                }
-
-                foreach (DTOProducto dtoProducto in productos)
-                {
-                    string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto;";
-                    cmd.CommandText = sentenciaImagenes;
-                    cmd.Parameters.Clear();
-                    cmd.Parameters.AddWithValue("@IdProducto", dtoProducto.Id);
-
-                    List<Imagen> imagenes = new List<Imagen>();
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Imagen imagen = new Imagen();
-                            imagen.Id = Convert.ToInt64(reader["idImagen"]);
-                            imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
-                            imagen.Extension = Convert.ToString(reader["extension"]);
-                            imagenes.Add(imagen);
-                        }
-                    }
-
-                    foreach (Imagen imagen in imagenes)
-                    {
-                        byte[] stream = await servicioBlob.GetBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
-                        DTOImagen dtoImagen = new DTOImagen();
-                        dtoImagen.Imagen = stream;
-                        dtoImagen.Extension = imagen.Extension;
-                        dtoProducto.Imagenes.Add(dtoImagen);
-                    }
-
-                    string sentenciaStock = @"SELECT * FROM Stock WHERE idProducto = @IdProducto;";
-                    cmd.CommandText = sentenciaStock;
-                    cmd.Parameters.Clear();
-                    cmd.Parameters.AddWithValue("@IdProducto", dtoProducto.Id);
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Stock stock = new Stock();
-                            stock.Id = Convert.ToInt64(reader["idStock"]);
-                            stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
-                            stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
-                            stock.IdColor = Convert.ToInt64(reader["idColor"]);
-                            stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
-                            dtoProducto.Stocks.Add(stock.darDto());
-                        }
-                    }
-                }
-
-                trn.Rollback();
-                manejadorConexion.CerrarConexionConClose(cn);
-                return productos;
-            }
-            catch (Exception ex)
-            {
-                trn.Rollback();
-                manejadorConexion.CerrarConexionConClose(cn);
-                this.DescripcionError = ex.Message;
-                throw ex;
-            }
-        }
-        public async Task<IEnumerable<DTOProductoEnviarAFRONT>> TraerTodos2()
+        public async Task<IEnumerable<DTOProductoEnviarAFRONT>> TraerTodos()
         {
             List<DTOProductoEnviarAFRONT> productos = new List<DTOProductoEnviarAFRONT>();
 
@@ -685,10 +585,6 @@ namespace Repositorios
                             }
                         }
                     }
-
-
-
-
                 }
 
                 trn.Rollback();

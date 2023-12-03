@@ -16,8 +16,7 @@ namespace IRepositorios
 
         Task<DTOProducto> BuscarPorId(DTOProducto obj);
 
-        Task<IEnumerable<DTOProducto>> TraerTodos();
-        Task<IEnumerable<DTOProductoEnviarAFRONT>> TraerTodos2();
+        Task<IEnumerable<DTOProductoEnviarAFRONT>> TraerTodos();
 
         bool BajaLogica(DTOProducto obj);
 
