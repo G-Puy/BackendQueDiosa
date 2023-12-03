@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Repositorios;
 using System.Text;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 builder.Services.AddTransient<IRepositorioTipoPrenda, RepositorioTipoPrenda>();
 builder.Services.AddTransient<IRepositorioUsuario, RepositorioUsuario>();
 builder.Services.AddTransient<IRepositorioColor, RepositorioColor>();
@@ -17,19 +17,10 @@ builder.Services.AddTransient<IRepositorioProducto, RepositorioProducto>();
 builder.Services.AddTransient<IRepositorioStock, RepositorioStock>();
 
 builder.Services.AddControllers();
-
-// Configuración de Swagger
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Mi API",
-        Version = "v1"
-    });
-});
+builder.Services.AddSwaggerGen();
 
-// Configuración de JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -42,13 +33,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Configuración de políticas de autorización
-builder.Services.AddAuthorization(options =>
-{
+builder.Services.AddAuthorization(options => {
     options.AddPolicy("Administrador", policy => policy.RequireClaim("TipoUsuario", "1"));
 });
 
-// Configuración de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("NuevaPolitcaFreeAccess", app =>
@@ -62,18 +50,21 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
 
-// Swagger en todos los entornos
 app.UseSwagger();
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Mi API V1");
-});
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseCors("NuevaPolitcaFreeAccess");
 app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 app.MapControllers();
 
