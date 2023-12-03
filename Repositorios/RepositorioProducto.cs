@@ -451,6 +451,61 @@ namespace Repositorios
                     await servicioBlob.UploadBlobAsync($"{producto.Id}i{idGenerado}", stream);
                 }
 
+
+                string sentenciaTrearStock = @"SELECT * FROM Stock WHERE idStock = @IdProducto";
+                cmd.CommandText = sentenciaTrearStock;
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+
+                List<Stock> stocks = new List<Stock>();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Stock stock = new Stock();
+                        stock.Id = Convert.ToInt64(reader["idStock"]);
+                        stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                        stock.IdColor = Convert.ToInt64(reader["idColor"]);
+                        stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                        stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                        stocks.Add(stock);
+                    }
+                }
+
+                foreach (Stock stock in stocks)
+                {
+                    if (!producto.Stocks.Contains(stock))
+                    {
+                        string sentenciaAlerta = @"DELETE FROM AlertaStock WHERE idStock = @IdStock";
+                        string sentenciaStock = @"DELETE FROM Stock WHERE idStock = @IdStock";
+
+                        cmd.CommandText = sentenciaAlerta;
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@IdStock", stock.Id);
+                        affected = cmd.ExecuteNonQuery();
+
+                        cmd.CommandText = sentenciaStock;
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@IdStock", stock.Id);
+                        affected = cmd.ExecuteNonQuery();
+                    }
+                }
+
+                foreach (Stock stock in producto.Stocks)
+                {
+                    if (!stocks.Contains(stock))
+                    {
+                        string sentenciaAgregarStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle, @cantidad)
+                                            SELECT CAST(Scope_IDentity() as int)";
+                        cmd.CommandText = sentenciaAgregarStock;
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
+                        cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
+                        cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
+                        cmd.Parameters.AddWithValue("@Cantidad", 0);
+                    }
+                }
+
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;

@@ -159,14 +159,45 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpPut("modificar")]
-        public IActionResult Modificar([FromBody] DTOProducto dtoProducto,IFormFileCollection imagenes)
+        public IActionResult Modificar([FromBody] IFormCollection dataEnvio)
         {
             try
             {
+                var productoJson = dataEnvio["producto"].ToString();
+                Console.WriteLine(productoJson);
+                DTOProductoEnvio producto = JsonConvert.DeserializeObject<DTOProductoEnvio>(productoJson);
+                var archivos = dataEnvio.Files;
+
+                DTOProducto dtoProducto = new DTOProducto();
+                dtoProducto.Nombre = producto.Nombre;
+                dtoProducto.PrecioAnterior = producto.PrecioAnterior;
+                dtoProducto.Nuevo = producto.Nuevo;
+                dtoProducto.Descripcion = producto.Descripcion;
+                dtoProducto.PrecioActual = producto.PrecioActual;
+                dtoProducto.IdTipoProducto = producto.IdTipoProducto;
+                dtoProducto.BajaLogica = producto.BajaLogica;
+                dtoProducto.GuiaTalles = producto.GuiaTalles;
+
+                DTOStockEnvio stock = producto.Stock;
+
+                foreach (DTOTalleEnvio talle in stock.Talles)
+                {
+                    foreach (DTOColorEnvio color in talle.Colores)
+                    {
+                        DTOStock dtoStock = new DTOStock();
+                        dtoStock.IdProducto = stock.IdProducto;
+                        dtoStock.IdColor = color.Id;
+                        dtoStock.IdTalle = talle.Id;
+                        dtoStock.Cantidad = color.Cantidad;
+
+                        dtoProducto.Stocks.Add(dtoStock);
+                    }
+                }
+
                 if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null)
                     return BadRequest("Ya existe nombre");
 
-                bool resultado = this.ManejadorProducto.Modificar(dtoProducto, imagenes).Result;
+                bool resultado = this.ManejadorProducto.Modificar(dtoProducto, archivos).Result;
 
                 if (resultado) return Ok("Modificado exitosamente");
                 else return BadRequest("Fallo al modificar");
