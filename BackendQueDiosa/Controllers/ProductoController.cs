@@ -25,6 +25,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
+                
                 var productoJson = dataEnvio["producto"].ToString();
                 Console.WriteLine(productoJson);
                 DTOProductoEnvio producto = JsonConvert.DeserializeObject<DTOProductoEnvio>(productoJson);
@@ -59,7 +60,7 @@ namespace BackendQueDiosa.Controllers
 
                 Task<bool> resultadoAlta = this.ManejadorProducto.Alta(dtoProducto, archivos);
 
-                if (resultadoAlta.Result) return Ok("Ingresado exitosamente");
+                if (resultadoAlta.Result) return Ok(true);
                 else return BadRequest("Fallo al ingresar");
             }
             catch (Exception ex)
@@ -215,7 +216,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                List<DTOProducto> resultado = (List<DTOProducto>)this.ManejadorProducto.TraerTodos().Result;
+                List<DTOProductoEnviarAFRONT> resultado = (List<DTOProductoEnviarAFRONT>)this.ManejadorProducto.TraerTodos().Result;
                 if (resultado != null) return Ok(resultado);
                 else return BadRequest(resultado);
             }
