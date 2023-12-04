@@ -301,11 +301,6 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 affected = cmd.ExecuteNonQuery();
 
-                cmd.CommandText = sentenciaProducto;
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
-                affected = cmd.ExecuteNonQuery();
-
                 string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
                 cmd.CommandText = sentenciaImagenes;
                 cmd.Parameters.Clear();
@@ -334,6 +329,11 @@ namespace Repositorios
                 {
                     await servicioBlob.DeleteBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
                 }
+
+                cmd.CommandText = sentenciaProducto;
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                affected = cmd.ExecuteNonQuery();
 
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
