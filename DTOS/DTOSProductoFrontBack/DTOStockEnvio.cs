@@ -12,5 +12,6 @@ namespace DTOS.DTOSProductoFrontBack
         public long Id { get; set; } = -1;
         public long IdProducto { get; set; } = -1;
         public List<DTOTalleEnvio> Talles { get; set; } = new List<DTOTalleEnvio>();
+        public int Cantidad { get; set; } = 0;
     }
 }

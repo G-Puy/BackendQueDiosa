@@ -6,10 +6,25 @@ using System.Data.SqlClient;
 
 namespace Repositorios
 {
-    public class RepositorioStock : RepositorioBase
+    public class RepositorioStock : RepositorioBase, IRepositorioStock
     {
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
+
+        public bool Alta(DTOStock obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool BajaLogica(DTOStock obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DTOStock BuscarPorId(DTOStock obj)
+        {
+            throw new NotImplementedException();
+        }
 
         public bool Eliminar(DTOStock obj)
         {
@@ -78,7 +93,7 @@ namespace Repositorios
 
                     int idGenerado = cmd.ExecuteNonQuery();
                 }
-                
+
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
@@ -90,6 +105,11 @@ namespace Repositorios
                 this.DescripcionError = ex.Message;
                 throw ex;
             }
+        }
+
+        public bool Modificar(DTOStock obj)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<DTOStock> TraerTodos()

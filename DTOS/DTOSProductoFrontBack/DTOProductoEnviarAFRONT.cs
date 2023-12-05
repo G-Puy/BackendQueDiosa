@@ -20,5 +20,6 @@ namespace DTOS.DTOSProductoFrontBack
         public string GuiaTalles { get; set; } = "";
         public DTOStockEnvio Stock { get; set; } = new DTOStockEnvio();
         public List<DTOImagen> Imagenes { get; set; } = new List<DTOImagen>();
+        public string TipoTalle { get; set; } = "";
     }
 }

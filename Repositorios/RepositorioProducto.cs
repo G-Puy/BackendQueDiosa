@@ -557,8 +557,22 @@ namespace Repositorios
                     }
                 }
 
+
+
                 foreach (DTOProductoEnviarAFRONT dtoProdEnvioFront in productos)
                 {
+                    cmd.CommandText = @"SELECT nombre FROM TipoProducto where idTipoProducto = @IdTipoProducto";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdTIpoProducto", dtoProdEnvioFront.IdTipoProducto);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            dtoProdEnvioFront.TipoTalle = Convert.ToString(reader["nombre"]);
+                        }
+                    }
+
                     string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto;";
                     cmd.CommandText = sentenciaImagenes;
                     cmd.Parameters.Clear();
@@ -613,6 +627,8 @@ namespace Repositorios
                         }
                     }
 
+                    var cantidadTotal = 0;
+
                     dtoProdEnvioFront.Stock.IdProducto = dtoProdEnvioFront.Id;
                     long idTalleActual = 0;
                     foreach (DTOStockTalleColorEnvioAFront stockActual in listaStocks)
@@ -630,6 +646,7 @@ namespace Repositorios
                         //CARGAR COLOR
                         DTOColorEnvio dTOColorEnvio = new DTOColorEnvio();
                         dTOColorEnvio.NombreColor = stockActual.NombreColor;
+                        cantidadTotal += stockActual.Cantidad;
                         dTOColorEnvio.Cantidad = stockActual.Cantidad;
 
                         foreach (DTOTalleEnvio talleParaAgregarElColor in dtoProdEnvioFront.Stock.Talles)
@@ -640,6 +657,8 @@ namespace Repositorios
                             }
                         }
                     }
+
+                    dtoProdEnvioFront.Stock.Cantidad = cantidadTotal;
                 }
 
                 trn.Rollback();
