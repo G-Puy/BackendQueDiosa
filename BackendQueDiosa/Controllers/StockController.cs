@@ -1,4 +1,6 @@
-﻿using DTOS;
+﻿using Dominio.Entidades;
+using DTOS;
+using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,44 +17,6 @@ namespace BackendQueDiosa.Controllers
         public StockController([FromServices] IRepositorioStock repInj)
         {
             this.ManejadorStock = repInj;
-        }
-
-        [Authorize]
-        [HttpPost("alta")]
-        public IActionResult Alta([FromBody] DTOStock dtoStock)
-        {
-            try
-            {
-                bool resultadoAlta = this.ManejadorStock.Alta(dtoStock);
-
-                if (resultadoAlta) return Ok(resultadoAlta);
-                else return BadRequest(resultadoAlta);
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        [HttpGet("buscarPorId")]
-        public IActionResult BuscarPorId(int id)
-        {
-            try
-            {
-                DTOStock dtoStock = new DTOStock();
-                dtoStock.Id = id;
-
-                DTOStock resultado = this.ManejadorStock.BuscarPorId(dtoStock);
-
-                if (resultado != null && resultado.Id > 0) return Ok(resultado);
-                else return BadRequest(resultado);
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
 
         [Authorize]
@@ -78,11 +42,27 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpPut("modificar")]
-        public IActionResult Modificar([FromBody] DTOStock dtoStock)
+        public IActionResult Modificar([FromBody] DTOStockEnvio dtoStockEnvio)
         {
             try
             {
-                bool resultado = this.ManejadorStock.Modificar(dtoStock);
+                List<DTOStock> stocks = new List<DTOStock>();
+                foreach (DTOTalleEnvio talle in dtoStockEnvio.Talles)
+                {
+                    foreach (DTOColorEnvio color in talle.Colores)
+                    {
+                        DTOStock dtoStock = new DTOStock();
+                        dtoStock.IdProducto = dtoStockEnvio.IdProducto;
+                        dtoStock.IdColor = color.Id;
+                        dtoStock.IdTalle = talle.Id;
+                        dtoStock.Cantidad = color.Cantidad;
+
+                        stocks.Add(dtoStock);
+                    }
+                }
+
+
+                bool resultado = this.ManejadorStock.Modificar(stocks);
 
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);

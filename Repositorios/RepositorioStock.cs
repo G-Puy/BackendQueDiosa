@@ -6,92 +6,10 @@ using System.Data.SqlClient;
 
 namespace Repositorios
 {
-    public class RepositorioStock : RepositorioBase, IRepositorioStock
+    public class RepositorioStock : RepositorioBase
     {
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
-
-        public bool Alta(DTOStock obj)
-        {
-            Stock stock = new Stock();
-            stock.cargarDeDTO(obj);
-
-            cn = manejadorConexion.CrearConexion();
-            SqlTransaction trn = null;
-            try
-            {
-                string sentenciaProducto = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle, @Cantidad)
-                                            SELECT CAST(Scope_IDentity() as int)";
-                SqlCommand cmd = new SqlCommand(sentenciaProducto, cn);
-                cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
-                cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
-                cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
-                cmd.Parameters.AddWithValue("@Cantidad", stock.Cantidad);
-                manejadorConexion.AbrirConexion(cn);
-                trn = cn.BeginTransaction();
-                cmd.Transaction = trn;
-                int idGenerado = (int)cmd.ExecuteScalar();
-                trn.Commit();
-                manejadorConexion.CerrarConexionConClose(cn);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                trn.Rollback();
-                manejadorConexion.CerrarConexionConClose(cn);
-                this.DescripcionError = ex.Message;
-                throw ex;
-            }
-        }
-
-        public bool BajaLogica(DTOStock obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DTOStock BuscarPorId(DTOStock obj)
-        {
-            Stock stock = new Stock();
-
-            cn = manejadorConexion.CrearConexion();
-            SqlTransaction trn = null;
-            try
-            {
-                string sentenciaSql = @"SELECT * FROM Stock WHERE idStock = @IdStock";
-                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@IdStock", obj.Id);
-                manejadorConexion.AbrirConexion(cn);
-                trn = cn.BeginTransaction();
-                cmd.Transaction = trn;
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        stock.Id = Convert.ToInt64(reader["idStock"]);
-                        stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
-                        stock.IdColor = Convert.ToInt64(reader["idColor"]);
-                        stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
-                        stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
-                    }
-                }
-                trn.Commit();
-                manejadorConexion.CerrarConexionConClose(cn);
-
-                if (stock == null || stock.Id == 0)
-                {
-                    return null;
-                }
-
-                return stock.darDto();
-            }
-            catch (Exception ex)
-            {
-                trn.Rollback();
-                manejadorConexion.CerrarConexionConClose(cn);
-                this.DescripcionError = ex.Message;
-                throw ex;
-            }
-        }
 
         public bool Eliminar(DTOStock obj)
         {
@@ -129,10 +47,15 @@ namespace Repositorios
             }
         }
 
-        public bool Modificar(DTOStock obj)
+        public bool Modificar(List<DTOStock> obj)
         {
-            Stock stock = new Stock();
-            stock.cargarDeDTO(obj);
+            List<Stock> stocks = new List<Stock>();
+            foreach (var s in obj)
+            {
+                Stock stock = new Stock();
+                stock.cargarDeDTO(s);
+                stocks.Add(stock);
+            }
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
@@ -140,15 +63,22 @@ namespace Repositorios
             {
                 string sentenciaSql = @"UPDATE Stock SET idProducto = @IdProducto, idColor = @IdColor, idTalle = @IdTalle, cantidad = @Cantidad  WHERE idStock = @IdStock";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@IdStock", stock.Id);
-                cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
-                cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
-                cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
-                cmd.Parameters.AddWithValue("@Cantidad", stock.Cantidad);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
-                int idGenerado = cmd.ExecuteNonQuery();
+
+                foreach (Stock stock in stocks)
+                {
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdStock", stock.Id);
+                    cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
+                    cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
+                    cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
+                    cmd.Parameters.AddWithValue("@Cantidad", stock.Cantidad);
+
+                    int idGenerado = cmd.ExecuteNonQuery();
+                }
+                
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
