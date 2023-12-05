@@ -569,7 +569,7 @@ namespace Repositorios
                     {
                         while (reader.Read())
                         {
-                            dtoProdEnvioFront.TipoTalle = Convert.ToString(reader["nombre"]);
+                            dtoProdEnvioFront.TipoProductoNombre = Convert.ToString(reader["nombre"]);
                         }
                     }
 
