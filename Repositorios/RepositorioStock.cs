@@ -91,7 +91,7 @@ namespace Repositorios
                     cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
                     cmd.Parameters.AddWithValue("@Cantidad", stock.Cantidad);
 
-                    int idGenerado = cmd.ExecuteNonQuery();
+                    int affected = cmd.ExecuteNonQuery();
                 }
 
                 trn.Commit();
