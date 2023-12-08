@@ -648,6 +648,8 @@ namespace Repositorios
                         dTOColorEnvio.NombreColor = stockActual.NombreColor;
                         cantidadTotal += stockActual.Cantidad;
                         dTOColorEnvio.Cantidad = stockActual.Cantidad;
+                        dTOColorEnvio.Id = stockActual.IdColor;
+                        dTOColorEnvio.IdStock = stockActual.Id;
 
                         foreach (DTOTalleEnvio talleParaAgregarElColor in dtoProdEnvioFront.Stock.Talles)
                         {

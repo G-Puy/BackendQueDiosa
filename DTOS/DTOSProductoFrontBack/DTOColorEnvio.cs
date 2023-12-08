@@ -11,5 +11,6 @@ namespace DTOS.DTOSProductoFrontBack
         public long Id { get; set; } = -1;
         public int Cantidad { get; set; } = 0;
         public string NombreColor { get; set; } = "";
+        public long IdStock { get; set; } = -1;
     }
 }
