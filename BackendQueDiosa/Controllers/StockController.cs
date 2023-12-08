@@ -52,7 +52,7 @@ namespace BackendQueDiosa.Controllers
                     foreach (DTOColorEnvio color in talle.Colores)
                     {
                         DTOStock dtoStock = new DTOStock();
-                        dtoStock.Id = dtoStockEnvio.Id;
+                        dtoStock.Id = color.IdStock;
                         dtoStock.IdProducto = dtoStockEnvio.IdProducto;
                         dtoStock.IdColor = color.Id;
                         dtoStock.IdTalle = talle.Id;
