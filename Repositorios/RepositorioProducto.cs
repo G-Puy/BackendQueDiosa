@@ -407,48 +407,52 @@ namespace Repositorios
                 cmd.Transaction = trn;
                 int idGenerado = cmd.ExecuteNonQuery();
 
-                string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
-                cmd.CommandText = sentenciaImagenes;
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                if (imagenesDTO.Count == 0 || imagenesDTO.ElementAt(0).FileName.Contains("NOMODIFICAR") ) {
 
-                List<Imagen> imagenes = new List<Imagen>();
-
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        Imagen imagen = new Imagen();
-                        imagen.Id = Convert.ToInt64(reader["idImagen"]);
-                        imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
-                        imagen.Extension = Convert.ToString(reader["extension"]);
-                        imagenes.Add(imagen);
-                    }
-                }
-
-                string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
-                cmd.CommandText = sentenciaEliminarImagenes;
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
-                int affected = cmd.ExecuteNonQuery();
-
-                foreach (Imagen imagen in imagenes)
-                {
-                    await servicioBlob.DeleteBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
-                }
-
-                foreach (var imagen in imagenesDTO)
-                {
-                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto, @Extension);
-                                                SELECT CAST(Scope_IDentity() as int)";
-                    cmd.CommandText = sentenciaImagen;
+                    string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
+                    cmd.CommandText = sentenciaImagenes;
                     cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
-                    cmd.Parameters.AddWithValue("@Extension", imagen.ContentType.Split("/").Last());
-                    idGenerado = (int)cmd.ExecuteScalar();
 
-                    using var stream = imagen.OpenReadStream();
-                    await servicioBlob.UploadBlobAsync($"{producto.Id}i{idGenerado}", stream);
+                    List<Imagen> imagenes = new List<Imagen>();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Imagen imagen = new Imagen();
+                            imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                            imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            imagen.Extension = Convert.ToString(reader["extension"]);
+                            imagenes.Add(imagen);
+                        }
+                    }
+
+                    string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
+                    cmd.CommandText = sentenciaEliminarImagenes;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                    int affected = cmd.ExecuteNonQuery();
+
+                    foreach (Imagen imagen in imagenes)
+                    {
+                        await servicioBlob.DeleteBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                    }
+
+                    foreach (var imagen in imagenesDTO)
+                    {
+                        string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto, @Extension);
+                                                SELECT CAST(Scope_IDentity() as int)";
+                        cmd.CommandText = sentenciaImagen;
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                        cmd.Parameters.AddWithValue("@Extension", imagen.ContentType.Split("/").Last());
+                        idGenerado = (int)cmd.ExecuteScalar();
+
+                        using var stream = imagen.OpenReadStream();
+                        await servicioBlob.UploadBlobAsync($"{producto.Id}i{idGenerado}", stream);
+                    }
+
                 }
 
 
