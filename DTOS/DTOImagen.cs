@@ -9,6 +9,6 @@ namespace DTOS
     public class DTOImagen
     {
         public byte[] Imagen { get; set; } = null;
-        public string Extension = "";
+        public string Extension { get; set; } = "";
     }
 }

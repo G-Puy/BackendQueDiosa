@@ -382,7 +382,7 @@ namespace Repositorios
             }
         }
 
-        public async Task<bool> Modificar(DTOProducto obj, IFormFileCollection imagenesDTO)
+        public async Task<bool> Modificar(DTOProducto obj, IFormFileCollection imagenesDTO, bool modificarImagenes = true)
         {
             Producto producto = new Producto();
             producto.cargarDeDTO(obj);
@@ -407,51 +407,54 @@ namespace Repositorios
                 cmd.Transaction = trn;
                 int idGenerado = cmd.ExecuteNonQuery();
 
-                string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
-                cmd.CommandText = sentenciaImagenes;
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
-
-                List<Imagen> imagenes = new List<Imagen>();
-
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                if (modificarImagenes == true)
                 {
-                    while (reader.Read())
-                    {
-                        Imagen imagen = new Imagen();
-                        imagen.Id = Convert.ToInt64(reader["idImagen"]);
-                        imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
-                        imagen.Extension = Convert.ToString(reader["extension"]);
-                        imagenes.Add(imagen);
-                    }
-                }
 
-                string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
-                cmd.CommandText = sentenciaEliminarImagenes;
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
-                int affected = cmd.ExecuteNonQuery();
-
-                foreach (Imagen imagen in imagenes)
-                {
-                    await servicioBlob.DeleteBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
-                }
-
-                foreach (var imagen in imagenesDTO)
-                {
-                    string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto, @Extension);
-                                                SELECT CAST(Scope_IDentity() as int)";
-                    cmd.CommandText = sentenciaImagen;
+                    string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
+                    cmd.CommandText = sentenciaImagenes;
                     cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
-                    cmd.Parameters.AddWithValue("@Extension", imagen.ContentType.Split("/").Last());
-                    idGenerado = (int)cmd.ExecuteScalar();
 
-                    using var stream = imagen.OpenReadStream();
-                    await servicioBlob.UploadBlobAsync($"{producto.Id}i{idGenerado}", stream);
+                    List<Imagen> imagenes = new List<Imagen>();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Imagen imagen = new Imagen();
+                            imagen.Id = Convert.ToInt64(reader["idImagen"]);
+                            imagen.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            imagen.Extension = Convert.ToString(reader["extension"]);
+                            imagenes.Add(imagen);
+                        }
+                    }
+
+                    string sentenciaEliminarImagenes = @"DELETE FROM Imagen WHERE idProducto = @IdProducto";
+                    cmd.CommandText = sentenciaEliminarImagenes;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                    int affected = cmd.ExecuteNonQuery();
+
+                    foreach (Imagen imagen in imagenes)
+                    {
+                        await servicioBlob.DeleteBlobAsync($"{imagen.IdProducto}i{imagen.Id}");
+                    }
+
+                    foreach (var imagen in imagenesDTO)
+                    {
+                        string sentenciaImagen = @"INSERT INTO Imagen VALUES(@IdProducto, @Extension);
+                                                SELECT CAST(Scope_IDentity() as int)";
+                        cmd.CommandText = sentenciaImagen;
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
+                        cmd.Parameters.AddWithValue("@Extension", imagen.ContentType.Split("/").Last());
+                        idGenerado = (int)cmd.ExecuteScalar();
+
+                        using var stream = imagen.OpenReadStream();
+                        await servicioBlob.UploadBlobAsync($"{producto.Id}i{idGenerado}", stream);
+                    }
+
                 }
-
-
                 string sentenciaTrearStock = @"SELECT * FROM Stock WHERE idStock = @IdProducto";
                 cmd.CommandText = sentenciaTrearStock;
                 cmd.Parameters.Clear();
@@ -471,7 +474,7 @@ namespace Repositorios
                         stocks.Add(stock);
                     }
                 }
-
+                int affected2 = 0;
                 foreach (Stock stock in stocks)
                 {
                     if (!producto.Stocks.Contains(stock))
@@ -482,12 +485,12 @@ namespace Repositorios
                         cmd.CommandText = sentenciaAlerta;
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@IdStock", stock.Id);
-                        affected = cmd.ExecuteNonQuery();
+                        affected2 = cmd.ExecuteNonQuery();
 
                         cmd.CommandText = sentenciaStock;
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@IdStock", stock.Id);
-                        affected = cmd.ExecuteNonQuery();
+                        affected2 = cmd.ExecuteNonQuery();
                     }
                 }
 

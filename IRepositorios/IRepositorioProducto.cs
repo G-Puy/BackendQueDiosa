@@ -12,7 +12,7 @@ namespace IRepositorios
 
         Task<bool> Eliminar(DTOProducto obj);
 
-        Task<bool> Modificar(DTOProducto obj, IFormFileCollection imagenes);
+        Task<bool> Modificar(DTOProducto obj, IFormFileCollection imagenes, bool modificarImagenes);
 
         Task<DTOProducto> BuscarPorId(DTOProducto obj);
 

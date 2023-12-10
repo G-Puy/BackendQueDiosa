@@ -160,7 +160,7 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpPut("modificar")]
-        public IActionResult Modificar([FromBody] IFormCollection dataEnvio)
+        public async Task<IActionResult> Modificar([FromForm] IFormCollection dataEnvio)
         {
             try
             {
@@ -181,6 +181,10 @@ namespace BackendQueDiosa.Controllers
 
                 DTOStockEnvio stock = producto.Stock;
 
+                bool modificarFotos = !archivos[0].FileName.Contains("NOMODIFICAR");
+
+                //TODO: aca como es editar hay que  
+
                 foreach (DTOTalleEnvio talle in stock.Talles)
                 {
                     foreach (DTOColorEnvio color in talle.Colores)
@@ -189,16 +193,19 @@ namespace BackendQueDiosa.Controllers
                         dtoStock.IdProducto = stock.IdProducto;
                         dtoStock.IdColor = color.Id;
                         dtoStock.IdTalle = talle.Id;
-                        dtoStock.Cantidad = color.Cantidad;
+                        dtoStock.Cantidad = 0;
 
                         dtoProducto.Stocks.Add(dtoStock);
                     }
                 }
 
+                //NO SE PORQUJE EL  BUSCAR POR NOMBRE FALLA SI ESTOY INGRESANDOLE UN NOMBRE DISTINTO
+
+
                 if (this.ManejadorProducto.BuscarPorNombre(dtoProducto) != null)
                     return BadRequest("Ya existe nombre");
 
-                bool resultado = this.ManejadorProducto.Modificar(dtoProducto, archivos).Result;
+                bool resultado = this.ManejadorProducto.Modificar(dtoProducto, archivos, modificarFotos).Result;
 
                 if (resultado) return Ok("Modificado exitosamente");
                 else return BadRequest("Fallo al modificar");
