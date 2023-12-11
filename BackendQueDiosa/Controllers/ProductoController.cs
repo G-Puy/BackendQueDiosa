@@ -184,7 +184,7 @@ namespace BackendQueDiosa.Controllers
                 bool modificarFotos = !archivos[0].FileName.Contains("NOMODIFICAR");
 
                 //TODO: aca como es editar hay que  
-
+                //Toma el push
                 foreach (DTOTalleEnvio talle in stock.Talles)
                 {
                     foreach (DTOColorEnvio color in talle.Colores)
