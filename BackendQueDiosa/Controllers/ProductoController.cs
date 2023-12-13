@@ -202,7 +202,7 @@ namespace BackendQueDiosa.Controllers
 
                 bool resultado = this.ManejadorProducto.Modificar(dtoProducto, archivos).Result;
 
-                if (resultado) return Ok("Modificado exitosamente");
+                if (resultado) return Ok(true);
                 else return BadRequest("Fallo al modificar");
 
             }
