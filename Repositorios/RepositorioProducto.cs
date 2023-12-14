@@ -5,6 +5,8 @@ using DTOS;
 using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
 using Microsoft.AspNetCore.Http;
+using Serilog;
+using Serilog.Core;
 using System.Data.SqlClient;
 using System.Reflection.Metadata;
 
@@ -12,6 +14,7 @@ namespace Repositorios
 {
     public class RepositorioProducto : RepositorioBase, IRepositorioProducto
     {
+        private Logger log = new LoggerConfiguration().WriteTo.Console().CreateLogger();
         private ServicioBlobAzure servicioBlob = new ServicioBlobAzure();
 
         private Conexion manejadorConexion = new Conexion();
@@ -580,13 +583,16 @@ namespace Repositorios
             List<DTOProductoEnviarAFRONT> productos = new List<DTOProductoEnviarAFRONT>();
 
             cn = manejadorConexion.CrearConexion();
+            log.Information(cn.ToString());
             SqlTransaction trn = null;
 
             try
             {
                 string sentenciaSql = @"SELECT * FROM Producto WHERE bajaLogica = 0;";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                log.Information(cmd.ToString());
                 manejadorConexion.AbrirConexion(cn);
+                log.Information(cn.ToString());
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 using (SqlDataReader reader = cmd.ExecuteReader())

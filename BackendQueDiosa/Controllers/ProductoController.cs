@@ -6,6 +6,8 @@ using IRepositorios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Serilog;
+using Serilog.Core;
 
 namespace BackendQueDiosa.Controllers
 {
@@ -14,8 +16,9 @@ namespace BackendQueDiosa.Controllers
     public class ProductoController : ControllerBase
     {
         private IRepositorioProducto ManejadorProducto { get; set; }
+       private Logger log = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
-        public ProductoController([FromServices] IRepositorioProducto repInj)
+    public ProductoController([FromServices] IRepositorioProducto repInj)
         {
             this.ManejadorProducto = repInj;
         }
@@ -218,7 +221,10 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
+                log.Information("LLego a Traer Todos");
+                log.Debug("LLego a Traer Todos");
                 List<DTOProductoEnviarAFRONT> resultado = (List<DTOProductoEnviarAFRONT>)this.ManejadorProducto.TraerTodos().Result;
+                
                 if (resultado != null) return Ok(resultado);
                 else return BadRequest(resultado);
             }
