@@ -34,6 +34,8 @@ namespace BackendQueDiosa.Controllers
                 DTOProductoEnvio producto = JsonConvert.DeserializeObject<DTOProductoEnvio>(productoJson);
                 var archivos = dataEnvio.Files;
 
+                if (archivos.Count < 1) return BadRequest("No hay imagenes");
+
                 DTOProducto dtoProducto = new DTOProducto();
                 dtoProducto.Nombre = producto.Nombre;
                 dtoProducto.PrecioAnterior = producto.PrecioAnterior;
@@ -171,6 +173,8 @@ namespace BackendQueDiosa.Controllers
                 Console.WriteLine(productoJson);
                 DTOProductoEnvio producto = JsonConvert.DeserializeObject<DTOProductoEnvio>(productoJson);
                 var archivos = dataEnvio.Files;
+
+                if (archivos.Count < 1) return BadRequest("No hay imagenes");
 
                 DTOProducto dtoProducto = new DTOProducto();
                 dtoProducto.Id = producto.Id;
