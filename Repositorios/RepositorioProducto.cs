@@ -718,6 +718,7 @@ namespace Repositorios
                             if (talleParaAgregarElColor.Id == stockActual.IdTalle)
                             {
                                 talleParaAgregarElColor.Colores.Add(dTOColorEnvio);
+                                talleParaAgregarElColor.Cantidad += stockActual.Cantidad;
                             }
                         }
                     }
