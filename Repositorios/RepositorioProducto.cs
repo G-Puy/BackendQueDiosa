@@ -525,6 +525,7 @@ namespace Repositorios
                         stocks.Add(stock);
                     }
                 }
+                /*
                 int affected2 = 0;
                 foreach (Stock stock in stocks)
                 {
@@ -570,7 +571,7 @@ namespace Repositorios
                         cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
                         cmd.Parameters.AddWithValue("@Cantidad", 0);
                     }
-                }
+                }*/
 
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
