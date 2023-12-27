@@ -525,14 +525,14 @@ namespace Repositorios
                         stocks.Add(stock);
                     }
                 }
-                /*
+                
                 int affected2 = 0;
                 foreach (Stock stock in stocks)
                 {
                     bool esta = false;
                     foreach (Stock st in producto.Stocks)
                     {
-                        if (stock.Id == st.Id) { esta = true; break; }
+                        if (stock.IdTalle == st.IdTalle && stock.IdColor == st.IdColor && stock.IdProducto == producto.Id) { esta = true; break; }
                     }
 
                     if (!esta)
@@ -557,21 +557,25 @@ namespace Repositorios
                     bool esta = false;
                     foreach (Stock st in stocks)
                     {
-                        if (stock.Id == st.Id) { esta = true; break; }
+                        log.Debug($"Talle: ${stock.IdTalle} == ${st.IdTalle}");
+                        log.Debug($"Color: ${stock.IdColor} == ${st.IdColor}");
+                        log.Debug($"Pro: ${producto.Id} == ${st.IdProducto}");
+                        if (stock.IdTalle == st.IdTalle && stock.IdColor == st.IdColor && producto.Id == st.IdProducto) { esta = true; break; }
                     }
 
                     if (!esta)
                     {
-                        string sentenciaAgregarStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle, @cantidad)
+                        string sentenciaAgregarStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle, @Cantidad)
                                             SELECT CAST(Scope_IDentity() as int)";
                         cmd.CommandText = sentenciaAgregarStock;
                         cmd.Parameters.Clear();
-                        cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
+                        cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                         cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
                         cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
                         cmd.Parameters.AddWithValue("@Cantidad", 0);
+                        affected2 = (int)cmd.ExecuteScalar();
                     }
-                }*/
+                }
 
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
