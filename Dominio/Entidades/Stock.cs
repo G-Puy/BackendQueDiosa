@@ -34,5 +34,7 @@ namespace Dominio.Entidades
             dtoStock.Cantidad = this.Cantidad;
             return dtoStock;
         }
+
+
     }
 }

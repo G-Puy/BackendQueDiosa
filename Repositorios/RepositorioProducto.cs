@@ -506,7 +506,7 @@ namespace Repositorios
                     }
 
                 }
-                string sentenciaTrearStock = @"SELECT * FROM Stock WHERE idStock = @IdProducto";
+                string sentenciaTrearStock = @"SELECT * FROM Stock WHERE idProducto = @IdProducto";
                 cmd.CommandText = sentenciaTrearStock;
                 cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
@@ -528,7 +528,13 @@ namespace Repositorios
                 int affected2 = 0;
                 foreach (Stock stock in stocks)
                 {
-                    if (!producto.Stocks.Contains(stock))
+                    bool esta = false;
+                    foreach (Stock st in producto.Stocks)
+                    {
+                        if (stock.Id == st.Id) { esta = true; break; }
+                    }
+
+                    if (!esta)
                     {
                         string sentenciaAlerta = @"DELETE FROM AlertaStock WHERE idStock = @IdStock";
                         string sentenciaStock = @"DELETE FROM Stock WHERE idStock = @IdStock";
@@ -547,7 +553,13 @@ namespace Repositorios
 
                 foreach (Stock stock in producto.Stocks)
                 {
-                    if (!stocks.Contains(stock))
+                    bool esta = false;
+                    foreach (Stock st in stocks)
+                    {
+                        if (stock.Id == st.Id) { esta = true; break; }
+                    }
+
+                    if (!esta)
                     {
                         string sentenciaAgregarStock = @"INSERT INTO Stock VALUES(@IdProducto, @IdColor, @IdTalle, @cantidad)
                                             SELECT CAST(Scope_IDentity() as int)";
