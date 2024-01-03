@@ -1,10 +1,12 @@
 ﻿using Azure.Core;
+using DTOS.DTOSProductoFrontBack;
 using MercadoPago.Client.Common;
 using MercadoPago.Client.Payment;
 using MercadoPago.Client.Preference;
 using MercadoPago.Config;
 using MercadoPago.Resource.Preference;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 
@@ -15,32 +17,8 @@ namespace BackendQueDiosa.Controllers
     public class MercadoPagoController : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> algo([FromForm] IFormCollection dataEnvio)
+        public async Task<IActionResult> algo(DTOVentaEnvio dataEnvio)
         {
-            List<PreferencePaymentMethodRequest> ExcludedPaymentMethodsList = new List<PreferencePaymentMethodRequest>
-            {
-                new PreferencePaymentMethodRequest
-                {
-                    Id = "amex"
-                },
-                new PreferencePaymentMethodRequest
-                {
-                    Id = "master"
-                },
-                new PreferencePaymentMethodRequest
-                {
-                    Id = "creditel"
-                }
-            };
-            List<PreferencePaymentTypeRequest> ExcludedPaymentTypesList = new List<PreferencePaymentTypeRequest> 
-            {
-                new PreferencePaymentTypeRequest
-                {
-                    Id = "ticket"
-                }
-            };
-
-
             // Cria o objeto de request da preferência
             var request = new PreferenceRequest
             {
@@ -48,14 +26,13 @@ namespace BackendQueDiosa.Controllers
                 {
                     new PreferenceItemRequest
                     {
-                        Id = "item-ID-1234",
-                        Title = "Meu produto",
-                        CurrencyId = "BRL",
-                        PictureUrl = "https://www.mercadopago.com/org-img/MP3/home/logomp3.gif",
+                        Id = dataEnvio.Id.ToString(),
+                        Title = dataEnvio.Nombre,
+                        CurrencyId = "UYU",
                         Description = "Descrição do Item",
                         CategoryId = "art",
-                        Quantity = 1,
-                        UnitPrice = 75.76m
+                        Quantity = dataEnvio.Cantidad,
+                        UnitPrice = dataEnvio.Precio
                     }
                 },
                 Payer = new PreferencePayerRequest
@@ -89,8 +66,28 @@ namespace BackendQueDiosa.Controllers
                 AutoReturn = "approved",
                 PaymentMethods = new PreferencePaymentMethodsRequest
                 {
-                    ExcludedPaymentMethods = ExcludedPaymentMethodsList,
-                    ExcludedPaymentTypes = ExcludedPaymentTypesList,
+                    ExcludedPaymentMethods = new List<PreferencePaymentMethodRequest>
+                    {
+                       new PreferencePaymentMethodRequest
+                       {
+                         Id = "amex"
+                      },
+                       new PreferencePaymentMethodRequest
+                      {
+                          Id = "master"
+                      },
+                      new PreferencePaymentMethodRequest
+                        {
+                            Id = "creditel"
+                       }
+                  },
+                    ExcludedPaymentTypes = new List<PreferencePaymentTypeRequest>
+                   {
+                       new PreferencePaymentTypeRequest
+                       {
+                           Id = "ticket"
+                       }
+                   },
                     Installments = 1
                 },
                 NotificationUrl = "https://www.your-site.com/ipn",
@@ -105,11 +102,8 @@ namespace BackendQueDiosa.Controllers
             var client = new PreferenceClient();
             Preference preference = await client.CreateAsync(request);
 
-            return Ok(preference);
+            return Ok(preference.Id);
         }
-
-
-
 
     }
 }
