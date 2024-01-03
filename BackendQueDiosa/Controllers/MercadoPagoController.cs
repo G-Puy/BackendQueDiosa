@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BackendQueDiosa.Controllers
 {
@@ -16,6 +17,11 @@ namespace BackendQueDiosa.Controllers
     [ApiController]
     public class MercadoPagoController : ControllerBase
     {
+        public MercadoPagoController()
+        {
+            MercadoPagoConfig.AccessToken = "TEST - 1609974477177647 - 010314 - aa1a201be14a912fb990aaa24584a10b - 128881622";
+        }
+
         [HttpPost]
         public async Task<IActionResult> algo(DTOVentaEnvio dataEnvio)
         {
