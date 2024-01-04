@@ -201,6 +201,60 @@ namespace Repositorios
             }
         }
 
+        public List<DTOProducto> BuscarPorIds(List<DTOProducto> ids)
+        {
+            List<DTOProducto> productos = new List<DTOProducto>();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Producto WHERE idProducto IN (";
+                for (int i = 0; i < ids.Count; i++)
+                {
+                    if (i != 0)
+                        sentenciaSql += ", ";
+
+                    sentenciaSql += ids.ElementAt(i).Id;
+                }
+                sentenciaSql += ");";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Producto producto = new Producto();
+                        producto.Id = Convert.ToInt64(reader["idProducto"]);
+                        producto.Nombre = Convert.ToString(reader["nombre"]);
+                        producto.Descripcion = Convert.ToString(reader["descripcion"]);
+                        producto.PrecioActual = Convert.ToDouble(reader["precioActual"]);
+                        producto.PrecioAnterior = Convert.ToDouble(reader["precioAnterior"]);
+                        producto.IdTipoProducto = Convert.ToInt64(reader["idTipoProducto"]);
+                        producto.VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]);
+                        producto.Nuevo = Convert.ToBoolean(reader["nuevo"]);
+                        producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        producto.GuiaTalles = Convert.ToString(reader["guiaTalles"]);
+                        productos.Add(producto.darDto());
+                    }
+                }
+
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+
+                return productos;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public async Task<DTOProducto> BuscarPorNombre(DTOProducto dtoProducto)
         {
             Producto producto = new Producto();
@@ -525,7 +579,7 @@ namespace Repositorios
                         stocks.Add(stock);
                     }
                 }
-                
+
                 int affected2 = 0;
                 foreach (Stock stock in stocks)
                 {

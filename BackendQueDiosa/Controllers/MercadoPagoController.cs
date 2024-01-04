@@ -1,5 +1,7 @@
 ﻿using Azure.Core;
+using DTOS;
 using DTOS.DTOSProductoFrontBack;
+using IRepositorios;
 using MercadoPago.Client.Common;
 using MercadoPago.Client.Payment;
 using MercadoPago.Client.Preference;
@@ -17,30 +19,52 @@ namespace BackendQueDiosa.Controllers
     [ApiController]
     public class MercadoPagoController : ControllerBase
     {
-        public MercadoPagoController()
+        private IRepositorioProducto ManejadorProducto { get; set; }
+
+        public MercadoPagoController([FromServices] IRepositorioProducto repInj)
         {
-            MercadoPagoConfig.AccessToken = "TEST - 1609974477177647 - 010314 - aa1a201be14a912fb990aaa24584a10b - 128881622";
+            MercadoPagoConfig.AccessToken = "TEST-1609974477177647-010314-aa1a201be14a912fb990aaa24584a10b-128881622";
+            this.ManejadorProducto = repInj;
         }
 
         [HttpPost]
-        public async Task<IActionResult> algo(DTOVentaEnvio dataEnvio)
+        public async Task<IActionResult> algo(DTOOrderData dataVenta)
         {
+            List<DTOProducto> ids = new List<DTOProducto>();
+            foreach (var data in dataVenta.DTOOrderDataProductos)
+            {
+                DTOProducto producto = new DTOProducto();
+                producto.Id = data.Id;
+                ids.Add(producto);
+            }
+
+            List<DTOProducto> productos = ManejadorProducto.BuscarPorIds(ids);
+
+            List<PreferenceItemRequest> preferenceItemRequests = new List<PreferenceItemRequest>();
+
+            foreach (var item in productos)
+            {
+                int cantidad = dataVenta.DTOOrderDataProductos.Find(x => x.Id == item.Id).Cantidad;
+
+                PreferenceItemRequest preferenceItemRequest = new PreferenceItemRequest
+                {
+                    Id = item.Id.ToString(),
+                    Title = item.Nombre,
+                    CurrencyId = "UYU",
+                    Description = item.Descripcion,
+                    Quantity = cantidad,
+                    UnitPrice = 1
+                };
+
+                preferenceItemRequests.Add(preferenceItemRequest);
+            }
+
+
+
             // Cria o objeto de request da preferência
             var request = new PreferenceRequest
             {
-                Items = new List<PreferenceItemRequest>
-                {
-                    new PreferenceItemRequest
-                    {
-                        Id = dataEnvio.Id.ToString(),
-                        Title = dataEnvio.Nombre,
-                        CurrencyId = "UYU",
-                        Description = "Descrição do Item",
-                        CategoryId = "art",
-                        Quantity = dataEnvio.Cantidad,
-                        UnitPrice = dataEnvio.Precio
-                    }
-                },
+                Items = preferenceItemRequests,
                 Payer = new PreferencePayerRequest
                 {
                     Name = "João",
