@@ -121,8 +121,8 @@ namespace Repositorios
                 string sentenciaSql = @"SELECT * FROM Stock WHERE idProducto = @IdProducto AND idColor = @IdColor AND idTalle = @IdTalle";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdProducto", obj.IdProducto);
-                cmd.Parameters.AddWithValue("IdColor", obj.IdColor);
-                cmd.Parameters.AddWithValue("IdTalle", obj.IdTalle);
+                cmd.Parameters.AddWithValue("@IdColor", obj.IdColor);
+                cmd.Parameters.AddWithValue("@IdTalle", obj.IdTalle);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -142,7 +142,7 @@ namespace Repositorios
                 }
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return obj.Cantidad >= stock.Cantidad;
+                return obj.Cantidad <= stock.Cantidad;
             }
             catch (Exception ex)
             {

@@ -43,6 +43,7 @@ namespace BackendQueDiosa.Controllers
                 stock.IdProducto = data.Id;
                 stock.IdColor = data.IdColor;
                 stock.IdTalle = data.IdTalle;
+                stock.Cantidad = data.Cantidad;
                 stocks.Add(stock);
             }
 
