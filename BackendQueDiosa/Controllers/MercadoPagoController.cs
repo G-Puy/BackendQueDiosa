@@ -20,25 +20,37 @@ namespace BackendQueDiosa.Controllers
     public class MercadoPagoController : ControllerBase
     {
         private IRepositorioProducto ManejadorProducto { get; set; }
+        private IRepositorioStock ManejadorStock { get; set; }
 
-        public MercadoPagoController([FromServices] IRepositorioProducto repInj)
+        public MercadoPagoController([FromServices] IRepositorioProducto repInj, IRepositorioStock repStock)
         {
             MercadoPagoConfig.AccessToken = "TEST-1609974477177647-010314-aa1a201be14a912fb990aaa24584a10b-128881622";
             this.ManejadorProducto = repInj;
+            this.ManejadorStock = repStock;
         }
 
         [HttpPost]
         public async Task<IActionResult> algo(DTOOrderData dataVenta)
         {
             List<DTOProducto> ids = new List<DTOProducto>();
+            List<DTOStock> stocks = new List<DTOStock>();
             foreach (var data in dataVenta.DTOOrderDataProductos)
             {
                 DTOProducto producto = new DTOProducto();
                 producto.Id = data.Id;
                 ids.Add(producto);
+                DTOStock stock = new DTOStock();
+                stock.IdProducto = data.Id;
+                stock.IdColor = data.IdColor;
+                stock.IdTalle = data.IdTalle;
+                stocks.Add(stock);
             }
 
             List<DTOProducto> productos = ManejadorProducto.BuscarPorIds(ids);
+
+
+            if (productos.Exists(p => p.BajaLogica)) return BadRequest("Producto dado de baja");
+            if (stocks.Exists(s => !ManejadorStock.TieneStock(s))) return BadRequest("Producto no tiene stock"); 
 
             List<PreferenceItemRequest> preferenceItemRequests = new List<PreferenceItemRequest>();
 
@@ -58,8 +70,6 @@ namespace BackendQueDiosa.Controllers
 
                 preferenceItemRequests.Add(preferenceItemRequest);
             }
-
-
 
             // Cria o objeto de request da preferência
             var request = new PreferenceRequest

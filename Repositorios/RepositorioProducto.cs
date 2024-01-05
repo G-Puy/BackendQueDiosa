@@ -644,11 +644,6 @@ namespace Repositorios
             }
         }
 
-        public Task<bool> Modificar(DTOProducto obj, IFormFileCollection imagenes, bool modificarImagenes)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<DTOProductoEnviarAFRONT>> TraerTodos()
         {
             List<DTOProductoEnviarAFRONT> productos = new List<DTOProductoEnviarAFRONT>();

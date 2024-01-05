@@ -112,6 +112,47 @@ namespace Repositorios
             throw new NotImplementedException();
         }
 
+        public bool TieneStock(DTOStock obj)
+        {
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Stock WHERE idProducto = @IdProducto AND idColor = @IdColor AND idTalle = @IdTalle";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@IdProducto", obj.IdProducto);
+                cmd.Parameters.AddWithValue("IdColor", obj.IdColor);
+                cmd.Parameters.AddWithValue("IdTalle", obj.IdTalle);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+
+                Stock stock = new Stock();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        stock.Id = Convert.ToInt64(reader["idStock"]);
+                        stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                        stock.IdColor = Convert.ToInt64(reader["idColor"]);
+                        stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                        stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                    }
+                }
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return obj.Cantidad >= stock.Cantidad;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public IEnumerable<DTOStock> TraerTodos()
         {
             List<DTOStock> stocks = new List<DTOStock>();
