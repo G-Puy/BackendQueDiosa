@@ -135,8 +135,8 @@ namespace BackendQueDiosa.Controllers
                 StatementDescriptor = "MEUNEGOCIO",
                 ExternalReference = "Reference_1234",
                 Expires = true,
-                ExpirationDateFrom = DateTime.Parse("2016-02-01T12:00:00.000-04:00"),
-                ExpirationDateTo = DateTime.Parse("2016-02-28T12:00:00.000-04:00")
+                ExpirationDateFrom = DateTime.Now.AddMinutes(90),
+                ExpirationDateTo = DateTime.Now.AddMinutes(90)
             };
 
             // Cria a preferência usando o client
