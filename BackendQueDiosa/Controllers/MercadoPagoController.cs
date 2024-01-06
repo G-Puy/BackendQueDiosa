@@ -33,13 +33,13 @@ namespace BackendQueDiosa.Controllers
         public async Task<IActionResult> algo(DTOOrderData orderDataEnvio)
         {
             var persona = orderDataEnvio.datosPersona;
-            var dataProducots = orderDataEnvio.datosProductos;
+            var dataProductos = orderDataEnvio.datosProductos;
 
             List<DTOProducto> ids = new List<DTOProducto>();
             List<DTOStock> stocks = new List<DTOStock>();
             try
             {
-                foreach (var data in dataProducots)
+                foreach (var data in dataProductos)
                 {
                     DTOProducto producto = new DTOProducto();
                     producto.Id = data.Id;
@@ -57,18 +57,18 @@ namespace BackendQueDiosa.Controllers
                 if (stocks.Exists(s => !ManejadorStock.TieneStock(s))) return BadRequest("Producto no tiene stock");
                 List<PreferenceItemRequest> preferenceItemRequests = new List<PreferenceItemRequest>();
 
-                foreach (var item in productos)
+                foreach (var item in stocks)
                 {
-                    int cantidad = dataProducots.Find(x => x.Id == item.Id).Cantidad;
+                    DTOProducto p = productos.Find(x => x.Id == item.Id);
 
                     PreferenceItemRequest preferenceItemRequest = new PreferenceItemRequest
                     {
-                        Id = item.Id.ToString(),
-                        Title = item.Nombre,
+                        Id = p.Id.ToString(),
+                        Title = p.Nombre,
                         CurrencyId = "UYU",
-                        Description = item.Descripcion,
-                        Quantity = cantidad,
-                        UnitPrice = 1
+                        Description = p.Descripcion,
+                        Quantity = item.Cantidad,
+                        UnitPrice = Convert.ToDecimal(p.PrecioActual)
                     };
 
                     preferenceItemRequests.Add(preferenceItemRequest);
