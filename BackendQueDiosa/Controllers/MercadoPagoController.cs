@@ -29,85 +29,88 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorStock = repStock;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> algo(DTOOrderData dataVenta)
+        [HttpPost("crearPreferencia")]
+        public async Task<IActionResult> algo(DTOOrderData orderDataEnvio)
         {
+            //TODO: HOLA SANTI :3
+            //TODO: No me cambies los nombres que cambie porque no llegan los datos y le puse un nombre de ruta porque no me funcionaba la por defecto.
+            //TODO: Caputrar los datos de las personas
+            //TODO: Verificar que sume el precio de los productos bien, teniendo en cuenta precio por cantidad.
+            //TODO: Verificar validaciones de stock comentadas
+
             List<DTOProducto> ids = new List<DTOProducto>();
             List<DTOStock> stocks = new List<DTOStock>();
-            foreach (var data in dataVenta.DTOOrderDataProductos)
+            try
             {
-                DTOProducto producto = new DTOProducto();
-                producto.Id = data.Id;
-                ids.Add(producto);
-                DTOStock stock = new DTOStock();
-                stock.IdProducto = data.Id;
-                stock.IdColor = data.IdColor;
-                stock.IdTalle = data.IdTalle;
-                stock.Cantidad = data.Cantidad;
-                stocks.Add(stock);
-            }
-
-            List<DTOProducto> productos = ManejadorProducto.BuscarPorIds(ids);
-
-
-            if (productos.Exists(p => p.BajaLogica)) return BadRequest("Producto dado de baja");
-            if (stocks.Exists(s => !ManejadorStock.TieneStock(s))) return BadRequest("Producto no tiene stock"); 
-
-            List<PreferenceItemRequest> preferenceItemRequests = new List<PreferenceItemRequest>();
-
-            foreach (var item in productos)
-            {
-                int cantidad = dataVenta.DTOOrderDataProductos.Find(x => x.Id == item.Id).Cantidad;
-
-                PreferenceItemRequest preferenceItemRequest = new PreferenceItemRequest
+                foreach (var data in orderDataEnvio.datosProductos)
                 {
-                    Id = item.Id.ToString(),
-                    Title = item.Nombre,
-                    CurrencyId = "UYU",
-                    Description = item.Descripcion,
-                    Quantity = cantidad,
-                    UnitPrice = 1
-                };
+                    DTOProducto producto = new DTOProducto();
+                    producto.Id = data.Id;
+                    ids.Add(producto);
+                    DTOStock stock = new DTOStock();
+                    stock.IdProducto = data.Id;
+                    stock.IdColor = data.IdColor;
+                    stock.IdTalle = data.IdTalle;
+                    stock.Cantidad = data.Cantidad;
+                    stocks.Add(stock);
+                }
 
-                preferenceItemRequests.Add(preferenceItemRequest);
-            }
+                List<DTOProducto> productos = ManejadorProducto.BuscarPorIds(ids);
+                //if (productos.Exists(p => p.BajaLogica)) return BadRequest("Producto dado de baja");
+                //if (stocks.Exists(s => !ManejadorStock.TieneStock(s))) return BadRequest("Producto no tiene stock");
+                List<PreferenceItemRequest> preferenceItemRequests = new List<PreferenceItemRequest>();
 
-            // Cria o objeto de request da preferência
-            var request = new PreferenceRequest
-            {
-                Items = preferenceItemRequests,
-                Payer = new PreferencePayerRequest
+                foreach (var item in productos)
                 {
-                    Name = "João",
-                    Surname = "Silva",
-                    Email = "user@email.com",
-                    Phone = new PhoneRequest
+                    int cantidad = orderDataEnvio.datosProductos.Find(x => x.Id == item.Id).Cantidad;
+
+                    PreferenceItemRequest preferenceItemRequest = new PreferenceItemRequest
                     {
-                        AreaCode = "11",
-                        Number = "4444-4444"
-                    },
-                    Identification = new IdentificationRequest
+                        Id = item.Id.ToString(),
+                        Title = item.Nombre,
+                        CurrencyId = "UYU",
+                        Description = item.Descripcion,
+                        Quantity = cantidad,
+                        UnitPrice = 1
+                    };
+
+                    preferenceItemRequests.Add(preferenceItemRequest);
+                    // Cria o objeto de request da preferência
+                    var request = new PreferenceRequest
                     {
-                        Type = "CPF",
-                        Number = "19119119100"
-                    },
-                    Address = new AddressRequest
-                    {
-                        StreetName = "Street",
-                        StreetNumber = "123",
-                        ZipCode = "06233200"
-                    }
-                },
-                BackUrls = new PreferenceBackUrlsRequest
-                {
-                    Success = "https://www.success.com",
-                    Failure = "http://www.failure.com",
-                    Pending = "http://www.pending.com"
-                },
-                AutoReturn = "approved",
-                PaymentMethods = new PreferencePaymentMethodsRequest
-                {
-                    ExcludedPaymentMethods = new List<PreferencePaymentMethodRequest>
+                        Items = preferenceItemRequests,
+                        Payer = new PreferencePayerRequest
+                        {
+                            Name = "João",
+                            Surname = "Silva",
+                            Email = "user@email.com",
+                            Phone = new PhoneRequest
+                            {
+                                AreaCode = "11",
+                                Number = "4444-4444"
+                            },
+                            Identification = new IdentificationRequest
+                            {
+                                Type = "CPF",
+                                Number = "19119119100"
+                            },
+                            Address = new AddressRequest
+                            {
+                                StreetName = "Street",
+                                StreetNumber = "123",
+                                ZipCode = "06233200"
+                            }
+                        },
+                        BackUrls = new PreferenceBackUrlsRequest
+                        {
+                            Success = "https://www.success.com",
+                            Failure = "http://www.failure.com",
+                            Pending = "http://www.pending.com"
+                        },
+                        AutoReturn = "approved",
+                        PaymentMethods = new PreferencePaymentMethodsRequest
+                        {
+                            ExcludedPaymentMethods = new List<PreferencePaymentMethodRequest>
                     {
                        new PreferencePaymentMethodRequest
                        {
@@ -122,28 +125,47 @@ namespace BackendQueDiosa.Controllers
                             Id = "creditel"
                        }
                   },
-                    ExcludedPaymentTypes = new List<PreferencePaymentTypeRequest>
+                            ExcludedPaymentTypes = new List<PreferencePaymentTypeRequest>
                    {
                        new PreferencePaymentTypeRequest
                        {
                            Id = "ticket"
                        }
                    },
-                    Installments = 1
-                },
-                NotificationUrl = "https://www.your-site.com/ipn",
-                StatementDescriptor = "MEUNEGOCIO",
-                ExternalReference = "Reference_1234",
-                Expires = true,
-                ExpirationDateFrom = DateTime.Now.AddMinutes(90),
-                ExpirationDateTo = DateTime.Now.AddMinutes(90)
-            };
+                            Installments = 1
+                        },
+                        NotificationUrl = "https://www.your-site.com/ipn",
+                        StatementDescriptor = "MEUNEGOCIO",
+                        ExternalReference = "Reference_1234",
+                        Expires = true,
+                        ExpirationDateFrom = DateTime.UtcNow,
+                        ExpirationDateTo = DateTime.UtcNow.AddMinutes(60)
+                    };
 
-            // Cria a preferência usando o client
-            var client = new PreferenceClient();
-            Preference preference = await client.CreateAsync(request);
+                    // Cria a preferência usando o client
+                    var client = new PreferenceClient();
+                    Preference preference = await client.CreateAsync(request);
 
-            return Ok(preference.Id);
+                    return Ok(preference.Id);
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
+          
+
+        
+
+
+            
+
+          
+
+           
         }
 
     }

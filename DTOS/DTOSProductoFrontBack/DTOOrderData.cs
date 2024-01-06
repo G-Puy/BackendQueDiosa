@@ -8,7 +8,7 @@ namespace DTOS.DTOSProductoFrontBack
 {
     public class DTOOrderData
     {
-        public DTOOrderDataPersona DTOOrderDataPersona { get; set; } = new DTOOrderDataPersona();
-        public List<DTOOrderDataProducto> DTOOrderDataProductos { get; set; } = new List<DTOOrderDataProducto>();
+        public DTOOrderDataPersona datosPersona { get; set; } = new DTOOrderDataPersona();
+        public List<DTOOrderDataProducto> datosProductos { get; set; } = new List<DTOOrderDataProducto>();
     }
 }
