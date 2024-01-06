@@ -59,7 +59,7 @@ namespace BackendQueDiosa.Controllers
 
                 foreach (var item in stocks)
                 {
-                    DTOProducto p = productos.Find(x => x.Id == item.Id);
+                    DTOProducto p = productos.Find(x => x.Id == item.IdProducto);
 
                     PreferenceItemRequest preferenceItemRequest = new PreferenceItemRequest
                     {
