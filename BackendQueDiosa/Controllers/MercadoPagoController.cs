@@ -93,9 +93,9 @@ namespace BackendQueDiosa.Controllers
                     },
                     BackUrls = new PreferenceBackUrlsRequest
                     {
-                        Success = "https://quediosa.azurewebsites.net/store/success",
-                        Failure = "https://quediosa.azurewebsites.net/store/failure",
-                        Pending = "https://quediosa.azurewebsites.net/store/pending"
+                        Success = "https://quediosa.netlify.app/store/success",
+                        Failure = "https://quediosa.netlify.app/store/failure",
+                        Pending = "https://quediosa.netlify.app/store/pending"
                     },
                     AutoReturn = "approved",
                     PaymentMethods = new PreferencePaymentMethodsRequest
