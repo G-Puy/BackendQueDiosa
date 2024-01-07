@@ -93,9 +93,9 @@ namespace BackendQueDiosa.Controllers
                     },
                     BackUrls = new PreferenceBackUrlsRequest
                     {
-                        Success = "https://www.success.com",
-                        Failure = "http://www.failure.com",
-                        Pending = "http://www.pending.com"
+                        Success = "https://quediosa.azurewebsites.net/store/success",
+                        Failure = "https://quediosa.azurewebsites.net/store/failure",
+                        Pending = "https://quediosa.azurewebsites.net/store/pending"
                     },
                     AutoReturn = "approved",
                     PaymentMethods = new PreferencePaymentMethodsRequest
