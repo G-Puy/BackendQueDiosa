@@ -17,8 +17,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM Stock WHRE idProducto = @IdProducto AND idColor = @IdColor AND idTalle = @IdTalle;
-                                        SELECT CAST(Scope_IDentity() as int);";
+                string sentenciaSql = @"SELECT * FROM Stock WHERE idProducto = @IdProducto AND idColor = @IdColor AND idTalle = @IdTalle;";
 
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 manejadorConexion.AbrirConexion(cn);
@@ -63,11 +62,13 @@ namespace Repositorios
 
                     if (diferencia <= 2)
                     {
-                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@IdStock, @Descripcion, false)";
+                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@IdStock, @Descripcion, @Estado);
+                                                   SELECT CAST(Scope_IDentity() as int);";
                         cmd.CommandText = sentenciaAlerta;
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@IdStock", stock.Id);
                         cmd.Parameters.AddWithValue("@Descripcion", "Queda poco stock");
+                        cmd.Parameters.AddWithValue("@Estado", false);
                         int insert = (int)cmd.ExecuteScalar();
                     }
 
