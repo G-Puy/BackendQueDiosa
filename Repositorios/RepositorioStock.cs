@@ -57,7 +57,9 @@ namespace Repositorios
 
                     if (diferencia < 0)
                     {
-                        throw new Exception("No hay stock suficiente");
+                        trn.Rollback();
+                        manejadorConexion.CerrarConexionConClose(cn);
+                        return false;
                     }
 
                     if (diferencia <= 2)
