@@ -11,6 +11,91 @@ namespace Repositorios
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
 
+        public bool ActualizarStock(List<DTOStock> obj)
+        {
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Stock WHRE idProducto = @IdProducto AND idColor = @IdColor AND idTalle = @IdTalle;
+                                        SELECT CAST(Scope_IDentity() as int);";
+
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+
+                List<Stock> stocks = new List<Stock>();
+
+                foreach (DTOStock item in obj)
+                {
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", item.IdProducto);
+                    cmd.Parameters.AddWithValue("@IdColor", item.IdColor);
+                    cmd.Parameters.AddWithValue("@IdTalle", item.IdTalle);
+
+                    Stock stock = new Stock();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            stock.Id = Convert.ToInt64(reader["idStock"]);
+                            stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            stock.IdColor = Convert.ToInt64(reader["idColor"]);
+                            stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                            stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                        }
+                    }
+
+                    stocks.Add(stock);
+                }
+
+                foreach (Stock stock in stocks)
+                {
+                    var objeto = obj.Find(o => o.IdProducto == stock.IdProducto && o.IdTalle == stock.IdTalle && o.IdColor == stock.IdColor);
+                    var diferencia = stock.Cantidad - objeto.Cantidad;
+
+                    if (diferencia < 0)
+                    {
+                        throw new Exception("No hay stock suficiente");
+                    }
+
+                    if (diferencia <= 2)
+                    {
+                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@IdStock, @Descripcion, false)";
+                        cmd.CommandText = sentenciaAlerta;
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@IdStock", stock.Id);
+                        cmd.Parameters.AddWithValue("@Descripcion", "Queda poco stock");
+                        int insert = (int)cmd.ExecuteScalar();
+                    }
+
+                    string sentenciaUpdate = @"UPDATE Stock SET cantidad = @Cantidad  WHERE idProducto = @IdProducto AND idColor = @IdColor AND idTalle = @IdTalle";
+
+                    cmd.CommandText = sentenciaUpdate;
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
+                    cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
+                    cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
+                    cmd.Parameters.AddWithValue("@Cantidad", diferencia);
+
+                    int affected = cmd.ExecuteNonQuery();
+                }
+
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public bool Alta(DTOStock obj)
         {
             throw new NotImplementedException();

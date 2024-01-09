@@ -136,6 +136,8 @@ namespace BackendQueDiosa.Controllers
                 var client = new PreferenceClient();
                 Preference preference = await client.CreateAsync(request);
 
+                ManejadorStock.ActualizarStock(stocks);
+
                 return Ok(preference.Id);
             }
             catch (Exception ex)
