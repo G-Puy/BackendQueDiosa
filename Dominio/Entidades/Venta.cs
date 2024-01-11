@@ -16,7 +16,6 @@ namespace Dominio.Entidades
         public bool BajaLogica { get; set; } = false;
         public string Direccion { get; set; } = "";
         public string Telefono { get; set; } = "";
-        public string IdPreferencia { get; set; } = "";
         public bool Aprobado { get; set; } = false;
         public List<VentaProducto> ProductosVendidos { get; set; } = new List<VentaProducto>();
 
@@ -29,7 +28,6 @@ namespace Dominio.Entidades
             this.BajaLogica = dto.BajaLogica;
             this.Direccion = dto.Direccion;
             this.Telefono = dto.Telefono;
-            this.IdPreferencia = dto.IdPreferencia;
             this.Aprobado = dto.Aprobado;
 
             foreach (DTOVentaProducto dTOVentaProducto in dto.ProductosVendidos)
@@ -50,7 +48,6 @@ namespace Dominio.Entidades
             dto.BajaLogica = this.BajaLogica;
             dto.Direccion = this.Direccion;
             dto.Telefono = this.Telefono;
-            dto.IdPreferencia = this.IdPreferencia;
             dto.Aprobado = this.Aprobado;
 
             foreach (VentaProducto ventaProducto in this.ProductosVendidos)

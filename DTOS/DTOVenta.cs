@@ -15,7 +15,6 @@ namespace DTOS
         public bool BajaLogica { get; set; } = false;
         public string Direccion { get; set; } = "";
         public string Telefono { get; set; } = "";
-        public string IdPreferencia { get; set; } = "";
         public bool Aprobado { get; set; } = false;
         public List<DTOVentaProducto> ProductosVendidos { get; set; } = new List<DTOVentaProducto>();
     }

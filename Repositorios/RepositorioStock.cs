@@ -99,7 +99,7 @@ namespace Repositorios
             }
         }
 
-        public bool ActualizarStockYCrearVenta(List<DTOStock> obj, DTOVenta dto)
+        public long ActualizarStockYCrearVenta(List<DTOStock> obj, DTOVenta dto)
         {
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
@@ -147,7 +147,7 @@ namespace Repositorios
                     {
                         trn.Rollback();
                         manejadorConexion.CerrarConexionConClose(cn);
-                        return false;
+                        return -1;
                     }
 
                     if (diferencia <= 2)
@@ -178,7 +178,7 @@ namespace Repositorios
                 Venta venta = new Venta();
                 venta.cargarDeDTO(dto);
 
-                string sentenciaVenta = @"INSERT INTO Venta VALUES (@MontoTotal, @NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @IdPreferencia, @Aprobado);
+                string sentenciaVenta = @"INSERT INTO Venta VALUES (@MontoTotal, @NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado);
                                           SELECT CAST(Scope_IDentity() as int);";
                 cmd.CommandText = sentenciaVenta;
                 cmd.Parameters.Clear();
@@ -188,7 +188,6 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@BajaLogica", false);
                 cmd.Parameters.AddWithValue("@Direccion", venta.Direccion);
                 cmd.Parameters.AddWithValue("@Telefono", venta.Telefono);
-                cmd.Parameters.AddWithValue("@IdPreferencia", venta.IdPreferencia);
                 cmd.Parameters.AddWithValue("@Aprobado", false);
 
                 int idGeneradoVenta = (int)cmd.ExecuteScalar();
@@ -210,7 +209,7 @@ namespace Repositorios
 
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return true;
+                return idGeneradoVenta;
             }
             catch (Exception ex)
             {

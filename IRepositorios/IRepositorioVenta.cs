@@ -10,6 +10,8 @@ namespace IRepositorios
 {
     public interface IRepositorioVenta: IRepositorioT<DTOVenta>
     {
+        public bool Confirmar(long idVenta);
 
+        public bool Cancelar(long idVenta);
     }
 }

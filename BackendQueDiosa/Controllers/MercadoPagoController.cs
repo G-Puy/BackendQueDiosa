@@ -48,7 +48,7 @@ namespace BackendQueDiosa.Controllers
                 venta.CorreoComprador = persona.mail;
                 venta.Direccion = persona.direccion;
                 venta.Telefono = persona.telefono;
-                
+
                 foreach (var data in dataProductos)
                 {
                     DTOProducto producto = new DTOProducto();
@@ -160,25 +160,34 @@ namespace BackendQueDiosa.Controllers
                 var client = new PreferenceClient();
                 Preference preference = await client.CreateAsync(request);
 
-                venta.IdPreferencia = preference.Id;
+                var idVenta = ManejadorStock.ActualizarStockYCrearVenta(stocks, venta.darDto());
 
-                if (!ManejadorStock.ActualizarStockYCrearVenta(stocks, venta.darDto())) return BadRequest(false);
+                if (idVenta == -1) return BadRequest(false);
 
-                return Ok(preference.Id);
+                DTOPreferencia dto = new DTOPreferencia();
+                dto.IdPreferencia = preference.Id;
+                dto.IdVenta = idVenta;
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
-
                 throw;
             }
-
         }
 
-        [HttpPost("realizarCompra")]
-        public IActionResult realizarCompra(int id)
+        [HttpPost("confirmarCompra")]
+        public IActionResult ConfirmarCompra(long id)
         {
+            if (ManejadorVenta.Confirmar(id)) return Ok(true);
+            else return BadRequest(false);
+        }
 
-            return Ok(id);
+        [HttpPost("cancelarCompra")]
+        public IActionResult CancelarCompra(long id)
+        {
+            if (ManejadorVenta.Cancelar(id)) return Ok(true);
+            else return BadRequest(false);
         }
 
     }
