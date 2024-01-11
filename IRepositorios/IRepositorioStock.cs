@@ -1,4 +1,5 @@
 ﻿using DTOS;
+using System.Data.SqlClient;
 
 namespace IRepositorios
 {
@@ -9,5 +10,7 @@ namespace IRepositorios
         public bool TieneStock(DTOStock obj);
 
         public bool ActualizarStock(List<DTOStock> obj);
+
+        public bool ActualizarStockYCrearVenta(List<DTOStock> obj, DTOVenta dto);
     }
 }

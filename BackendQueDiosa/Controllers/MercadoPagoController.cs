@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Dominio.Entidades;
 using DTOS;
 using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
@@ -10,6 +11,7 @@ using MercadoPago.Resource.Preference;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics.Metrics;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -21,16 +23,18 @@ namespace BackendQueDiosa.Controllers
     {
         private IRepositorioProducto ManejadorProducto { get; set; }
         private IRepositorioStock ManejadorStock { get; set; }
+        private IRepositorioVenta ManejadorVenta { get; set; }
 
-        public MercadoPagoController([FromServices] IRepositorioProducto repInj, IRepositorioStock repStock)
+        public MercadoPagoController([FromServices] IRepositorioProducto repInj, IRepositorioStock repStock, IRepositorioVenta manejadorVenta)
         {
             MercadoPagoConfig.AccessToken = "TEST-1609974477177647-010314-aa1a201be14a912fb990aaa24584a10b-128881622";
             this.ManejadorProducto = repInj;
             this.ManejadorStock = repStock;
+            this.ManejadorVenta = manejadorVenta;
         }
 
         [HttpPost("crearPreferencia")]
-        public async Task<IActionResult> algo(DTOOrderData orderDataEnvio)
+        public async Task<IActionResult> CrearPreferencia(DTOOrderData orderDataEnvio)
         {
             var persona = orderDataEnvio.datosPersona;
             var dataProductos = orderDataEnvio.datosProductos;
@@ -39,6 +43,12 @@ namespace BackendQueDiosa.Controllers
             List<DTOStock> stocks = new List<DTOStock>();
             try
             {
+                Venta venta = new Venta();
+                venta.NombreComprador = persona.nombre;
+                venta.CorreoComprador = persona.mail;
+                venta.Direccion = persona.direccion;
+                venta.Telefono = persona.telefono;
+                
                 foreach (var data in dataProductos)
                 {
                     DTOProducto producto = new DTOProducto();
@@ -50,6 +60,12 @@ namespace BackendQueDiosa.Controllers
                     stock.IdTalle = data.IdTalle;
                     stock.Cantidad = data.Cantidad;
                     stocks.Add(stock);
+                    VentaProducto ventaProducto = new VentaProducto();
+                    ventaProducto.IdProducto = data.Id;
+                    ventaProducto.IdColor = data.IdColor;
+                    ventaProducto.IdTalle = data.IdTalle;
+                    ventaProducto.Cantidad = data.Cantidad;
+                    venta.ProductosVendidos.Add(ventaProducto);
                 }
 
                 List<DTOProducto> productos = ManejadorProducto.BuscarPorIds(ids);
@@ -61,6 +77,14 @@ namespace BackendQueDiosa.Controllers
                 {
                     DTOProducto p = productos.Find(x => x.Id == item.IdProducto);
 
+                    Decimal precio = Convert.ToDecimal(p.PrecioActual);
+
+                    foreach (var v in venta.ProductosVendidos)
+                    {
+                        if (v.IdProducto == item.IdProducto) v.Precio = precio;
+                    }
+                    venta.MontoTotal += precio * item.Cantidad;
+
                     PreferenceItemRequest preferenceItemRequest = new PreferenceItemRequest
                     {
                         Id = p.Id.ToString(),
@@ -68,7 +92,7 @@ namespace BackendQueDiosa.Controllers
                         CurrencyId = "UYU",
                         Description = p.Descripcion,
                         Quantity = item.Cantidad,
-                        UnitPrice = Convert.ToDecimal(p.PrecioActual)
+                        UnitPrice = precio
                     };
 
                     preferenceItemRequests.Add(preferenceItemRequest);
@@ -136,7 +160,9 @@ namespace BackendQueDiosa.Controllers
                 var client = new PreferenceClient();
                 Preference preference = await client.CreateAsync(request);
 
-                if (ManejadorStock.ActualizarStock(stocks)) return BadRequest(false);
+                venta.IdPreferencia = preference.Id;
+
+                if (!ManejadorStock.ActualizarStockYCrearVenta(stocks, venta.darDto())) return BadRequest(false);
 
                 return Ok(preference.Id);
             }
@@ -146,6 +172,13 @@ namespace BackendQueDiosa.Controllers
                 throw;
             }
 
+        }
+
+        [HttpPost("realizarCompra")]
+        public IActionResult realizarCompra(int id)
+        {
+
+            return Ok(id);
         }
 
     }

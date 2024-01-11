@@ -20,8 +20,7 @@ builder.Services.AddTransient<IRepositorioColor, RepositorioColor>();
 builder.Services.AddTransient<IRepositorioTalle, RepositorioTalle>();
 builder.Services.AddTransient<IRepositorioProducto, RepositorioProducto>();
 builder.Services.AddTransient<IRepositorioStock, RepositorioStock>();
-
-
+builder.Services.AddTransient<IRepositorioVenta, RepositorioVenta>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -35,7 +34,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization(options => {
+builder.Services.AddAuthorization(options =>
+{
     options.AddPolicy("Administrador", policy => policy.RequireClaim("TipoUsuario", "1"));
 });
 
