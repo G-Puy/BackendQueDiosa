@@ -91,7 +91,73 @@ namespace Repositorios
 
         public IEnumerable<DTOVenta> TraerTodos()
         {
-            throw new NotImplementedException();
+            List<DTOVenta> ventas = new List<DTOVenta>();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Venta WHERE bajaLogica = 0";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Venta venta = new Venta();
+
+                        venta.IdVenta = Convert.ToInt64(reader["idVenta"]);
+                        venta.MontoTotal = Convert.ToDecimal(reader["montoTotal"]);
+                        venta.NombreComprador = Convert.ToString(reader["nombreComprador"]);
+                        venta.CorreoComprador = Convert.ToString(reader["correoComprador"]);
+                        venta.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        venta.Direccion = Convert.ToString(reader["direccion"]);
+                        venta.Telefono = Convert.ToString(reader["telefono"]);
+                        venta.Aprobado = Convert.ToBoolean(reader["aprobado"]);
+                        DTOVenta dtoTipoT = venta.darDto();
+
+                        ventas.Add(dtoTipoT);
+                    }
+                }
+
+                cmd.CommandText = "SELECT * FROM VentaProducto WHERE idVenta = @IdVenta";
+                foreach (DTOVenta venta in ventas)
+                {
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdVenta", venta.IdVenta);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            VentaProducto vp = new VentaProducto();
+
+                            vp.IdVenta = Convert.ToInt64(reader["idVenta"]);
+                            vp.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            vp.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                            vp.IdColor = Convert.ToInt64(reader["idColor"]);
+                            vp.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                            vp.Precio = Convert.ToDecimal(reader["precio"]);
+                            DTOVentaProducto dtoTipoT = vp.darDto();
+
+                            venta.ProductosVendidos.Add(dtoTipoT);
+                        }
+                    }
+                }
+
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return (IEnumerable<DTOVenta>)ventas;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
         }
 
         public bool Confirmar(long idVenta)
