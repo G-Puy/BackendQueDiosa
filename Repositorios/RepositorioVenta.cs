@@ -109,6 +109,14 @@ namespace Repositorios
                 cmd.Transaction = trn;
                 cmd.ExecuteNonQuery();
 
+                cmd.CommandText = @"INSERT INTO AlertaPedido VALUES (@IdVenta, @Descripcion, @Entregado);
+                                    SELECT CAST(Scope_IDentity() as int);";
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@IdVenta", idVenta);
+                cmd.Parameters.AddWithValue("@Descripcion", "descripcion");
+                cmd.Parameters.AddWithValue("@Entregado", false);
+                cmd.ExecuteScalar();
+
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
