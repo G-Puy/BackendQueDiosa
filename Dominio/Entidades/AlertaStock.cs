@@ -18,7 +18,6 @@ namespace Dominio.Entidades
         {
             DTOAlertaStock alerta = new DTOAlertaStock();
             alerta.Id = Id;
-            alerta.IdStock = IdStock;
             alerta.Descripcion = Descripcion;
             alerta.Leida = Leida;
             return alerta;
@@ -27,7 +26,6 @@ namespace Dominio.Entidades
         public void cargarDeDto(DTOAlertaStock alerta)
         {
             Id = alerta.Id;
-            IdStock = alerta.IdStock;
             Descripcion = alerta.Descripcion;
             Leida = alerta.Leida;
         }

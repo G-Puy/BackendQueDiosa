@@ -43,7 +43,8 @@ namespace Repositorios
 
         public IEnumerable<DTOAlertaStock> TraerTodos()
         {
-            List<DTOAlertaStock> alertas = new List<DTOAlertaStock>();
+            List<DTOAlertaStock> dtos = new List<DTOAlertaStock>();
+            List<AlertaStock> alertas = new List<AlertaStock>();
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
@@ -63,13 +64,36 @@ namespace Repositorios
                         alerta.IdStock = Convert.ToInt64(reader["idStock"]);
                         alerta.Descripcion = Convert.ToString(reader["descripcion"]);
                         alerta.Leida = Convert.ToBoolean(reader["leida"]);
-                        DTOAlertaStock dtoTipoT = alerta.darDto();
-                        alertas.Add(dtoTipoT);
+                        alertas.Add(alerta);
                     }
+                }
+
+                cmd.CommandText = @"SELECT * FROM Stock WHERE idStock = @IdStock";
+                foreach (AlertaStock alerta in alertas)
+                {
+                    DTOAlertaStock dto = alerta.darDto();
+
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdStock", alerta.IdStock);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Stock stock = new Stock();
+                            stock.Id = Convert.ToInt64(reader["idStock"]);
+                            stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                            stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                            stock.IdColor = Convert.ToInt64(reader["idColor"]);
+                            stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                            dto.stock = stock.darDto();
+                        }
+                    }
+
+                    dtos.Add(dto);
                 }
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return (IEnumerable<DTOAlertaStock>)alertas;
+                return dtos;
             }
             catch (Exception ex)
             {
