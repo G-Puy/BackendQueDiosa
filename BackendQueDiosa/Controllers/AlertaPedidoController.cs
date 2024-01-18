@@ -36,7 +36,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                List<DTOAlertaStock> resultado = (List<DTOAlertaStock>)this.ManejadorPedido.TraerTodos();
+                List<DTOAlertaPedido> resultado = (List<DTOAlertaPedido>)this.ManejadorPedido.TraerTodos();
                 return Ok(resultado);
             }
             catch (Exception ex)

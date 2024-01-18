@@ -118,6 +118,8 @@ namespace IRepositorios
                             venta.Direccion = Convert.ToString(reader["direccion"]);
                             venta.Telefono = Convert.ToString(reader["telefono"]);
                             venta.Aprobado = Convert.ToBoolean(reader["aprobado"]);
+                            venta.ApellidoComprador = Convert.ToString(reader["apellidoComprador"]);
+                            venta.Envio = Convert.ToBoolean(reader["envio"]);
                             dto.Venta = venta.darDto();
                         }
                     }

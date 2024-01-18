@@ -178,8 +178,8 @@ namespace Repositorios
                 Venta venta = new Venta();
                 venta.cargarDeDTO(dto);
 
-                string sentenciaVenta = @"INSERT INTO Venta VALUES (@MontoTotal, @NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado);
-                                          SELECT CAST(Scope_IDentity() as int);";
+                string sentenciaVenta = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio)
+                                        SELECT CAST(Scope_IDentity() as int);";
                 cmd.CommandText = sentenciaVenta;
                 cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@MontoTotal", venta.MontoTotal);
@@ -189,6 +189,8 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@Direccion", venta.Direccion);
                 cmd.Parameters.AddWithValue("@Telefono", venta.Telefono);
                 cmd.Parameters.AddWithValue("@Aprobado", false);
+                cmd.Parameters.AddWithValue("@ApellidoComprador", venta.ApellidoComprador);
+                cmd.Parameters.AddWithValue("@Envio", venta.Envio);
 
                 int idGeneradoVenta = (int)cmd.ExecuteScalar();
 

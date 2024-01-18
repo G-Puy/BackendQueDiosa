@@ -16,6 +16,8 @@ namespace DTOS
         public string Direccion { get; set; } = "";
         public string Telefono { get; set; } = "";
         public bool Aprobado { get; set; } = false;
+        public string ApellidoComprador { get; set; } = "";
+        public bool Envio { get; set; } = false;
         public List<DTOVentaProducto> ProductosVendidos { get; set; } = new List<DTOVentaProducto>();
     }
 }

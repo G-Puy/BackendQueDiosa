@@ -48,6 +48,8 @@ namespace BackendQueDiosa.Controllers
                 venta.CorreoComprador = persona.mail;
                 venta.Direccion = persona.direccion;
                 venta.Telefono = persona.telefono;
+                venta.ApellidoComprador = persona.apellido;
+                venta.Envio = persona.enviar;
 
                 foreach (var data in dataProductos)
                 {

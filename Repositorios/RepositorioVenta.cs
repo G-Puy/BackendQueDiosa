@@ -27,7 +27,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono)
+                string sentenciaSql = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio)
                                         SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@MontoTotal", venta.MontoTotal);
@@ -36,6 +36,9 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@BajaLogica", false);
                 cmd.Parameters.AddWithValue("@Direccion", venta.Direccion);
                 cmd.Parameters.AddWithValue("@Telefono", venta.Telefono);
+                cmd.Parameters.AddWithValue("@Aprobado", venta.Aprobado);
+                cmd.Parameters.AddWithValue("@ApellidoComprador", venta.ApellidoComprador);
+                cmd.Parameters.AddWithValue("@Envio", venta.Envio);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -116,6 +119,8 @@ namespace Repositorios
                         venta.Direccion = Convert.ToString(reader["direccion"]);
                         venta.Telefono = Convert.ToString(reader["telefono"]);
                         venta.Aprobado = Convert.ToBoolean(reader["aprobado"]);
+                        venta.ApellidoComprador = Convert.ToString(reader["apellidoComprador"]);
+                        venta.Envio = Convert.ToBoolean(reader["envio"]);
                         DTOVenta dtoTipoT = venta.darDto();
 
                         ventas.Add(dtoTipoT);

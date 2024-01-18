@@ -17,6 +17,8 @@ namespace Dominio.Entidades
         public string Direccion { get; set; } = "";
         public string Telefono { get; set; } = "";
         public bool Aprobado { get; set; } = false;
+        public string ApellidoComprador { get; set; } = "";
+        public bool Envio { get; set; } = false;
         public List<VentaProducto> ProductosVendidos { get; set; } = new List<VentaProducto>();
 
         public void cargarDeDTO(DTOVenta dto)
@@ -29,6 +31,8 @@ namespace Dominio.Entidades
             this.Direccion = dto.Direccion;
             this.Telefono = dto.Telefono;
             this.Aprobado = dto.Aprobado;
+            this.Envio = dto.Envio;
+            this.ApellidoComprador = dto.ApellidoComprador;
 
             foreach (DTOVentaProducto dTOVentaProducto in dto.ProductosVendidos)
             {
@@ -49,6 +53,8 @@ namespace Dominio.Entidades
             dto.Direccion = this.Direccion;
             dto.Telefono = this.Telefono;
             dto.Aprobado = this.Aprobado;
+            dto.ApellidoComprador = this.ApellidoComprador;
+            dto.Envio = this.Envio;
 
             foreach (VentaProducto ventaProducto in this.ProductosVendidos)
             {
