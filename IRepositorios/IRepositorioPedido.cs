@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace IRepositorios
 {
-    public interface IRepositorioAlertaStock : IRepositorioT<DTOAlertaStock>
+    public interface IRepositorioPedido: IRepositorioT<DTOAlertaPedido>
     {
-        public bool Leer(long id);
+        public bool Entregado(long id);
     }
 }

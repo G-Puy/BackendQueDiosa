@@ -21,6 +21,7 @@ builder.Services.AddTransient<IRepositorioTalle, RepositorioTalle>();
 builder.Services.AddTransient<IRepositorioProducto, RepositorioProducto>();
 builder.Services.AddTransient<IRepositorioStock, RepositorioStock>();
 builder.Services.AddTransient<IRepositorioVenta, RepositorioVenta>();
+builder.Services.AddTransient<IRepositorioAlertaStock, RepositorioAlertaStock>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

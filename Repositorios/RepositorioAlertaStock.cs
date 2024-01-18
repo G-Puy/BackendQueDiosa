@@ -36,6 +36,33 @@ namespace Repositorios
             throw new NotImplementedException();
         }
 
+        public bool Leer(long id)
+        {
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"UPDATE AlertaStock SET leida = @Leida WHERE idAlertaStock = @IdAlertaStock";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@Leida",true);
+                cmd.Parameters.AddWithValue("@IdAlertaStock", id);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                cmd.ExecuteNonQuery();
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public bool Modificar(DTOAlertaStock obj)
         {
             throw new NotImplementedException();
