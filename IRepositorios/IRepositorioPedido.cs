@@ -1,4 +1,5 @@
 ﻿using DTOS;
+using DTOS.DTOSProductoFrontBack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace IRepositorios
     public interface IRepositorioPedido: IRepositorioT<DTOAlertaPedido>
     {
         public bool Entregado(long id);
+        public List<DTOAlertaPedido> TraerFiltrado(DTOFiltroAlertasPedidos dtoFiltro);
     }
 }

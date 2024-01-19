@@ -180,12 +180,12 @@ namespace Repositorios
                 cmd.Transaction = trn;
                 cmd.ExecuteNonQuery();
 
-                cmd.CommandText = @"INSERT INTO AlertaPedido VALUES (@IdVenta, @Descripcion, @Entregado);
+                cmd.CommandText = @"INSERT INTO AlertaPedido VALUES (@IdVenta, @Descripcion, @Realizado);
                                     SELECT CAST(Scope_IDentity() as int);";
                 cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdVenta", idVenta);
                 cmd.Parameters.AddWithValue("@Descripcion", "descripcion");
-                cmd.Parameters.AddWithValue("@Entregado", false);
+                cmd.Parameters.AddWithValue("@Realizado", false);
                 cmd.ExecuteScalar();
 
                 trn.Commit();
