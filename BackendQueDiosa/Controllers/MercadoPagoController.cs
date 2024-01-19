@@ -179,14 +179,14 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpPost("confirmarCompra")]
-        public IActionResult ConfirmarCompra(long id)
+        public IActionResult ConfirmarCompra([FromHeader] long id)
         {
             if (ManejadorVenta.Confirmar(id)) return Ok(true);
             else return BadRequest(false);
         }
 
         [HttpPost("cancelarCompra")]
-        public IActionResult CancelarCompra(long id)
+        public IActionResult CancelarCompra([FromHeader] long id)
         {
             if (ManejadorVenta.Cancelar(id)) return Ok(true);
             else return BadRequest(false);
