@@ -16,7 +16,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorPedido = repInj;
         }
 
-        [HttpPost("Entregado")]
+        [HttpGet("Entregado")]
         public IActionResult Entregado([FromHeader] long id)
         {
             try

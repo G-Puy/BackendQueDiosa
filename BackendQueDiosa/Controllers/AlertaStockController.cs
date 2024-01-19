@@ -16,7 +16,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorAlerta = repInj;
         }
 
-        [HttpPost("Leida")]
+        [HttpGet("Leida")]
         public IActionResult Leida([FromHeader] long id)
         {
             try
