@@ -9,8 +9,6 @@ namespace IRepositorios
 
         public bool TieneStock(DTOStock obj);
 
-        public bool ActualizarStock(List<DTOStock> obj);
-
         public long ActualizarStockYCrearVenta(List<DTOStock> obj, DTOVenta dto);
     }
 }

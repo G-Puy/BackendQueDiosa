@@ -1,6 +1,7 @@
 ﻿using Conexiones;
 using Dominio.Entidades;
 using DTOS;
+using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
 using System.Data.SqlClient;
 
@@ -10,94 +11,6 @@ namespace Repositorios
     {
         private Conexion manejadorConexion = new Conexion();
         private SqlConnection cn;
-
-        public bool ActualizarStock(List<DTOStock> obj)
-        {
-            cn = manejadorConexion.CrearConexion();
-            SqlTransaction trn = null;
-            try
-            {
-                string sentenciaSql = @"SELECT * FROM Stock WHERE idProducto = @IdProducto AND idColor = @IdColor AND idTalle = @IdTalle;";
-
-                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                manejadorConexion.AbrirConexion(cn);
-                trn = cn.BeginTransaction();
-                cmd.Transaction = trn;
-
-                List<Stock> stocks = new List<Stock>();
-
-                foreach (DTOStock item in obj)
-                {
-                    cmd.Parameters.Clear();
-                    cmd.Parameters.AddWithValue("@IdProducto", item.IdProducto);
-                    cmd.Parameters.AddWithValue("@IdColor", item.IdColor);
-                    cmd.Parameters.AddWithValue("@IdTalle", item.IdTalle);
-
-                    Stock stock = new Stock();
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            stock.Id = Convert.ToInt64(reader["idStock"]);
-                            stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
-                            stock.IdColor = Convert.ToInt64(reader["idColor"]);
-                            stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
-                            stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
-                        }
-                    }
-
-                    stocks.Add(stock);
-                }
-
-                foreach (Stock stock in stocks)
-                {
-                    var objeto = obj.Find(o => o.IdProducto == stock.IdProducto && o.IdTalle == stock.IdTalle && o.IdColor == stock.IdColor);
-                    var diferencia = stock.Cantidad - objeto.Cantidad;
-
-                    if (diferencia < 0)
-                    {
-                        trn.Rollback();
-                        manejadorConexion.CerrarConexionConClose(cn);
-                        return false;
-                    }
-
-                    if (diferencia <= 2)
-                    {
-                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@IdStock, @Descripcion, @Estado);
-                                                   SELECT CAST(Scope_IDentity() as int);";
-                        cmd.CommandText = sentenciaAlerta;
-                        cmd.Parameters.Clear();
-                        cmd.Parameters.AddWithValue("@IdStock", stock.Id);
-                        cmd.Parameters.AddWithValue("@Descripcion", "Queda poco stock");
-                        cmd.Parameters.AddWithValue("@Estado", false);
-                        int insert = (int)cmd.ExecuteScalar();
-                    }
-
-                    string sentenciaUpdate = @"UPDATE Stock SET cantidad = @Cantidad  WHERE idProducto = @IdProducto AND idColor = @IdColor AND idTalle = @IdTalle";
-
-                    cmd.CommandText = sentenciaUpdate;
-                    cmd.Parameters.Clear();
-                    cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
-                    cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
-                    cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
-                    cmd.Parameters.AddWithValue("@Cantidad", diferencia);
-
-                    int affected = cmd.ExecuteNonQuery();
-                }
-
-                trn.Commit();
-                manejadorConexion.CerrarConexionConClose(cn);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                trn.Rollback();
-                manejadorConexion.CerrarConexionConClose(cn);
-                this.DescripcionError = ex.Message;
-                throw ex;
-            }
-        }
 
         public long ActualizarStockYCrearVenta(List<DTOStock> obj, DTOVenta dto)
         {
@@ -152,13 +65,53 @@ namespace Repositorios
 
                     if (diferencia <= 2)
                     {
-                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@IdStock, @Descripcion, @Estado);
+                        cmd.CommandText = @"SELECT nombre FROM Producto WHERE idProducto = @IdProducto";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
+                        string nombreProducto = "";
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                nombreProducto = Convert.ToString(reader["nombre"]);
+                            }
+                        }
+
+                        cmd.CommandText = @"SELECT nombre FROM Talle WHERE idTalle = @IdTalle";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@IdTalle", stock.IdTalle);
+                        string nombreTalle = "";
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                nombreTalle = Convert.ToString(reader["nombre"]);
+                            }
+                        }
+
+                        cmd.CommandText = @"SELECT nombre FROM Color WHERE idColor = @IdColor";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.AddWithValue("@IdColor", stock.IdColor);
+                        string nombreColor = "";
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                nombreColor = Convert.ToString(reader["nombre"]);
+                            }
+                        }
+
+
+                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@IdStock, @Leida, @NombreProducto, @NombreTalle, @NombreColor, @Cantidad);
                                                    SELECT CAST(Scope_IDentity() as int);";
                         cmd.CommandText = sentenciaAlerta;
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@IdStock", stock.Id);
-                        cmd.Parameters.AddWithValue("@Descripcion", "Queda poco stock");
-                        cmd.Parameters.AddWithValue("@Estado", false);
+                        cmd.Parameters.AddWithValue("@Leida", false);
+                        cmd.Parameters.AddWithValue("@NombreProducto", nombreProducto);
+                        cmd.Parameters.AddWithValue("@NombreTalle", nombreTalle);
+                        cmd.Parameters.AddWithValue("@NombreColor", nombreColor);
+                        cmd.Parameters.AddWithValue("@Cantidad", diferencia);
                         int insert = (int)cmd.ExecuteScalar();
                     }
 

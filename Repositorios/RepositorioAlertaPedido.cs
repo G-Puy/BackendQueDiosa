@@ -52,7 +52,7 @@ namespace IRepositorios
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 cmd.ExecuteNonQuery();
-                trn.Rollback();
+                trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
             }
@@ -187,7 +187,7 @@ namespace IRepositorios
 
                     dtos.Add(dto);
                 }
-                trn.Rollback();
+                trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return dtos;
             }
@@ -275,7 +275,7 @@ namespace IRepositorios
 
                         dtos.Add(dto);
                     }
-                    trn.Rollback();
+                    trn.Commit();
                     manejadorConexion.CerrarConexionConClose(cn);
                     return dtos;
                 }

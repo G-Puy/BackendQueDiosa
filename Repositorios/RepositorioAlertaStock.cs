@@ -42,15 +42,15 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE AlertaStock SET leida = @Leida WHERE idAlertaStock = @IdAlertaStock";
-                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Leida",true);
-                cmd.Parameters.AddWithValue("@IdAlertaStock", id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
+                string sentenciaSql = @"UPDATE AlertaStock SET leida = @Leida WHERE idAlertaStock = @IdAlertaStock";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@Leida", true);
+                cmd.Parameters.AddWithValue("@IdAlertaStock", id);
                 cmd.Transaction = trn;
                 cmd.ExecuteNonQuery();
-                trn.Rollback();
+                trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
             }
@@ -71,7 +71,6 @@ namespace Repositorios
         public IEnumerable<DTOAlertaStock> TraerTodos()
         {
             List<DTOAlertaStock> dtos = new List<DTOAlertaStock>();
-            List<AlertaStock> alertas = new List<AlertaStock>();
 
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;
@@ -88,37 +87,15 @@ namespace Repositorios
                     {
                         AlertaStock alerta = new AlertaStock();
                         alerta.Id = Convert.ToInt64(reader["idAlertaStock"]);
-                        alerta.IdStock = Convert.ToInt64(reader["idStock"]);
-                        alerta.Descripcion = Convert.ToString(reader["descripcion"]);
                         alerta.Leida = Convert.ToBoolean(reader["leida"]);
-                        alertas.Add(alerta);
+                        alerta.NombreProducto = Convert.ToString(reader["nombreProducto"]);
+                        alerta.NombreTalle = Convert.ToString(reader["nombreTalle"]);
+                        alerta.NombreColor = Convert.ToString(reader["nombreColor"]);
+                        alerta.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                        dtos.Add(alerta.darDto());
                     }
                 }
-
-                cmd.CommandText = @"SELECT * FROM Stock WHERE idStock = @IdStock";
-                foreach (AlertaStock alerta in alertas)
-                {
-                    DTOAlertaStock dto = alerta.darDto();
-
-                    cmd.Parameters.Clear();
-                    cmd.Parameters.AddWithValue("@IdStock", alerta.IdStock);
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Stock stock = new Stock();
-                            stock.Id = Convert.ToInt64(reader["idStock"]);
-                            stock.IdProducto = Convert.ToInt64(reader["idProducto"]);
-                            stock.IdTalle = Convert.ToInt64(reader["idTalle"]);
-                            stock.IdColor = Convert.ToInt64(reader["idColor"]);
-                            stock.Cantidad = Convert.ToInt32(reader["cantidad"]);
-                            dto.stock = stock.darDto();
-                        }
-                    }
-
-                    dtos.Add(dto);
-                }
-                trn.Rollback();
+                trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return dtos;
             }

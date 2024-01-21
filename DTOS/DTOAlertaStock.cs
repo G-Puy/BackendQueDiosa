@@ -9,8 +9,10 @@ namespace DTOS
     public class DTOAlertaStock
     {
         public long Id { get; set; } = 0;
-        public string Descripcion { get; set; } = "";
         public bool Leida { get; set; } = false;
-        public DTOStock stock { get; set; } = new DTOStock();
+        public string NombreProducto { get; set; } = "";
+        public string NombreTalle { get; set; } = "";
+        public string NombreColor { get; set; } = "";
+        public int Cantidad { get; set; } = 0;
     }
 }

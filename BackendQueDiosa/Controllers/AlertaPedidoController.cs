@@ -18,11 +18,11 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpGet("Entregado")]
-        public IActionResult Entregado([FromHeader] long id)
+        public IActionResult Entregado(long idVenta)
         {
             try
             {
-                if (ManejadorPedido.Entregado(id)) return Ok(true);
+                if (ManejadorPedido.Entregado(idVenta)) return Ok(true);
                 else return BadRequest(false);
             }
             catch (Exception ex)
@@ -31,7 +31,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpGet("TraerTodos")]
+        [HttpGet("TraerFiltrados")]
         public IActionResult TraerFiltrados([FromBody] DTOFiltroAlertasPedidos dto)
         {
             try

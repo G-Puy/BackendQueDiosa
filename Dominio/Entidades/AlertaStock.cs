@@ -10,24 +10,32 @@ namespace Dominio.Entidades
     public class AlertaStock
     {
         public long Id { get; set; } = 0;
-        public long IdStock { get; set; } = 0;
-        public string Descripcion { get; set; } = "";
         public bool Leida { get; set; } = false;
+        public string NombreProducto { get; set; } = "";
+        public string NombreTalle { get; set; } = "";
+        public string NombreColor { get; set; } = "";
+        public int Cantidad { get; set; } = 0;
 
         public DTOAlertaStock darDto()
         {
             DTOAlertaStock alerta = new DTOAlertaStock();
             alerta.Id = Id;
-            alerta.Descripcion = Descripcion;
             alerta.Leida = Leida;
+            alerta.NombreColor = NombreColor;
+            alerta.NombreProducto = NombreProducto;
+            alerta.NombreTalle = NombreTalle;
+            alerta.Cantidad = Cantidad;
             return alerta;
         }
 
         public void cargarDeDto(DTOAlertaStock alerta)
         {
             Id = alerta.Id;
-            Descripcion = alerta.Descripcion;
             Leida = alerta.Leida;
+            NombreTalle = alerta.NombreTalle;
+            NombreColor = alerta.NombreColor;
+            NombreProducto = alerta.NombreProducto;
+            Cantidad = alerta.Cantidad;
         }
     }
 }
