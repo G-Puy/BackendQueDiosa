@@ -76,9 +76,10 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT * FROM AlertaStock";
+                string sentenciaSql = @"SELECT * FROM AlertaStock WHERE leida = @Leida";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 manejadorConexion.AbrirConexion(cn);
+                cmd.Parameters.AddWithValue("@Leida", false);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 using (SqlDataReader reader = cmd.ExecuteReader())

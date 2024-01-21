@@ -17,11 +17,11 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpGet("Leida")]
-        public IActionResult Leida(long idVenta)
+        public IActionResult Leida(long idAlerta)
         {
             try
             {
-                if (ManejadorAlerta.Leer(idVenta)) return Ok(true);
+                if (ManejadorAlerta.Leer(idAlerta)) return Ok(true);
                 else return BadRequest(false);
             }
             catch (Exception ex)

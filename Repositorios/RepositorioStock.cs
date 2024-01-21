@@ -102,7 +102,7 @@ namespace Repositorios
                         }
 
 
-                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@IdStock, @Leida, @NombreProducto, @NombreTalle, @NombreColor, @Cantidad);
+                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@Leida, @NombreProducto, @NombreTalle, @NombreColor, @Cantidad);
                                                    SELECT CAST(Scope_IDentity() as int);";
                         cmd.CommandText = sentenciaAlerta;
                         cmd.Parameters.Clear();

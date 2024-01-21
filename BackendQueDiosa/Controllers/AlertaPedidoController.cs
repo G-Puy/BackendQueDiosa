@@ -18,11 +18,11 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpGet("Entregado")]
-        public IActionResult Entregado(long idVenta)
+        public IActionResult Entregado(long idAlerta)
         {
             try
             {
-                if (ManejadorPedido.Entregado(idVenta)) return Ok(true);
+                if (ManejadorPedido.Entregado(idAlerta)) return Ok(true);
                 else return BadRequest(false);
             }
             catch (Exception ex)
