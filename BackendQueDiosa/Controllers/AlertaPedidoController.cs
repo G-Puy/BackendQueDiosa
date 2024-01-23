@@ -31,7 +31,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [HttpGet("TraerFiltrados")]
+        [HttpPost("TraerFiltrados")]
         public IActionResult TraerFiltrados([FromBody] DTOFiltroAlertasPedidos dto)
         {
             try

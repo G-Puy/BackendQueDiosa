@@ -27,7 +27,8 @@ namespace BackendQueDiosa.Controllers
 
         public MercadoPagoController([FromServices] IRepositorioProducto repInj, IRepositorioStock repStock, IRepositorioVenta manejadorVenta)
         {
-            MercadoPagoConfig.AccessToken = "TEST-1609974477177647-010314-aa1a201be14a912fb990aaa24584a10b-128881622";
+            // MercadoPagoConfig.AccessToken = "TEST-1609974477177647-010314-aa1a201be14a912fb990aaa24584a10b-128881622"; OFICIAL
+            MercadoPagoConfig.AccessToken = "TEST-4047227634484086-011912-91f30428b5ab88c487b8c5f895a08224-1620680375";
             this.ManejadorProducto = repInj;
             this.ManejadorStock = repStock;
             this.ManejadorVenta = manejadorVenta;

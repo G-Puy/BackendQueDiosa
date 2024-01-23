@@ -181,11 +181,11 @@ namespace Repositorios
                 cmd.Transaction = trn;
                 cmd.ExecuteNonQuery();
 
-                cmd.CommandText = @"INSERT INTO AlertaPedido VALUES (@IdVenta, @Descripcion, @Realizado);
+                cmd.CommandText = @"INSERT INTO AlertaPedido VALUES (@IdVenta, @Realizado);
                                     SELECT CAST(Scope_IDentity() as int);";
                 cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@IdVenta", idVenta);
-                cmd.Parameters.AddWithValue("@Descripcion", "descripcion");
+                //cmd.Parameters.AddWithValue("@Descripcion", "descripcion");
                 cmd.Parameters.AddWithValue("@Realizado", false);
                 cmd.ExecuteScalar();
 
@@ -198,6 +198,7 @@ namespace Repositorios
                 trn.Rollback();
                 manejadorConexion.CerrarConexionConClose(cn);
                 this.DescripcionError = ex.Message;
+                
                 throw ex;
             }
         }
