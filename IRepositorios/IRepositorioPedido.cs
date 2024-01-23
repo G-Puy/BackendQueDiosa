@@ -10,7 +10,7 @@ namespace IRepositorios
 {
     public interface IRepositorioPedido: IRepositorioT<DTOAlertaPedido>
     {
-        public bool Entregado(long id);
+        public bool Realizado(long id);
         public List<DTOAlertaPedido> TraerFiltrado(DTOFiltroAlertasPedidos dtoFiltro);
     }
 }

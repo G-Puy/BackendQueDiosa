@@ -11,24 +11,39 @@ namespace Dominio.Entidades
     {
         public long Id { get; set; } = 0;
         public long IdVenta { get; set; } = 0;
-        public string Descripcion { get; set; } = "";
-        public bool Entregado { get; set; } = false;
+        public decimal MontoTotal { get; set; } = 0;
+        public bool Envio { get; set; } = false;
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string Telefono { get; set; } = string.Empty;
+        public string Direccion { get; set; } = string.Empty;
+        public bool Realizado { get; set; } = false;
 
         public DTOAlertaPedido darDto()
         {
             DTOAlertaPedido dto = new DTOAlertaPedido();
             dto.Id = Id;
-            dto.Descripcion = Descripcion;
-            dto.Entregado = Entregado;
+            dto.IdVenta = IdVenta;
+            dto.MontoTotal = MontoTotal;
+            dto.Envio = Envio;
+            dto.Nombre = Nombre;
+            dto.Apellido = Apellido;
+            dto.Telefono = Telefono;
+            dto.Realizado = Realizado;
             return dto;
         }
 
         public void cargarDeDto(DTOAlertaPedido dto)
         {
             Id = dto.Id;
-            IdVenta = dto.Venta.IdVenta;
-            Descripcion = dto.Descripcion;
-            Entregado = dto.Entregado;
+            IdVenta = dto.IdVenta;
+            MontoTotal = dto.MontoTotal;
+            Envio = dto.Envio;
+            Nombre = dto.Nombre;
+            Apellido = dto.Apellido;
+            Telefono = dto.Telefono;
+            Direccion = dto.Direccion;
+            Realizado = dto.Realizado;
         }
     }
 }

@@ -30,6 +30,20 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [HttpGet("TraerDetallePedido")]
+        public IActionResult TraerDetallePedido(long idVenta)
+        {
+            try
+            {
+                var resultado = ManejadorVenta.TraerDetallePedido(idVenta);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("TraerTodos")]
         public IActionResult TraerTodos()
         {

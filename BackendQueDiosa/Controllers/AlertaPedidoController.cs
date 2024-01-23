@@ -22,7 +22,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                if (ManejadorPedido.Entregado(idAlerta)) return Ok(true);
+                if (ManejadorPedido.Realizado(idAlerta)) return Ok(true);
                 else return BadRequest(false);
             }
             catch (Exception ex)

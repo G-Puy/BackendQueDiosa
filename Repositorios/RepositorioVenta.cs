@@ -1,6 +1,7 @@
 ﻿using Conexiones;
 using Dominio.Entidades;
 using DTOS;
+using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
 using Serilog;
 using System;
@@ -275,6 +276,97 @@ namespace Repositorios
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
+        public List<DTODetallePedido> TraerDetallePedido(long idVenta)
+        {
+            List<VentaProducto> vps = new List<VentaProducto>();
+            List<DTODetallePedido> dps = new List<DTODetallePedido>();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = "SELECT * FROM VentaProducto WHERE idVenta = @IdVenta";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                cmd.Parameters.AddWithValue("@IdVenta", idVenta);
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        VentaProducto vp = new VentaProducto();
+                        vp.IdVenta = Convert.ToInt64(reader["idVenta"]);
+                        vp.IdProducto = Convert.ToInt64(reader["idProducto"]);
+                        vp.IdTalle = Convert.ToInt64(reader["idTalle"]);
+                        vp.IdColor = Convert.ToInt64(reader["idColor"]);
+                        vp.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                        vp.Precio = Convert.ToDecimal(reader["precio"]);
+                        vps.Add(vp);
+                    }
+                }
+
+                foreach (var v in vps)
+                {
+                    var nombreProducto = "";
+                    var nombreTalle = "";
+                    var nombreColor = "";
+
+                    cmd.CommandText = @"SELECT nombre FROM Producto WHERE idProducto = @IdProducto;";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdProducto", v.IdProducto);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            nombreProducto = Convert.ToString(reader["nombre"]);
+                        }
+                    }
+
+                    cmd.CommandText = @"SELECT nombre FROM Talle WHERE idTalle = @IdTalle;";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdTalle", v.IdTalle);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            nombreProducto = Convert.ToString(reader["nombre"]);
+                        }
+                    }
+
+                    cmd.CommandText = @"SELECT nombre FROM Color WHERE idColor= @IdColor;";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@IdColor", v.IdColor);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            nombreProducto = Convert.ToString(reader["nombre"]);
+                        }
+                    }
+
+                    DTODetallePedido dp = new DTODetallePedido();
+                    dp.Cantidad = v.Cantidad;
+                    dp.NombreProducto = nombreProducto;
+                    dp.NombreTalle = nombreTalle;
+                    dp.NombreColor = nombreColor;
+                    dps.Add(dp);
+                }
+
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return dps;
             }
             catch (Exception ex)
             {
