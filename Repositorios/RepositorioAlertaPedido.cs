@@ -87,27 +87,27 @@ namespace IRepositorios
                 }
                 if (dtoFiltro.IdVenta != -1)
                 {
-                    if (primera) sentenciaSql += " WHERE"; else sentenciaSql += " AND";
+                    if (primera) { sentenciaSql += " WHERE"; primera = false; } else sentenciaSql += " AND";
                     sentenciaSql += " a.idVenta = @IdVenta";
                 }
                 if (dtoFiltro.realizado != "")
                 {
-                    if (primera) sentenciaSql += " WHERE"; else sentenciaSql += " AND";
+                    if (primera) { sentenciaSql += " WHERE"; primera = false; } else sentenciaSql += " AND";
                     sentenciaSql += " a.realizado = @Realizado";
                 }
                 if (dtoFiltro.envioRetiro != "")
                 {
-                    if (primera) sentenciaSql += " WHERE"; else sentenciaSql += " AND";
+                    if (primera) { sentenciaSql += " WHERE"; primera = false; } else sentenciaSql += " AND";
                     sentenciaSql += " v.envio = @Envio";
                 }
                 if (dtoFiltro.nombre != "")
                 {
-                    if (primera) sentenciaSql += " WHERE"; else sentenciaSql += " AND";
+                    if (primera) { sentenciaSql += " WHERE"; primera = false; } else sentenciaSql += " AND";
                     sentenciaSql += " v.nombreComprador = @NombreComprador";
                 }
                 if (dtoFiltro.apellido != "")
                 {
-                    if (primera) sentenciaSql += " WHERE"; else sentenciaSql += " AND";
+                    if (primera) { sentenciaSql += " WHERE"; primera = false; } else sentenciaSql += " AND";
                     sentenciaSql += " v.apellidoComprador = @ApellidoComprador";
                 }
 
@@ -116,18 +116,18 @@ namespace IRepositorios
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 if (dtoFiltro.IdVenta != -1) cmd.Parameters.AddWithValue("@IdVenta", dtoFiltro.IdVenta);
-                if (dtoFiltro.realizado != "")
+                if (dtoFiltro.realizado == "realizado" || dtoFiltro.realizado == "noRealizado")
                 {
                     bool realizado = dtoFiltro.realizado.Equals("realizado");
                     cmd.Parameters.AddWithValue("@Realizado", realizado);
                 }
-                if (dtoFiltro.envioRetiro != "")
+                if (dtoFiltro.envioRetiro == "envio" || dtoFiltro.envioRetiro == "retiro")
                 {
                     bool envio = dtoFiltro.envioRetiro.Equals("envio");
                     cmd.Parameters.AddWithValue("@Envio", envio);
                 }
                 if (dtoFiltro.nombre != "") cmd.Parameters.AddWithValue("@NombreComprador", dtoFiltro.nombre);
-                if (dtoFiltro.apellido != "") cmd.Parameters.AddWithValue("@ApellidoComprador", dtoFiltro.nombre);
+                if (dtoFiltro.apellido != "") cmd.Parameters.AddWithValue("@ApellidoComprador", dtoFiltro.apellido);
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
