@@ -59,7 +59,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TABLE Color SET bajaLogica = @BajaLogica WHERE idColor = @idColor";
+                string sentenciaSql = @"UPDATE Color SET bajaLogica = @BajaLogica WHERE idColor = @idColor";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@idColor", color.Id);
                 cmd.Parameters.AddWithValue("@BajaLogica", true);

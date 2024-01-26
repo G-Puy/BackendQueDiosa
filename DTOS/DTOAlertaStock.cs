@@ -14,5 +14,6 @@ namespace DTOS
         public string NombreTalle { get; set; } = "";
         public string NombreColor { get; set; } = "";
         public int Cantidad { get; set; } = 0;
+        public long IdProducto { get; set; } = 0;
     }
 }

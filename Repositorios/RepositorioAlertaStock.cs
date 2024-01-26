@@ -93,6 +93,7 @@ namespace Repositorios
                         alerta.NombreTalle = Convert.ToString(reader["nombreTalle"]);
                         alerta.NombreColor = Convert.ToString(reader["nombreColor"]);
                         alerta.Cantidad = Convert.ToInt32(reader["cantidad"]);
+                        alerta.IdProducto = Convert.ToInt64(reader["idProducto"]);
                         dtos.Add(alerta.darDto());
                     }
                 }

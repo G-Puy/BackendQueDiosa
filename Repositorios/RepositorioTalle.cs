@@ -58,7 +58,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TABLE Talle SET bajaLogica = @BajaLogica WHERE idTalle = @idTalle";
+                string sentenciaSql = @"UPDATE Talle SET bajaLogica = @BajaLogica WHERE idTalle = @idTalle;";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@idTalle", talle.Id);
                 cmd.Parameters.AddWithValue("@BajaLogica", true);
@@ -200,7 +200,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT TOP 1 idTalle FROM Stock WHERE idTalle = @IdTalle";
+                string sentenciaSql = @"SELECT TOP 1 idTalle FROM Stock WHERE idTalle = @IdTalle;";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdTalle", dtoTalle.Id);
                 manejadorConexion.AbrirConexion(cn);

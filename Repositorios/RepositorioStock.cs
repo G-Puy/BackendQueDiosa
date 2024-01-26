@@ -102,7 +102,7 @@ namespace Repositorios
                         }
 
 
-                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@Leida, @NombreProducto, @NombreTalle, @NombreColor, @Cantidad);
+                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@Leida, @NombreProducto, @NombreTalle, @NombreColor, @Cantidad, @IdProducto);
                                                    SELECT CAST(Scope_IDentity() as int);";
                         cmd.CommandText = sentenciaAlerta;
                         cmd.Parameters.Clear();
@@ -112,6 +112,7 @@ namespace Repositorios
                         cmd.Parameters.AddWithValue("@NombreTalle", nombreTalle);
                         cmd.Parameters.AddWithValue("@NombreColor", nombreColor);
                         cmd.Parameters.AddWithValue("@Cantidad", diferencia);
+                        cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
                         int insert = (int)cmd.ExecuteScalar();
                     }
 
@@ -199,19 +200,14 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaAlerta = @"DELETE FROM AlertaStock WHERE idStock = @IdStock";
                 string sentenciaStock = @"DELETE FROM Stock WHERE idStock = @IdStock";
 
-                SqlCommand cmd = new SqlCommand(sentenciaAlerta, cn);
+                SqlCommand cmd = new SqlCommand(sentenciaStock, cn);
                 cmd.Parameters.AddWithValue("@IdStock", stock.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 int affected = cmd.ExecuteNonQuery();
-
-                cmd = new SqlCommand(sentenciaStock, cn);
-                cmd.Parameters.AddWithValue("@IdStock", stock.Id);
-                affected = cmd.ExecuteNonQuery();
 
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);

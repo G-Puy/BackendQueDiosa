@@ -51,17 +51,17 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TipoProducto SET bajaLogica = @BajaLogica WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"UPDATE TipoProducto SET bajaLogica = @BajaLogica WHERE idTipoProducto = @IdTipoProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.Id);
+                cmd.Parameters.AddWithValue("@IdTipoProducto", tipoPrenda.Id);
                 cmd.Parameters.AddWithValue("@BajaLogica", true);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
-                int idGenerado = cmd.ExecuteNonQuery();
+                int rowsAffected = cmd.ExecuteNonQuery();
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
-                return idGenerado > 0;
+                return rowsAffected > 0;
             }
             catch (Exception ex)
             {
@@ -165,9 +165,9 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"DELETE FROM TipoProducto WHERE idTipoProducto = @idTipoProducto";
+                string sentenciaSql = @"DELETE FROM TipoProducto WHERE idTipoProducto = @IdTipoProducto;";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@idTipoProducto", tipoPrenda.Id);
+                cmd.Parameters.AddWithValue("@IdTipoProducto", tipoPrenda.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -193,7 +193,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"SELECT TOP 1 idTipoProducto FROM PRODUCTO WHERE idTipoProducto = @IdTipoProducto";
+                string sentenciaSql = @"SELECT TOP 1 idTipoProducto FROM Producto WHERE idTipoProducto = @IdTipoProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdTipoProducto", dtoTipoPrenda.Id);
                 manejadorConexion.AbrirConexion(cn);

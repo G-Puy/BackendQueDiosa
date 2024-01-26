@@ -102,7 +102,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE TABLE Producto SET bajaLogica = @BajaLogica WHERE idProducto = @IdProducto";
+                string sentenciaSql = @"UPDATE Producto SET bajaLogica = @BajaLogica WHERE idProducto = @IdProducto";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 cmd.Parameters.AddWithValue("@BajaLogica", true);
@@ -342,21 +342,15 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaAlerta = @"DELETE FROM AlertaStock WHERE idStock IN (SELECT idStock FROM Stock WHERE idProducto = @IdProducto)";
-                string sentenciaStock = @"DELETE From Stock WHERE idProducto = @IdProducto";
-                string sentenciaProducto = @"DELETE FROM Producto WHERE idProducto = @IdProducto";
+                string sentenciaStock = @"DELETE FROM Stock WHERE idProducto = @IdProducto;";
+                string sentenciaProducto = @"DELETE FROM Producto WHERE idProducto = @IdProducto;";
 
-                SqlCommand cmd = new SqlCommand(sentenciaAlerta, cn);
+                SqlCommand cmd = new SqlCommand(sentenciaStock, cn);
                 cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 int affected = cmd.ExecuteNonQuery();
-
-                cmd.CommandText = sentenciaStock;
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@IdProducto", producto.Id);
-                affected = cmd.ExecuteNonQuery();
 
                 string sentenciaImagenes = @"SELECT * FROM Imagen WHERE idProducto = @IdProducto";
                 cmd.CommandText = sentenciaImagenes;
@@ -591,14 +585,7 @@ namespace Repositorios
 
                     if (!esta)
                     {
-                        string sentenciaAlerta = @"DELETE FROM AlertaStock WHERE idStock = @IdStock";
                         string sentenciaStock = @"DELETE FROM Stock WHERE idStock = @IdStock";
-
-                        cmd.CommandText = sentenciaAlerta;
-                        cmd.Parameters.Clear();
-                        cmd.Parameters.AddWithValue("@IdStock", stock.Id);
-                        affected2 = cmd.ExecuteNonQuery();
-
                         cmd.CommandText = sentenciaStock;
                         cmd.Parameters.Clear();
                         cmd.Parameters.AddWithValue("@IdStock", stock.Id);
