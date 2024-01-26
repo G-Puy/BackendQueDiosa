@@ -111,7 +111,7 @@ namespace BackendQueDiosa.Controllers
 
                 if (this.ManejadorTipoPrenda.EnUso(dtoTipoPrenda))
                 {
-                    resultado = this.ManejadorTipoPrenda.BajaLogica(dtoTipoPrenda);
+                    return BadRequest("En uso.");
                 }
                 else
                 {
