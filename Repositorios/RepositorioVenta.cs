@@ -342,7 +342,7 @@ namespace Repositorios
                     {
                         while (reader.Read())
                         {
-                            nombreProducto = Convert.ToString(reader["nombre"]);
+                            nombreTalle = Convert.ToString(reader["nombre"]);
                         }
                     }
 
@@ -353,12 +353,13 @@ namespace Repositorios
                     {
                         while (reader.Read())
                         {
-                            nombreProducto = Convert.ToString(reader["nombre"]);
+                            nombreColor = Convert.ToString(reader["nombre"]);
                         }
                     }
 
                     DTODetallePedido dp = new DTODetallePedido();
                     dp.Cantidad = v.Cantidad;
+                    dp.IdProducto = v.IdProducto;
                     dp.NombreProducto = nombreProducto;
                     dp.NombreTalle = nombreTalle;
                     dp.NombreColor = nombreColor;
