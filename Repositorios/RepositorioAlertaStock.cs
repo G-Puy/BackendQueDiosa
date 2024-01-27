@@ -31,6 +31,40 @@ namespace Repositorios
             throw new NotImplementedException();
         }
 
+        public int Contar(long id)
+        {
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                int cantidad = -1;
+                string sentenciaSql = @"SELECT COUNT(idAlertaStock) as cantidad FROM AlertaStock where leida = @Leida;";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Parameters.AddWithValue("@Leida", false);
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        cantidad = Convert.ToInt32(reader["cantidad"]);
+                    }
+                }
+
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return cantidad;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public bool Eliminar(DTOAlertaStock obj)
         {
             throw new NotImplementedException();

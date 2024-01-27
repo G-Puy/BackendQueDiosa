@@ -44,5 +44,17 @@ namespace BackendQueDiosa.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("Contar")]
+        public IActionResult Contar(long idAlerta)
+        {
+            try
+            {
+                int cantidad = this.ManejadorAlerta.Contar(idAlerta);
+                if (cantidad < 0) return BadRequest(cantidad);
+                else return Ok(cantidad);
+            }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
     }
 }
