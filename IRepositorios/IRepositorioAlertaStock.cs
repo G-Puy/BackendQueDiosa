@@ -10,6 +10,6 @@ namespace IRepositorios
     public interface IRepositorioAlertaStock : IRepositorioT<DTOAlertaStock>
     {
         public bool Leer(long id);
-        public int Contar(long id);
+        public int Contar();
     }
 }

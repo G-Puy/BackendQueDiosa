@@ -31,7 +31,7 @@ namespace Repositorios
             throw new NotImplementedException();
         }
 
-        public int Contar(long id)
+        public int Contar()
         {
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;

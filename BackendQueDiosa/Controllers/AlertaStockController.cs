@@ -46,11 +46,11 @@ namespace BackendQueDiosa.Controllers
         }
 
         [HttpGet("Contar")]
-        public IActionResult Contar(long idAlerta)
+        public IActionResult Contar()
         {
             try
             {
-                int cantidad = this.ManejadorAlerta.Contar(idAlerta);
+                int cantidad = this.ManejadorAlerta.Contar();
                 if (cantidad < 0) return BadRequest(cantidad);
                 else return Ok(cantidad);
             }

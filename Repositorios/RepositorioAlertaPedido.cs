@@ -240,7 +240,7 @@ namespace IRepositorios
             }
         }
 
-        public int Contar(long id)
+        public int Contar()
         {
             cn = manejadorConexion.CrearConexion();
             SqlTransaction trn = null;

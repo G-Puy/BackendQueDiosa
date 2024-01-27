@@ -12,6 +12,6 @@ namespace IRepositorios
     {
         public bool Realizado(long id);
         public List<DTOAlertaPedido> TraerFiltrado(DTOFiltroAlertasPedidos dtoFiltro);
-        public int Contar(long id);
+        public int Contar();
     }
 }
