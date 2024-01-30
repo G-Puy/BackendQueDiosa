@@ -249,6 +249,46 @@ namespace Repositorios
             }
         }
 
+        public bool NombreOcupado(DTOTipoPrenda dto)
+        {
+            List<TipoPrenda> prendas = new List<TipoPrenda>();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM TipoProducto WHERE UPPER(nombre) = @Nombre AND idTipoProducto != @IdTipoProducto";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@Nombre", dto.Nombre.ToUpper());
+                cmd.Parameters.AddWithValue("@IdTipoProducto", dto.Id);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        TipoPrenda prenda = new TipoPrenda();
+                        prenda.Id = Convert.ToInt64(reader["idTipoProducto"]);
+                        prenda.Nombre = reader["nombre"].ToString();
+                        prenda.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        prendas.Add(prenda);
+                    }
+                }
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+
+                return prendas.Count() > 0;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public IEnumerable<DTOTipoPrenda> TraerTodos()
         {
             List<DTOTipoPrenda> tipos = new List<DTOTipoPrenda>();

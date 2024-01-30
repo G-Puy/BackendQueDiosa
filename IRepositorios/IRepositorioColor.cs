@@ -12,5 +12,7 @@ namespace IRepositorios
         DTOColor BuscarPorNombre(DTOColor dtoColor);
 
         public bool EnUso(DTOColor dtoColor);
+
+        bool NombreOcupado(DTOColor dto);
     }
 }

@@ -631,6 +631,52 @@ namespace Repositorios
             }
         }
 
+        public bool NombreOcupado(DTOProducto dto)
+        {
+            List<Producto> productos = new List<Producto>();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Producto WHERE UPPER(nombre) = @Nombre AND idProducto != @IdProducto;";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@Nombre", dto.Nombre.ToUpper());
+                cmd.Parameters.AddWithValue("@IdProducto", dto.Id);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Producto producto = new Producto();
+                        producto.Id = Convert.ToInt64(reader["idProducto"]);
+                        producto.Nombre = Convert.ToString(reader["nombre"]);
+                        producto.Descripcion = Convert.ToString(reader["descripcion"]);
+                        producto.PrecioActual = Convert.ToDouble(reader["precioActual"]);
+                        producto.PrecioAnterior = Convert.ToDouble(reader["precioAnterior"]);
+                        producto.IdTipoProducto = Convert.ToInt64(reader["idTipoProducto"]);
+                        producto.VisibleEnWeb = Convert.ToBoolean(reader["visibleEnWeb"]);
+                        producto.Nuevo = Convert.ToBoolean(reader["nuevo"]);
+                        producto.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        producto.GuiaTalles = Convert.ToString(reader["guiaTalles"]);
+                        productos.Add(producto);
+                    }
+                }
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return productos.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public async Task<IEnumerable<DTOProductoEnviarAFRONT>> TraerTodos()
         {
             List<DTOProductoEnviarAFRONT> productos = new List<DTOProductoEnviarAFRONT>();

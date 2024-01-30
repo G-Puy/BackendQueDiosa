@@ -8,5 +8,7 @@ namespace IRepositorios
 
         public bool EnUso(DTOTipoPrenda dtoTipoPrenda);
 
+        bool NombreOcupado(DTOTipoPrenda dto);
+
     }
 }

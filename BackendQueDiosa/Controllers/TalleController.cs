@@ -24,7 +24,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
 
-                if (this.ManejadorTalle.BuscarPorNombre(dtoTal) != null) return BadRequest("Nombre ya existe");
+                if (this.ManejadorTalle.NombreOcupado(dtoTal)) return BadRequest("Nombre ya existe");
                 dtoTal.Nombre = dtoTal.Nombre.ToUpper();
                 bool resultadoAlta = this.ManejadorTalle.Alta(dtoTal);
 
@@ -134,7 +134,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                     dtoTal.Nombre = dtoTal.Nombre.ToUpper();
-                if (this.ManejadorTalle.BuscarPorNombre(dtoTal) != null)
+                if (this.ManejadorTalle.NombreOcupado(dtoTal))
                     return BadRequest("Ya existe nombre");
 
                 bool resultado = this.ManejadorTalle.Modificar(dtoTal);

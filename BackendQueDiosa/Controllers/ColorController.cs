@@ -24,7 +24,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                if (this.ManejadorColor.BuscarPorNombre(dtoCol) != null) return BadRequest("Nombre ya existe");
+                if (this.ManejadorColor.NombreOcupado(dtoCol)) return BadRequest("Nombre ya existe");
 
                 bool resultadoAlta = this.ManejadorColor.Alta(dtoCol);
 
@@ -132,7 +132,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 dtoCol.Nombre = dtoCol.Nombre.ToUpper();
-                if (this.ManejadorColor.BuscarPorNombre(dtoCol) != null)
+                if (this.ManejadorColor.NombreOcupado(dtoCol))
                     return BadRequest("Ya existe nombre");
 
                 bool resultado = this.ManejadorColor.Modificar(dtoCol);

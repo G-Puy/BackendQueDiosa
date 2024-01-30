@@ -20,7 +20,7 @@ namespace Repositorios
 
         public bool Alta(DTOColor obj)
         {
-           Color color = new Color();
+            Color color = new Color();
             color.cargarDeDTO(obj);
 
             cn = manejadorConexion.CrearConexion();
@@ -30,7 +30,7 @@ namespace Repositorios
                 string sentenciaSql = @"INSERT INTO Color VALUES(@Nombre,@BajaLogica)
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
-                cmd.Parameters.AddWithValue("@Nombre",color.Nombre);
+                cmd.Parameters.AddWithValue("@Nombre", color.Nombre);
                 cmd.Parameters.AddWithValue("@BajaLogica", false);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
@@ -247,6 +247,46 @@ namespace Repositorios
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return true;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
+        public bool NombreOcupado(DTOColor dto)
+        {
+            List<Color> colores = new List<Color>();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Color WHERE UPPER(nombre) = @Nombre AND idColor != @IdColor;";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@Nombre", dto.Nombre.ToUpper());
+                cmd.Parameters.AddWithValue("@IdColor", dto.Id);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Color color = new Color();
+                        color.Id = Convert.ToInt64(reader["idColor"]);
+                        color.Nombre = Convert.ToString(reader["nombre"]);
+                        color.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        colores.Add(color);
+                    }
+                }
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+
+                return colores.Count() > 0;
             }
             catch (Exception ex)
             {

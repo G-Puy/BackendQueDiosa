@@ -7,5 +7,7 @@ namespace IRepositorios
         DTOTalle BuscarPorNombre(DTOTalle dtoTalle);
 
         public bool EnUso(DTOTalle dtoTalle);
+
+        bool NombreOcupado(DTOTalle dto);
     }
 }

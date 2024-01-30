@@ -43,7 +43,7 @@ namespace BackendQueDiosa.Controllers
 
                 if (!ValidarContrasenia(mapperUsuario.Contraseña)) return BadRequest("Contrasenia invalida");
 
-                if (this.ManejadorUsuario.BuscarPorNombre(dtoUsuario) == null) return BadRequest("Nombre ya existe");
+                if (this.ManejadorUsuario.NombreOcupado(dtoUsuario)) return BadRequest("Nombre ya existe");
 
                 bool resultado = this.ManejadorUsuario.Alta(dtoUsuario);
 
@@ -232,7 +232,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                if (this.ManejadorUsuario.BuscarPorNombre(dtoUsuario) != null)
+                if (this.ManejadorUsuario.NombreOcupado(dtoUsuario))
                     return BadRequest("Ya existe nombre");
 
                 bool resultado = this.ManejadorUsuario.Modificar(dtoUsuario);

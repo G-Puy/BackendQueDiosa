@@ -62,6 +62,12 @@ namespace BackendQueDiosa.Controllers
                     }
                 }
 
+                DTOProducto dtop = new DTOProducto();
+                dtop.Nombre = producto.Nombre;
+                dtop.Id = producto.Id;
+
+                if (ManejadorProducto.NombreOcupado(dtop)) return BadRequest("Nombre en uso");
+
 
                 Task<bool> resultadoAlta = this.ManejadorProducto.Alta(dtoProducto, archivos);
 
@@ -203,7 +209,7 @@ namespace BackendQueDiosa.Controllers
                     }
                 }
 
-                if (this.ManejadorProducto.EnUso(dtoProducto))
+                if (this.ManejadorProducto.NombreOcupado(dtoProducto))
                     return BadRequest("Ya existe nombre");
 
                 bool resultado = this.ManejadorProducto.Modificar(dtoProducto, archivos).Result;

@@ -256,6 +256,46 @@ namespace Repositorios
             }
         }
 
+        public bool NombreOcupado(DTOTalle dto)
+        {
+            List<Talle> talles = new List<Talle>();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Talle WHERE UPPER(nombre) = @Nombre AND idTalle != @IdTalle;";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@Nombre", dto.Nombre.ToUpper());
+                cmd.Parameters.AddWithValue("@IdTalle", dto.Id);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Talle t = new Talle();
+                        t.Id = Convert.ToInt64(reader["idTalle"]);
+                        t.Nombre = Convert.ToString(reader["nombre"]);
+                        t.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        talles.Add(t);
+                    }
+                }
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+
+                return talles.Count() > 0;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public IEnumerable<DTOTalle> TraerTodos()
         {
             List<DTOTalle> talles = new List<DTOTalle>();

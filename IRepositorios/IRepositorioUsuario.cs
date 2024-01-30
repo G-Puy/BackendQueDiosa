@@ -7,5 +7,7 @@ namespace IRepositorios
         DTOUsuario Login(DTOUsuario dtoUsuario);
 
         DTOUsuario BuscarPorNombre(DTOUsuario obj);
+
+        bool NombreOcupado(DTOUsuario dto);
     }
 }

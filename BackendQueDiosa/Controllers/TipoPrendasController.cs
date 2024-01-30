@@ -25,7 +25,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                if (this.ManejadorTipoPrenda.BuscarPorNombre(dtoTp) != null) return BadRequest("Nombre ya existe");
+                if (this.ManejadorTipoPrenda.NombreOcupado(dtoTp)) return BadRequest("Nombre ya existe");
 
                 bool resultado = this.ManejadorTipoPrenda.Alta(dtoTp);
 
@@ -135,7 +135,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                if (this.ManejadorTipoPrenda.BuscarPorNombre(dtoCat) != null)
+                if (this.ManejadorTipoPrenda.NombreOcupado(dtoCat))
                     return BadRequest("Ya existe nombre");
 
                 bool resultadoEditar = this.ManejadorTipoPrenda.Modificar(dtoCat);

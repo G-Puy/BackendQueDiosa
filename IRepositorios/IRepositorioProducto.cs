@@ -27,5 +27,7 @@ namespace IRepositorios
         bool Existe(DTOProducto dTOProducto);
 
         List<DTOProducto> BuscarPorIds(List<DTOProducto> ids);
+
+        bool NombreOcupado(DTOProducto dto);
     }
 }

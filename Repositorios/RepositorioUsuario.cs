@@ -287,6 +287,53 @@ namespace Repositorios
             }
         }
 
+        public bool NombreOcupado(DTOUsuario dto)
+        {
+            List<Usuario> usuarios = new List<Usuario>();
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"SELECT * FROM Usuario WHERE nombreDeUsuario = @NombreDeUsuario AND idUsuario != @IdUsuario;";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@NombreDeUsuario", dto.NombreDeUsuario);
+                cmd.Parameters.AddWithValue("@IdUsuario", dto.IdUsuario);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Usuario usuario = new Usuario();
+                        usuario.IdUsuario = Convert.ToInt64(reader["idUsuario"]);
+                        usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
+                        // usuario.Contrasenia = reader["contrasenia"].ToString();
+                        usuario.Nombre = reader["nombre"].ToString();
+                        usuario.Apellido = reader["apellido"].ToString();
+                        usuario.Telefono = reader["telefono"].ToString();
+                        usuario.Correo = reader["correo"].ToString();
+                        // usuario.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
+                        usuarios.Add(usuario);
+
+                    }
+                }
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+
+                return usuarios.Count() > 0;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public IEnumerable<DTOUsuario> TraerTodos()
         {
             List<DTOUsuario> tipos = new List<DTOUsuario>();
@@ -308,7 +355,6 @@ namespace Repositorios
 
                         usuario.IdUsuario = Convert.ToInt64(reader["idUsuario"]);
                         usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
-                        usuario.Contrasenia = reader["contrasenia"].ToString();
                         usuario.Nombre = reader["nombre"].ToString();
                         usuario.Apellido = reader["apellido"].ToString();
                         usuario.Telefono = reader["telefono"].ToString();
