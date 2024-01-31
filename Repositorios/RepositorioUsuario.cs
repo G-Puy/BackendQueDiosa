@@ -24,7 +24,7 @@ namespace Repositorios
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@NombreUsuario", usuario.NombreDeUsuario);
-                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
+                cmd.Parameters.AddWithValue("@Contrasenia", usuario.NombreDeUsuario + ".12345");
                 cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                 cmd.Parameters.AddWithValue("@Apellido", usuario.Apellido);
                 cmd.Parameters.AddWithValue("@Telefono", usuario.Telefono);
@@ -98,12 +98,12 @@ namespace Repositorios
                     {
                         usuario.IdUsuario = Convert.ToInt64(reader["idUsuario"]);
                         usuario.NombreDeUsuario = reader["nombreDeUsuario"].ToString();
-                        usuario.Contrasenia = reader["contrasenia"].ToString();
+                        //usuario.Contrasenia = reader["contrasenia"].ToString();
                         usuario.Nombre = reader["nombre"].ToString();
                         usuario.Apellido = reader["apellido"].ToString();
                         usuario.Telefono = reader["telefono"].ToString();
                         usuario.Correo = reader["correo"].ToString();
-                        usuario.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
+                        //    usuario.BajaLogica = Convert.ToBoolean(reader["bajaLogica"]);
                         usuario.IdTipoUsuario = Convert.ToInt64(reader["idTipoUsuario"]);
 
                     }
@@ -259,11 +259,15 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"UPDATE Usuario SET nombreDeUsuario = @NombreDeUsuario, contrasenia = @Contrasenia, nombre = @Nombre, apellido = @Apellido, telefono = @Telefono, correo = @Correo, bajaLogica = @BajaLogica, idTipoUsuario = @IdTipoUsuario WHERE idUsuario = @IdUsuario";
+                string sentenciaSql = @"UPDATE Usuario SET nombreDeUsuario = @NombreDeUsuario, ";
+                string pass = "contrasenia = @Contrasenia, ";
+                string resto = "nombre = @Nombre, apellido = @Apellido, telefono = @Telefono, correo = @Correo, bajaLogica = @BajaLogica, idTipoUsuario = @IdTipoUsuario WHERE idUsuario = @IdUsuario";
+                if (obj.Contrasenia != "") sentenciaSql += pass;
+                sentenciaSql += resto;
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
                 cmd.Parameters.AddWithValue("@NombreUsuario", usuario.NombreDeUsuario);
-                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
+                if (obj.Contrasenia != "") cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
                 cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                 cmd.Parameters.AddWithValue("@Apellido", usuario.Apellido);
                 cmd.Parameters.AddWithValue("@Telefono", usuario.Telefono);

@@ -36,12 +36,9 @@ namespace BackendQueDiosa.Controllers
                 dtoUsuario.NombreDeUsuario = mapperUsuario.NombreDeUsuario;
                 dtoUsuario.Nombre = mapperUsuario.Nombre;
                 dtoUsuario.Apellido = mapperUsuario.Apellido;
-                dtoUsuario.Contrasenia = mapperUsuario.Contraseña;
                 dtoUsuario.Correo = mapperUsuario.Correo;
                 dtoUsuario.Telefono = mapperUsuario.Telefono;
                 dtoUsuario.TipoUsuario = mapperUsuario.IdTipoUsuario;
-
-                if (!ValidarContrasenia(mapperUsuario.Contraseña)) return BadRequest("Contrasenia invalida");
 
                 if (this.ManejadorUsuario.NombreOcupado(dtoUsuario)) return BadRequest("Nombre ya existe");
 
@@ -232,6 +229,8 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
+                if (dtoUsuario.Contrasenia != "" && !ValidarContrasenia(dtoUsuario.Contrasenia)) return BadRequest("Contrasenia invalida");
+
                 if (this.ManejadorUsuario.NombreOcupado(dtoUsuario))
                     return BadRequest("Ya existe nombre");
 
@@ -269,6 +268,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
+                if (!ValidarContrasenia(dtoUsuario.Contrasenia)) return BadRequest("Contrasenia invalida");
                 if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest(false);
                 bool resultado = this.ManejadorUsuario.ModificarPass(dtoUsuario);
                 if (resultado) return Ok(resultado);
