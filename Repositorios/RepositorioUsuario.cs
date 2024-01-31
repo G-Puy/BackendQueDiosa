@@ -179,7 +179,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"DELETE FROM TipoProducto WHERE idUsuario = @IdUsuario";
+                string sentenciaSql = @"DELETE FROM Usuario WHERE idUsuario = @IdUsuario";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
                 manejadorConexion.AbrirConexion(cn);
