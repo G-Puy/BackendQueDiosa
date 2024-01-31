@@ -9,5 +9,7 @@ namespace IRepositorios
         DTOUsuario BuscarPorNombre(DTOUsuario obj);
 
         bool NombreOcupado(DTOUsuario dto);
+
+        bool ModificarPass(DTOUsuario obj);
     }
 }

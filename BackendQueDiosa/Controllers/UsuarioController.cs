@@ -262,5 +262,22 @@ namespace BackendQueDiosa.Controllers
                 throw ex;
             }
         }
+
+        [Authorize]
+        [HttpPost("modificarPass")]
+        public IActionResult ModificarPass([FromBody] DTOUsuario dtoUsuario)
+        {
+            try
+            {
+                if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest(false);
+                bool resultado = this.ManejadorUsuario.ModificarPass(dtoUsuario);
+                if (resultado) return Ok(resultado);
+                else return BadRequest(resultado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

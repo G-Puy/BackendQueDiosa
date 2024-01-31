@@ -287,6 +287,36 @@ namespace Repositorios
             }
         }
 
+        public bool ModificarPass(DTOUsuario obj)
+        {
+            Usuario usuario = new Usuario();
+            usuario.cargarDeDTO(obj);
+
+            cn = manejadorConexion.CrearConexion();
+            SqlTransaction trn = null;
+            try
+            {
+                string sentenciaSql = @"UPDATE Usuario SET contrasenia = @Contrasenia WHERE idUsuario = @IdUsuario";
+                SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
+                cmd.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
+                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
+                manejadorConexion.AbrirConexion(cn);
+                trn = cn.BeginTransaction();
+                cmd.Transaction = trn;
+                int idGenerado = cmd.ExecuteNonQuery();
+                trn.Commit();
+                manejadorConexion.CerrarConexionConClose(cn);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                trn.Rollback();
+                manejadorConexion.CerrarConexionConClose(cn);
+                this.DescripcionError = ex.Message;
+                throw ex;
+            }
+        }
+
         public bool NombreOcupado(DTOUsuario dto)
         {
             List<Usuario> usuarios = new List<Usuario>();
