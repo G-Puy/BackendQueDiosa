@@ -260,9 +260,8 @@ namespace Repositorios
             try
             {
                 string sentenciaSql = @"UPDATE Usuario SET nombreDeUsuario = @NombreDeUsuario, ";
-                string pass = "contrasenia = @Contrasenia, ";
                 string resto = "nombre = @Nombre, apellido = @Apellido, telefono = @Telefono, correo = @Correo, bajaLogica = @BajaLogica, idTipoUsuario = @IdTipoUsuario WHERE idUsuario = @IdUsuario";
-                if (obj.Contrasenia != "") sentenciaSql += pass;
+                if (obj.Contrasenia != "") sentenciaSql += "contrasenia = @Contrasenia, ";
                 sentenciaSql += resto;
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
