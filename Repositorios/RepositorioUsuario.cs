@@ -30,7 +30,7 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@Telefono", usuario.Telefono);
                 cmd.Parameters.AddWithValue("@Correo", usuario.Correo);
                 cmd.Parameters.AddWithValue("@BajaLogica", usuario.BajaLogica);
-                cmd.Parameters.AddWithValue("@IdTipoUsuario", usuario.IdTipoUsuario);
+                cmd.Parameters.AddWithValue("@IdTipoUsuario", 2);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -266,7 +266,7 @@ namespace Repositorios
                 sentenciaSql += resto;
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@IdUsuario", usuario.IdUsuario);
-                cmd.Parameters.AddWithValue("@NombreUsuario", usuario.NombreDeUsuario);
+                cmd.Parameters.AddWithValue("@NombreDeUsuario", usuario.NombreDeUsuario);
                 if (obj.Contrasenia != "") cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
                 cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                 cmd.Parameters.AddWithValue("@Apellido", usuario.Apellido);

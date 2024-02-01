@@ -38,7 +38,6 @@ namespace BackendQueDiosa.Controllers
                 dtoUsuario.Apellido = mapperUsuario.Apellido;
                 dtoUsuario.Correo = mapperUsuario.Correo;
                 dtoUsuario.Telefono = mapperUsuario.Telefono;
-                dtoUsuario.TipoUsuario = mapperUsuario.IdTipoUsuario;
 
                 if (this.ManejadorUsuario.NombreOcupado(dtoUsuario)) return BadRequest("Nombre ya existe");
 
