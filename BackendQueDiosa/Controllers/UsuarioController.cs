@@ -1,5 +1,6 @@
 ﻿using BackendQueDiosa.Mappers;
 using DTOS;
+using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -263,13 +264,22 @@ namespace BackendQueDiosa.Controllers
 
         [Authorize]
         [HttpPost("modificarPass")]
-        public IActionResult ModificarPass([FromBody] DTOUsuario dtoUsuario)
+        public IActionResult ModificarPass([FromBody] DTOCambioPass dto)
         {
             try
             {
-                if (!ValidarContrasenia(dtoUsuario.Contrasenia)) return BadRequest("Contrasenia invalida");
+                if (!ValidarContrasenia(dto.ContraseniaNueva)) return BadRequest("Contrasenia invalida");
+
+                DTOUsuario dtoUsuario = new DTOUsuario();
+                dtoUsuario.Contrasenia = dto.Contrasenia;
+                dtoUsuario.NombreDeUsuario = dto.NombreDeUsuario;
+
                 if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest(false);
-                bool resultado = this.ManejadorUsuario.ModificarPass(dtoUsuario);
+
+                DTOUsuario nuevo = new DTOUsuario();
+                nuevo.Contrasenia = dto.ContraseniaNueva;
+                nuevo.IdUsuario = dto.Id;
+                bool resultado = this.ManejadorUsuario.ModificarPass(nuevo);
                 if (resultado) return Ok(resultado);
                 else return BadRequest(resultado);
             }

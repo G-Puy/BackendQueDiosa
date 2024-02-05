@@ -29,7 +29,7 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@Apellido", usuario.Apellido);
                 cmd.Parameters.AddWithValue("@Telefono", usuario.Telefono);
                 cmd.Parameters.AddWithValue("@Correo", usuario.Correo);
-                cmd.Parameters.AddWithValue("@BajaLogica", usuario.BajaLogica);
+                cmd.Parameters.AddWithValue("@BajaLogica", false);
                 cmd.Parameters.AddWithValue("@IdTipoUsuario", 2);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
