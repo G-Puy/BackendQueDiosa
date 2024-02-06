@@ -258,7 +258,7 @@ namespace BackendQueDiosa.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw ex;S
             }
         }
 
@@ -268,13 +268,13 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                if (!ValidarContrasenia(dto.ContraseniaNueva)) return BadRequest("Contrasenia nueva invalida.");
+                if (!ValidarContrasenia(dto.ContraseniaNueva)) return BadRequest("Contraseña nueva invalida.");
 
                 DTOUsuario dtoUsuario = new DTOUsuario();
                 dtoUsuario.Contrasenia = dto.Contrasenia;
                 dtoUsuario.NombreDeUsuario = dto.NombreDeUsuario;
 
-                if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest("Contrasenia vieja no es correcta.");
+                if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest("Contraseña vieja no es correcta.");
 
                 DTOUsuario nuevo = new DTOUsuario();
                 nuevo.Contrasenia = dto.ContraseniaNueva;
