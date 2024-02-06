@@ -268,13 +268,13 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                if (!ValidarContrasenia(dto.ContraseniaNueva)) return BadRequest("Contrasenia invalida");
+                if (!ValidarContrasenia(dto.ContraseniaNueva)) return BadRequest("Contrasenia nueva invalida.");
 
                 DTOUsuario dtoUsuario = new DTOUsuario();
                 dtoUsuario.Contrasenia = dto.Contrasenia;
                 dtoUsuario.NombreDeUsuario = dto.NombreDeUsuario;
 
-                if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest(false);
+                if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest("Contrasenia vieja no es correcta.");
 
                 DTOUsuario nuevo = new DTOUsuario();
                 nuevo.Contrasenia = dto.ContraseniaNueva;
