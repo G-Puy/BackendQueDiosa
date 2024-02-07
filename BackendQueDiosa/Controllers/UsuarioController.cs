@@ -258,7 +258,7 @@ namespace BackendQueDiosa.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;S
+                throw ex;
             }
         }
 
