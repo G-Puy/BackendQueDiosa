@@ -274,7 +274,7 @@ namespace BackendQueDiosa.Controllers
                 dtoUsuario.Contrasenia = dto.Contrasenia;
                 dtoUsuario.NombreDeUsuario = dto.NombreDeUsuario;
 
-                if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest("Contraseña vieja no es correcta.");
+                if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest("Contraseña actual no es correcta.");
 
                 DTOUsuario nuevo = new DTOUsuario();
                 nuevo.Contrasenia = dto.ContraseniaNueva;
