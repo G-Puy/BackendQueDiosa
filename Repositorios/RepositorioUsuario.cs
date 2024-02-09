@@ -24,7 +24,7 @@ namespace Repositorios
                                     SELECT CAST(Scope_IDentity() as int)";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@NombreUsuario", usuario.NombreDeUsuario);
-                cmd.Parameters.AddWithValue("@Contrasenia", usuario.NombreDeUsuario + ".12345");
+                cmd.Parameters.AddWithValue("@Contrasenia", usuario.Contrasenia);
                 cmd.Parameters.AddWithValue("@Nombre", usuario.Nombre);
                 cmd.Parameters.AddWithValue("@Apellido", usuario.Apellido);
                 cmd.Parameters.AddWithValue("@Telefono", usuario.Telefono);

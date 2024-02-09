@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -35,6 +36,7 @@ namespace BackendQueDiosa.Controllers
             {
                 DTOUsuario dtoUsuario = new DTOUsuario();
                 dtoUsuario.NombreDeUsuario = mapperUsuario.NombreDeUsuario;
+                dtoUsuario.Contrasenia = Encrypt(dtoUsuario.NombreDeUsuario + "Xx.12345");
                 dtoUsuario.Nombre = mapperUsuario.Nombre;
                 dtoUsuario.Apellido = mapperUsuario.Apellido;
                 dtoUsuario.Correo = mapperUsuario.Correo;
@@ -171,6 +173,8 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
+                dtoUsuarioFront.Contrasenia = Encrypt(dtoUsuarioFront.Contrasenia);
+
                 DTOUsuario resultadoLogin = this.ManejadorUsuario.Login(dtoUsuarioFront);
                 if (resultadoLogin != null)
                 {
@@ -234,6 +238,8 @@ namespace BackendQueDiosa.Controllers
                 if (this.ManejadorUsuario.NombreOcupado(dtoUsuario))
                     return BadRequest("Ya existe nombre");
 
+                if (dtoUsuario.Contrasenia != "") dtoUsuario.Contrasenia = Encrypt(dtoUsuario.Contrasenia);
+
                 bool resultado = this.ManejadorUsuario.Modificar(dtoUsuario);
 
                 if (resultado) return Ok("Modificado exitosamente");
@@ -271,13 +277,13 @@ namespace BackendQueDiosa.Controllers
                 if (!ValidarContrasenia(dto.ContraseniaNueva)) return BadRequest("Contraseña nueva invalida.");
 
                 DTOUsuario dtoUsuario = new DTOUsuario();
-                dtoUsuario.Contrasenia = dto.Contrasenia;
+                dtoUsuario.Contrasenia = Encrypt(dto.Contrasenia);
                 dtoUsuario.NombreDeUsuario = dto.NombreDeUsuario;
 
                 if (this.ManejadorUsuario.Login(dtoUsuario) == null) return BadRequest("Contraseña actual no es correcta.");
 
                 DTOUsuario nuevo = new DTOUsuario();
-                nuevo.Contrasenia = dto.ContraseniaNueva;
+                nuevo.Contrasenia = Encrypt(dto.ContraseniaNueva);
                 nuevo.IdUsuario = dto.Id;
                 bool resultado = this.ManejadorUsuario.ModificarPass(nuevo);
                 if (resultado) return Ok(resultado);
@@ -287,6 +293,13 @@ namespace BackendQueDiosa.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        private string Encrypt(string s)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes(s);
+            byte[] data = new SHA256Managed().ComputeHash(bytes);
+            return Encoding.ASCII.GetString(data);
         }
     }
 }
