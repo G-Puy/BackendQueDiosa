@@ -244,7 +244,6 @@ namespace BackendQueDiosa.Controllers
 
                 if (resultado) return Ok("Modificado exitosamente");
                 else return BadRequest("Fallo al modificar");
-
             }
             catch (Exception ex)
             {
