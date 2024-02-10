@@ -28,7 +28,7 @@ namespace BackendQueDiosa.Controllers
             this.config = config;
         }
 
-        [Authorize("Administrador")]
+        //[Authorize("Administrador")]
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] MapperUsuarioAlta mapperUsuario)
         {
@@ -77,7 +77,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [Authorize("Administrador")]
+        [Authorize]
         [HttpGet("buscarPorId")]
         public IActionResult BuscarPorId(int id)
         {
@@ -275,6 +275,7 @@ namespace BackendQueDiosa.Controllers
             {
                 if (!ValidarContrasenia(dto.ContraseniaNueva)) return BadRequest("Contraseña nueva invalida.");
 
+                //actual Martin2024.     de BD   = ?x?L?SF????P?d?'??????1???    actual de front = ?x?L?SF?\u0014???\u0014P?d?'??\u0013???\u0013?1???\u001d\u001d
                 DTOUsuario dtoUsuario = new DTOUsuario();
                 dtoUsuario.Contrasenia = Encrypt(dto.Contrasenia);
                 dtoUsuario.NombreDeUsuario = dto.NombreDeUsuario;
