@@ -233,17 +233,17 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                if (dtoUsuario.Contrasenia != "" && !ValidarContrasenia(dtoUsuario.Contrasenia)) return BadRequest("Contrasenia invalida");
+                if (dtoUsuario.Contrasenia != "" && !ValidarContrasenia(dtoUsuario.Contrasenia)) return BadRequest(new { mensaje = "Contrasenia invalida" });
 
                 if (this.ManejadorUsuario.NombreOcupado(dtoUsuario))
-                    return BadRequest("Ya existe nombre");
+                    return BadRequest(new { mensaje = "Ya existe nombre" });
 
                 if (dtoUsuario.Contrasenia != "") dtoUsuario.Contrasenia = Encrypt(dtoUsuario.Contrasenia);
 
                 bool resultado = this.ManejadorUsuario.Modificar(dtoUsuario);
 
-                if (resultado) return Ok("Modificado exitosamente");
-                else return BadRequest("Fallo al modificar");
+                if (resultado) return Ok(new { mensaje = "Modificado exitosamente" });
+                else return BadRequest(new { mensaje = "Fallo al modificar" });
             }
             catch (Exception ex)
             {
