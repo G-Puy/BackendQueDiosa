@@ -191,6 +191,7 @@ namespace BackendQueDiosa.Controllers
                 dtoProducto.IdTipoProducto = producto.IdTipoProducto;
                 dtoProducto.BajaLogica = producto.BajaLogica;
                 dtoProducto.GuiaTalles = producto.GuiaTalles;
+                dtoProducto.VisibleEnWeb = producto.VisibleEnWeb;
 
                 DTOStockEnvio stock = producto.Stock;
 
