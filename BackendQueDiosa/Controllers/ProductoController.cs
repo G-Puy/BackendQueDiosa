@@ -23,6 +23,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorProducto = repInj;
         }
 
+        [Authorize]
         [HttpPost("alta")]
         public async Task<IActionResult> Alta([FromForm] IFormCollection dataEnvio)
         {
@@ -140,6 +141,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("eliminar")]
         public IActionResult Eliminar(long id)
         {

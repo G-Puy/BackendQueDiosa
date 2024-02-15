@@ -18,7 +18,7 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorColor = repInj;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] DTOColor dtoCol)
         {

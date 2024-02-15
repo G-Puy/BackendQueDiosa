@@ -1,11 +1,13 @@
 ﻿using DTOS;
 using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Eventing.Reader;
 
 namespace BackendQueDiosa.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AlertaPedidoController : ControllerBase

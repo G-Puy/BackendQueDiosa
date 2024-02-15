@@ -98,7 +98,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        
+        [Authorize]
         [HttpDelete("eliminar")]
         public IActionResult Eliminar(long idTalle)
         {

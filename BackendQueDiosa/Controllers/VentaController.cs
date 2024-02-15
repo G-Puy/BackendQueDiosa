@@ -1,9 +1,11 @@
 ﻿using DTOS;
 using IRepositorios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendQueDiosa.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class VentaController : ControllerBase
