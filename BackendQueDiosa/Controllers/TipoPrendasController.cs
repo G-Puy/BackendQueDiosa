@@ -25,7 +25,7 @@ namespace BackendQueDiosa.Controllers
         {
             try
             {
-                if (this.ManejadorTipoPrenda.NombreOcupado(dtoTp)) return BadRequest("Nombre ya existe");
+                if (this.ManejadorTipoPrenda.NombreOcupado(dtoTp)) return BadRequest("Nombre en uso");
 
                 bool resultado = this.ManejadorTipoPrenda.Alta(dtoTp);
 
@@ -49,7 +49,7 @@ namespace BackendQueDiosa.Controllers
                 bool resultado = this.ManejadorTipoPrenda.BajaLogica(dtoTipoPrenda);
 
                 if (resultado) return Ok(resultado);
-                else return BadRequest(resultado);
+                else return BadRequest("No hay coincidencias");
 
             }
             catch (Exception ex)
@@ -69,7 +69,7 @@ namespace BackendQueDiosa.Controllers
                 DTOTipoPrenda resultado = this.ManejadorTipoPrenda.BuscarPorId(dtoTipoPrenda);
 
                 if (resultado != null && resultado.Id > 0) return Ok(resultado);
-                else return BadRequest(resultado);
+                else return BadRequest("No hay coincidencias");
 
             }
             catch (Exception ex)
@@ -111,7 +111,7 @@ namespace BackendQueDiosa.Controllers
 
                 if (this.ManejadorTipoPrenda.EnUso(dtoTipoPrenda))
                 {
-                    return BadRequest("En uso.");
+                    return BadRequest("No se puede eliminar un TIPO DE PRENDA en uso");
                 }
                 else
                 {
@@ -136,7 +136,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
                 if (this.ManejadorTipoPrenda.NombreOcupado(dtoCat))
-                    return BadRequest("Ya existe nombre");
+                    return BadRequest("Nombre en uso");
 
                 bool resultadoEditar = this.ManejadorTipoPrenda.Modificar(dtoCat);
 

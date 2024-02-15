@@ -17,5 +17,6 @@ namespace DTOS
         public string Telefono { get; set; } = string.Empty;
         public string Direccion { get; set; } = string.Empty;
         public bool Realizado { get; set; } = false;
+        public DateTime Fecha { get; set; } = DateTime.Now;
     }
 }

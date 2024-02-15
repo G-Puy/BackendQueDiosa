@@ -28,8 +28,8 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio)
-                                        SELECT CAST(Scope_IDentity() as int)";
+                string sentenciaSql = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio, @Fecha);
+                                        SELECT CAST(Scope_IDentity() as int);";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@MontoTotal", venta.MontoTotal);
                 cmd.Parameters.AddWithValue("@NombreComprador", venta.NombreComprador);
@@ -40,24 +40,25 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@Aprobado", venta.Aprobado);
                 cmd.Parameters.AddWithValue("@ApellidoComprador", venta.ApellidoComprador);
                 cmd.Parameters.AddWithValue("@Envio", venta.Envio);
+                cmd.Parameters.AddWithValue("@Fecha", venta.Fecha);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
                 int idGenerado = (int)cmd.ExecuteScalar();
 
-                cmd.CommandText = @"INSERT INTO VentaProducto VALUES(@IdVenta, @IdProducto, @IdTalle, @IdColor, @Cantidad, @Precio)
-                                  SELECT CAST(Scope_IDentity() as int)";
+                cmd.CommandText = @"INSERT INTO VentaProducto VALUES(@IdVenta, @IdProducto, @IdTalle, @IdColor, @Cantidad, @Precio);
+                                  SELECT CAST(Scope_IDentity() as int);";
                 foreach (VentaProducto ventaProducto in venta.ProductosVendidos)
                 {
                     cmd.Parameters.Clear();
-                    cmd.Parameters.AddWithValue("@IdVenta", ventaProducto.IdVenta);
+                    cmd.Parameters.AddWithValue("@IdVenta", idGenerado);
                     cmd.Parameters.AddWithValue("@IdProducto", ventaProducto.IdProducto);
                     cmd.Parameters.AddWithValue("@IdTalle", ventaProducto.IdTalle);
                     cmd.Parameters.AddWithValue("@IdColor", ventaProducto.IdColor);
                     cmd.Parameters.AddWithValue("@Cantidad", ventaProducto.Cantidad);
                     cmd.Parameters.AddWithValue("@Precio", ventaProducto.Precio);
 
-                    idGenerado = (int)cmd.ExecuteScalar();
+                    cmd.ExecuteScalar();
                 }
 
                 trn.Commit();
@@ -122,6 +123,7 @@ namespace Repositorios
                         venta.Aprobado = Convert.ToBoolean(reader["aprobado"]);
                         venta.ApellidoComprador = Convert.ToString(reader["apellidoComprador"]);
                         venta.Envio = Convert.ToBoolean(reader["envio"]);
+                        venta.Fecha = Convert.ToDateTime(reader["fecha"]);
                         DTOVenta dtoTipoT = venta.darDto();
 
                         ventas.Add(dtoTipoT);

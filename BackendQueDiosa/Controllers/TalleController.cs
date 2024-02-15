@@ -24,7 +24,7 @@ namespace BackendQueDiosa.Controllers
             try
             {
 
-                if (this.ManejadorTalle.NombreOcupado(dtoTal)) return BadRequest("Nombre ya existe");
+                if (this.ManejadorTalle.NombreOcupado(dtoTal)) return BadRequest("Nombre en uso");
                 dtoTal.Nombre = dtoTal.Nombre.ToUpper();
                 bool resultadoAlta = this.ManejadorTalle.Alta(dtoTal);
 
@@ -98,7 +98,7 @@ namespace BackendQueDiosa.Controllers
             }
         }
 
-        [Authorize]
+        
         [HttpDelete("eliminar")]
         public IActionResult Eliminar(long idTalle)
         {
@@ -110,7 +110,7 @@ namespace BackendQueDiosa.Controllers
 
                 if (this.ManejadorTalle.EnUso(dtoTal))
                 {
-                    resultado = this.ManejadorTalle.BajaLogica(dtoTal);
+                    return BadRequest("No se puede eliminar un TALLE en uso");
                 }
                 else
                 {
@@ -135,7 +135,7 @@ namespace BackendQueDiosa.Controllers
             {
                     dtoTal.Nombre = dtoTal.Nombre.ToUpper();
                 if (this.ManejadorTalle.NombreOcupado(dtoTal))
-                    return BadRequest("Ya existe nombre");
+                    return BadRequest("Nombre en uso");
 
                 bool resultado = this.ManejadorTalle.Modificar(dtoTal);
 

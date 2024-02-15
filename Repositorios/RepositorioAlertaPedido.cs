@@ -159,6 +159,7 @@ namespace IRepositorios
                             dto.Telefono = Convert.ToString(reader["telefono"]);
                             dto.Apellido = Convert.ToString(reader["apellidoComprador"]);
                             dto.Envio = Convert.ToBoolean(reader["envio"]);
+                            dto.Fecha = Convert.ToDateTime(reader["fecha"]);
                         }
                     }
 
@@ -222,6 +223,7 @@ namespace IRepositorios
                             dto.Telefono = Convert.ToString(reader["telefono"]);
                             dto.Apellido = Convert.ToString(reader["apellidoComprador"]);
                             dto.Envio = Convert.ToBoolean(reader["envio"]);
+                            dto.Fecha = Convert.ToDateTime(reader["fecha"]);
                         }
                     }
 

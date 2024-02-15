@@ -18,13 +18,18 @@ namespace BackendQueDiosa.Controllers
             this.ManejadorColor = repInj;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] DTOColor dtoCol)
         {
             try
             {
-                if (this.ManejadorColor.NombreOcupado(dtoCol)) return BadRequest("Nombre ya existe");
+                string n1 = dtoCol.Nombre.First().ToString();
+                string n2 = dtoCol.Nombre.Substring(1);
+
+                dtoCol.Nombre = n1.ToUpper() + n2.ToLower();
+
+                if (this.ManejadorColor.NombreOcupado(dtoCol)) return BadRequest("Nombre en uso");
 
                 bool resultadoAlta = this.ManejadorColor.Alta(dtoCol);
 
@@ -108,7 +113,7 @@ namespace BackendQueDiosa.Controllers
 
                 if (this.ManejadorColor.EnUso(dtoCol))
                 {
-                    resultado = this.ManejadorColor.BajaLogica(dtoCol);
+                    return BadRequest("No se puede eliminar un COLOR en uso");
                 }
                 else
                 {
@@ -133,7 +138,7 @@ namespace BackendQueDiosa.Controllers
             {
                 dtoCol.Nombre = dtoCol.Nombre.ToUpper();
                 if (this.ManejadorColor.NombreOcupado(dtoCol))
-                    return BadRequest("Ya existe nombre");
+                    return BadRequest("Nombre en uso");
 
                 bool resultado = this.ManejadorColor.Modificar(dtoCol);
 
