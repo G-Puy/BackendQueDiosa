@@ -204,7 +204,7 @@ namespace BackendQueDiosa.Controllers
 
             var securityToken = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddMonths(1),
                 signingCredentials: creds);
 
             string token = new JwtSecurityTokenHandler().WriteToken(securityToken);
