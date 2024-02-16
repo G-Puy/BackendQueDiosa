@@ -4,6 +4,7 @@ using DTOS;
 using DTOS.DTOSProductoFrontBack;
 using IRepositorios;
 using System.Data.SqlClient;
+using System.Runtime.CompilerServices;
 
 namespace Repositorios
 {
@@ -132,7 +133,7 @@ namespace Repositorios
                 Venta venta = new Venta();
                 venta.cargarDeDTO(dto);
 
-                string sentenciaVenta = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio)
+                string sentenciaVenta = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio, @Fecha)
                                         SELECT CAST(Scope_IDentity() as int);";
                 cmd.CommandText = sentenciaVenta;
                 cmd.Parameters.Clear();
@@ -145,6 +146,7 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@Aprobado", false);
                 cmd.Parameters.AddWithValue("@ApellidoComprador", venta.ApellidoComprador);
                 cmd.Parameters.AddWithValue("@Envio", venta.Envio);
+                cmd.Parameters.AddWithValue("@Fecha", venta.Fecha);
 
                 int idGeneradoVenta = (int)cmd.ExecuteScalar();
 
