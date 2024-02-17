@@ -28,7 +28,7 @@ namespace BackendQueDiosa.Controllers
             this.config = config;
         }
 
-        [Authorize("Administrador")]
+        //[Authorize("Administrador")]
         [HttpPost("alta")]
         public IActionResult Alta([FromBody] MapperUsuarioAlta mapperUsuario)
         {
