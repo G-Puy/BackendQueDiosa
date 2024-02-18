@@ -214,6 +214,15 @@ namespace Repositorios
                         color.Id = Convert.ToInt64(reader["idColor"]);
                     }
                 }
+                string sentenciaVP = @"SELECT TOP 1 idColor FROM VentaProducto WHERE idColor = @IdColor";
+                cmd.CommandText = sentenciaVP;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        color.Id = Convert.ToInt64(reader["idColor"]);
+                    }
+                }
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return color != null && color.Id > 0;

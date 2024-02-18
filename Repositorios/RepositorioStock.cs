@@ -103,7 +103,7 @@ namespace Repositorios
                         }
 
 
-                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@Leida, @NombreProducto, @NombreTalle, @NombreColor, @Cantidad, @IdProducto);
+                        string sentenciaAlerta = @"INSERT INTO AlertaStock VALUES (@Leida, @NombreProducto, @NombreTalle, @NombreColor, @Cantidad, @IdProducto, @Fecha);
                                                    SELECT CAST(Scope_IDentity() as int);";
                         cmd.CommandText = sentenciaAlerta;
                         cmd.Parameters.Clear();
@@ -114,6 +114,7 @@ namespace Repositorios
                         cmd.Parameters.AddWithValue("@NombreColor", nombreColor);
                         cmd.Parameters.AddWithValue("@Cantidad", diferencia);
                         cmd.Parameters.AddWithValue("@IdProducto", stock.IdProducto);
+                        cmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
                         int insert = (int)cmd.ExecuteScalar();
                     }
 
@@ -133,7 +134,7 @@ namespace Repositorios
                 Venta venta = new Venta();
                 venta.cargarDeDTO(dto);
 
-                string sentenciaVenta = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio, @Fecha)
+                string sentenciaVenta = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio, @Fecha, @Notas)
                                         SELECT CAST(Scope_IDentity() as int);";
                 cmd.CommandText = sentenciaVenta;
                 cmd.Parameters.Clear();
@@ -147,6 +148,7 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@ApellidoComprador", venta.ApellidoComprador);
                 cmd.Parameters.AddWithValue("@Envio", venta.Envio);
                 cmd.Parameters.AddWithValue("@Fecha", venta.Fecha);
+                cmd.Parameters.AddWithValue("@Notas", venta.Notas);
 
                 int idGeneradoVenta = (int)cmd.ExecuteScalar();
 

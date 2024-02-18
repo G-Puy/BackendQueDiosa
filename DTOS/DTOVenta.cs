@@ -19,6 +19,7 @@ namespace DTOS
         public string ApellidoComprador { get; set; } = "";
         public bool Envio { get; set; } = false;
         public DateTime Fecha {  get; set; } = DateTime.Now;
+        public string Notas { get; set; } = "";
         public List<DTOVentaProducto> ProductosVendidos { get; set; } = new List<DTOVentaProducto>();
     }
 }

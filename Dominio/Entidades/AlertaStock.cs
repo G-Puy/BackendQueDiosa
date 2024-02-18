@@ -16,6 +16,7 @@ namespace Dominio.Entidades
         public string NombreColor { get; set; } = "";
         public int Cantidad { get; set; } = 0;
         public long IdProducto { get; set; } = 0;
+        public DateTime Fecha { get; set; } = DateTime.Now;
 
         public DTOAlertaStock darDto()
         {
@@ -27,6 +28,7 @@ namespace Dominio.Entidades
             alerta.NombreTalle = NombreTalle;
             alerta.Cantidad = Cantidad;
             alerta.IdProducto = IdProducto;
+            alerta.Fecha = Fecha;
             return alerta;
         }
 
@@ -39,6 +41,7 @@ namespace Dominio.Entidades
             NombreProducto = alerta.NombreProducto;
             Cantidad = alerta.Cantidad;
             IdProducto = alerta.IdProducto;
+            Fecha = alerta.Fecha;
         }
     }
 }

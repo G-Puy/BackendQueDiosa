@@ -20,6 +20,7 @@ namespace Dominio.Entidades
         public string ApellidoComprador { get; set; } = "";
         public bool Envio { get; set; } = false;
         public DateTime Fecha {  get; set; } = DateTime.Now;
+        public string Notas { get; set; } = "";
         public List<VentaProducto> ProductosVendidos { get; set; } = new List<VentaProducto>();
 
         public void cargarDeDTO(DTOVenta dto)
@@ -35,6 +36,7 @@ namespace Dominio.Entidades
             this.Envio = dto.Envio;
             this.Fecha = dto.Fecha;
             this.ApellidoComprador = dto.ApellidoComprador;
+            this.Notas = dto.Notas;
 
             foreach (DTOVentaProducto dTOVentaProducto in dto.ProductosVendidos)
             {
@@ -58,6 +60,7 @@ namespace Dominio.Entidades
             dto.ApellidoComprador = this.ApellidoComprador;
             dto.Envio = this.Envio;
             dto.Fecha = this.Fecha;
+            dto.Notas = this.Notas;
 
             foreach (VentaProducto ventaProducto in this.ProductosVendidos)
             {

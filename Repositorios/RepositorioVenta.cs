@@ -28,7 +28,7 @@ namespace Repositorios
             SqlTransaction trn = null;
             try
             {
-                string sentenciaSql = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio, @Fecha);
+                string sentenciaSql = @"INSERT INTO Venta VALUES(@MontoTotal,@NombreComprador, @CorreoComprador, @BajaLogica, @Direccion, @Telefono, @Aprobado, @ApellidoComprador, @Envio, @Fecha, @Notas);
                                         SELECT CAST(Scope_IDentity() as int);";
                 SqlCommand cmd = new SqlCommand(sentenciaSql, cn);
                 cmd.Parameters.AddWithValue("@MontoTotal", venta.MontoTotal);
@@ -41,6 +41,7 @@ namespace Repositorios
                 cmd.Parameters.AddWithValue("@ApellidoComprador", venta.ApellidoComprador);
                 cmd.Parameters.AddWithValue("@Envio", venta.Envio);
                 cmd.Parameters.AddWithValue("@Fecha", venta.Fecha);
+                cmd.Parameters.AddWithValue("@Notas", venta.Notas);
                 manejadorConexion.AbrirConexion(cn);
                 trn = cn.BeginTransaction();
                 cmd.Transaction = trn;
@@ -124,6 +125,7 @@ namespace Repositorios
                         venta.ApellidoComprador = Convert.ToString(reader["apellidoComprador"]);
                         venta.Envio = Convert.ToBoolean(reader["envio"]);
                         venta.Fecha = Convert.ToDateTime(reader["fecha"]);
+                        venta.Notas = Convert.ToString(reader["notas"]);
                         DTOVenta dtoTipoT = venta.darDto();
 
                         ventas.Add(dtoTipoT);

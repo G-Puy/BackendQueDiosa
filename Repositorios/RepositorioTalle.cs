@@ -213,6 +213,15 @@ namespace Repositorios
                         talle.Id = Convert.ToInt64(reader["idTalle"]);
                     }
                 }
+                string sentenciaVP = @"SELECT TOP 1 idTalle FROM VentaProducto WHERE idTalle = @IdTalle;";
+                cmd.CommandText = sentenciaVP;
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        talle.Id = Convert.ToInt64(reader["idTalle"]);
+                    }
+                }
                 trn.Commit();
                 manejadorConexion.CerrarConexionConClose(cn);
                 return talle != null && talle.Id > 0;
