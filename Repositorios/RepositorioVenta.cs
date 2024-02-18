@@ -125,7 +125,7 @@ namespace Repositorios
                         venta.ApellidoComprador = Convert.ToString(reader["apellidoComprador"]);
                         venta.Envio = Convert.ToBoolean(reader["envio"]);
                         venta.Fecha = Convert.ToDateTime(reader["fecha"]);
-                        venta.Notas = Convert.ToString(reader["notas"]);
+                        venta.Notas = Convert.ToString(reader["Notas"]);
                         DTOVenta dtoTipoT = venta.darDto();
 
                         ventas.Add(dtoTipoT);

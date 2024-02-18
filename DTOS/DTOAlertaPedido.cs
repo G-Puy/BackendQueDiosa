@@ -18,5 +18,6 @@ namespace DTOS
         public string Direccion { get; set; } = string.Empty;
         public bool Realizado { get; set; } = false;
         public DateTime Fecha { get; set; } = DateTime.Now;
+        public string Notas { get; set; } = string.Empty;
     }
 }

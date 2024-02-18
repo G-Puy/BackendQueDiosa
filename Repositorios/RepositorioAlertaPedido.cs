@@ -160,6 +160,9 @@ namespace IRepositorios
                             dto.Apellido = Convert.ToString(reader["apellidoComprador"]);
                             dto.Envio = Convert.ToBoolean(reader["envio"]);
                             dto.Fecha = Convert.ToDateTime(reader["fecha"]);
+                            dto.Notas = Convert.ToString(reader["Notas"]);
+
+
                         }
                     }
 
@@ -224,6 +227,7 @@ namespace IRepositorios
                             dto.Apellido = Convert.ToString(reader["apellidoComprador"]);
                             dto.Envio = Convert.ToBoolean(reader["envio"]);
                             dto.Fecha = Convert.ToDateTime(reader["fecha"]);
+                            dto.Notas = Convert.ToString(reader["Notas"]);
                         }
                     }
 
