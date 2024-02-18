@@ -17,5 +17,7 @@ namespace DTOS.DTOSProductoFrontBack
         public string mail { get; set; } = "";
         public string telefono { get; set; } = "";
         public bool enviar { get; set; } = false;
+        public string notas { get; set; } = "";
+
     }
 }

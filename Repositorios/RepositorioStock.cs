@@ -163,7 +163,6 @@ namespace Repositorios
                     cmd.Parameters.AddWithValue("@IdColor", ventaProducto.IdColor);
                     cmd.Parameters.AddWithValue("@Cantidad", ventaProducto.Cantidad);
                     cmd.Parameters.AddWithValue("@Precio", ventaProducto.Precio);
-
                     cmd.ExecuteNonQuery();
                 }
 

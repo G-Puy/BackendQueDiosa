@@ -52,6 +52,7 @@ namespace BackendQueDiosa.Controllers
                 venta.ApellidoComprador = persona.apellido;
                 venta.Envio = persona.enviar;
                 venta.Fecha = DateTime.Now;
+                venta.Notas = persona.notas;
 
                 foreach (var data in dataProductos)
                 {
